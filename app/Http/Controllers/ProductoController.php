@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Models\Producto;
 
@@ -37,10 +38,10 @@ class ProductoController extends Controller
     public function store(Request $request)
     {
         $validate = $request->validate([
-            'nombre'     => 'required|string|max:255',
-            'variedad'   => 'required|string|max:255',
-            'formato'    => 'required|string|max:255',
-            'precio'     => 'required|numeric|min:0',
+            'nombre'     => 'string|max:255',
+            'variedad'   => 'string|max:255',
+            'formato'    => 'string|max:255',
+            'precio'     => 'numeric|min:0',
             'imagen'     => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'disponible' => 'nullable',
         ]);
@@ -78,10 +79,10 @@ class ProductoController extends Controller
     public function update(Request $request, Producto $producto)
     {
         $validated = $request->validate([
-            'nombre'      => 'required|string|max:255',
+            'nombre'      => 'nullable|string|max:255',
             'variedad'    => 'nullable|string|max:255',
             'formato'     => 'nullable|string|max:255',
-            'precio'      => 'required|numeric|min:0',
+            'precio'      => 'nullable|numeric|min:0',
             'imagen_file' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'disponible'  => 'nullable',
         ]);
@@ -89,6 +90,10 @@ class ProductoController extends Controller
         $validated['disponible'] = $request->has('disponible');
 
         if ($request->hasFile('imagen_file')) {
+            if ($producto->imagen) {
+                Storage::disk('public')->delete($producto->imagen);
+            }
+
             $validated['imagen'] = $request->file('imagen_file')->store('productos', 'public');
         }
 
@@ -102,7 +107,12 @@ class ProductoController extends Controller
      */
     public function destroy(Producto $producto)
     {
+        if($producto->imagen){
+            Storage::disk('public')->delete($producto->imagen);
+        }
+
         $producto->delete();
+
         return redirect()->route('productos.catalogo')->with('success', 'Producto eliminado exitosamente.✅');
     }
 }

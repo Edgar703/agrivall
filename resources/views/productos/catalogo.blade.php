@@ -5,11 +5,22 @@
 @section('contingut')
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h1 class="h3 mb-0">Productos</h1>
-    <a href="{{ route('productos.create') }}" class="btn btn-primary">+ Nuevo</a>
 </div>
 
 @if(session('success'))
-    <div class="alert alert-success">{{ session('success') }}</div>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <script>
+        setTimeout(function() {
+            let alert = document.querySelector('.alert-success');
+            if(alert) {
+                let bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            }
+        }, 3000);
+    </script>
 @endif
 
 <div class="row g-3">
@@ -78,5 +89,9 @@
             </div>
         </div>
     @endforelse
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <a href="{{ route('productos.create') }}" class="btn btn-primary">+ Nuevo</a>
+    </div>
+    
 </div>
 @endsection
