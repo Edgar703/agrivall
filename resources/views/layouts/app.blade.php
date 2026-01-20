@@ -1,33 +1,42 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('titol', 'Agrivall')</title>
 
-    <!-- Bootstrap 5 CDN -->
+    {{-- Bootstrap 5 CDN --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="{{ asset('assets/img/Agrivall_Logo.png') }}" type="image/x-icon">
 
 </head>
-<body>
+<body class="bg-light min-vh-100 d-grid" style="grid-template-rows: auto 1fr auto;">
 
-<div style="display: grid; min-height: 100vh; grid-template-rows: auto 1fr auto;">
-    
-    <!-- Navbar -->
-    @include('layouts.nav')
+@include('layouts.nav')
 
-    <!-- Main Content -->
-    <main class="container mt-4">
-        @yield('contingut')
-    </main>
+<main class="container py-4 bg-transparent py-4">
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-    <!-- Footer -->
-    <footer class="bg-light text-center py-3 mt-5">
-        <small>© {{ date('Y') }} Agrivall</small>
-    </footer>
-</div>
+    @if (session('status'))
+        <div class="alert alert-success">
+            {{ session('status') }}
+        </div>
+    @endif
 
-<!-- Bootstrap JS -->
+    @yield('contingut')
+</main>
+
+@include('layouts.footer')
+
+{{-- Bootstrap 5 JS Bundle CDN --}}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>

@@ -12,5 +12,4 @@
 
 <h2 class="h4">Bienvenido a Agrivall</h2>
 <p>Su plataforma de gestión agrícola.</p>
-
 @endsection

@@ -24,10 +24,11 @@
 @endif
 
 <div class="row g-3">
+    
     @forelse($productos as $producto)
         <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
             <div class="card h-100 shadow-sm">
-
+                
                 {{-- Imagen --}}
                 @if($producto->imagen)
                     <img
@@ -42,7 +43,7 @@
                         <span class="text-muted">Sin imagen</span>
                     </div>
                 @endif
-
+                    
                 <div class="card-body">
                     <h5 class="card-title mb-1">{{ $producto->nombre }}</h5>
                     <p class="card-text text-muted mb-2">
@@ -59,39 +60,48 @@
                         @endif
                     </div>
                 </div>
+                @auth
+                    @if (auth()->user()->role === 'admin')
+                        <div class="card-footer bg-white border-0 pt-0 pb-3 px-3">
+                            <div class="d-flex gap-2">
+                                <a href="{{ route('productos.edit', $producto) }}"
+                                class="btn btn-warning btn-sm flex-grow-1">
+                                    Editar
+                                </a>
 
-                <div class="card-footer bg-white border-0 pt-0 pb-3 px-3">
-                    <div class="d-flex gap-2">
-                        <a href="{{ route('productos.edit', $producto) }}"
-                           class="btn btn-warning btn-sm flex-grow-1">
-                            Editar
-                        </a>
-
-                        <form action="{{ route('productos.destroy', $producto) }}"
-                              method="POST" class="flex-grow-1">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit"
-                                    class="btn btn-danger btn-sm w-100"
-                                    onclick="return confirm('¿Seguro que quieres borrarlo?')">
-                                Borrar
-                            </button>
-                        </form>
-                    </div>
-                </div>
-
+                                <form action="{{ route('productos.destroy', $producto) }}"
+                                    method="POST" class="flex-grow-1">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                            class="btn btn-danger btn-sm w-100"
+                                            onclick="return confirm('¿Seguro que quieres borrarlo?')">
+                                        Borrar
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    @endif
+                @endauth
             </div>
         </div>
     @empty
-        <div class="col-12">
-            <div class="alert alert-info mb-0">
-                No hay productos todavía. <a href="{{ route('productos.create') }}">Crea el primero</a>.
-            </div>
-        </div>
+        @auth
+            @if (auth()->user()->role === 'admin')
+                <div class="col-12">
+                    <div class="alert alert-info mb-0">
+                        No hay productos todavía. <a href="{{ route('productos.create') }}">Crea el primero</a>.
+                    </div>
+                </div>
+            @endif
+        @endauth
     @endforelse
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <a href="{{ route('productos.create') }}" class="btn btn-primary">+ Nuevo</a>
-    </div>
-    
+    @auth
+        @if (auth()->user()->role === 'admin')
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <a href="{{ route('productos.create') }}" class="btn btn-primary">+ Nuevo</a>
+            </div>
+        @endif
+    @endauth
 </div>
 @endsection
