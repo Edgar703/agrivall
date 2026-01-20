@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
-    protected $table = 'postsblog';
+    protected $table = 'posts';
 
     protected $fillable = [
         'tipo_post_id',
@@ -16,7 +16,12 @@ class Post extends Model
         'fecha_public'
     ];
 
-    public function tipo(){
-        return $this->belongsTo(TipoPost::class, 'tipo_post_id');
+    public function usuario(){
+        return $this->belongsTo(Usuario::class, 'user_id');
+    }
+
+    public function tipoPost()
+    {
+        return $this->belongsTo(TipoPost::class);
     }
 }

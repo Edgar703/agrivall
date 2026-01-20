@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-success" style="min-height: 7vh;">
-    <div class="container-fluid "style="width: 80%;">
+    <div class="container-fluid" style="width: 80%;">
         <img src="{{ asset('assets/img/Agrivall_Logo.png') }}" alt="Agrivall Logo" height="40" class="ms-2 me-2"/>
         <a class="navbar-brand fw-bold" style="font-size: 30px;" href="/">Agrivall</a>
         
@@ -8,9 +8,15 @@
         </button>
         
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav ms-auto align-items-lg-center">
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('productos.catalogo') }}">Catálogo</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('posts.index') }}">Blog</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('casa-rural') }}">Casa Rural</a>
                 </li>
 
                 {{-- Solo admin ve gestion --}}
@@ -31,7 +37,7 @@
 
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button class="btn text-white btn-sm" style="background-color: brown; border-radius: 10px;">Salir</button>
+                        <button class="btn text-white btn-sm" style="background-color: #735322; border-radius: 10px;">Salir</button>
                     </form>
                 @else
                     <a class="btn text-white btn-sm" style="background-color: #735322; border-radius: 10px;" href="{{ route('login') }}">Login</a>

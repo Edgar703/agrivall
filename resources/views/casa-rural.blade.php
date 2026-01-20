@@ -10,6 +10,6 @@
     <div class="alert alert-success">{{ session('success') }}</div>
 @endif
 
-<h2 class="h4">Bienvenido a Agrivall</h2>
+<h2 class="h4">Bienvenido a Casa rural</h2>
 <p>Su plataforma de gestión agrícola.</p>
 @endsection

@@ -9,8 +9,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="shortcut icon" href="{{ asset('assets/img/Agrivall_Logo.png') }}" type="image/x-icon">
 
+
 </head>
-<body class="bg-light min-vh-100 d-grid" style="grid-template-rows: auto 1fr auto;">
+<body class="min-vh-100 d-grid" style="grid-template-rows: auto 1fr auto; background-color: bisque;">
 
 @include('layouts.nav')
 

@@ -12,8 +12,9 @@ class PostController extends Controller
      */
     public function index()
     {
-        $productos = Post::orderBy('created_at', 'desc')->get();
-        return view('posts.index', compact('productos'));
+        //$posts = Post::orderBy('created_at', 'desc')->get();
+        $posts = Post::orderBy('created_at', 'desc')->paginate(6);
+            return view('posts.index', compact('posts'));
     }
 
     /**
@@ -29,24 +30,21 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        $validate = $request->validate([
-            'nombre'     => 'string|max:255',
-            'variedad'   => 'string|max:255',
-            'formato'    => 'string|max:255',
-            'precio'     => 'numeric|min:0',
-            'imagen'     => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'disponible' => 'nullable',
+            $request->validate([
+            'titulo' => 'required|string|max:255',
+            'contenido' => 'required',
+            'categoria' => 'required'
         ]);
 
-        $validate['disponible'] = $request->has('disponible');
+        Post::create([
+            'user_id' => auth()->id(),
+            'titulo' => $request->titulo,
+            'contenido' => $request->contenido,
+            'categoria' => $request->categoria,
+            'publicado_en' => now()
+        ]);
 
-        if ($request->hasFile('imagen_file')) {
-            $path = $request->file('imagen_file')->store('productos', 'public');
-            $validate['imagen'] = $path;
-        }
-
-        Producto::create($validate);
-        return redirect()->route('productos.catalogo')->with('success', 'Producto creado exitosamente.✅');
+        return redirect()->route('posts.index')->with('success', 'Post creado');
     }
 
     /**
@@ -54,7 +52,8 @@ class PostController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $post = Post::findOrFail($id);
+        return view('posts.show', compact('post'));
     }
 
     /**
@@ -62,7 +61,13 @@ class PostController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $post = Post::findOrFail($id);
+        // Si no está logueado, Laravel ya lo corta con middleware auth (lo veremos abajo)
+        if (auth()->id() !== $post->user_id && auth()->user()->role !== 'admin') {
+            abort(403); // Prohibido
+        }
+
+        return view('posts.edit', compact('post'));
     }
 
     /**
@@ -70,7 +75,25 @@ class PostController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $post = Post::findOrFail($id);
+
+        if (auth()->id() !== $post->user_id && auth()->user()->role !== 'admin') {
+            abort(403); // Prohibido
+        }
+
+        $request->validate([
+            'titulo' => 'required|string|max:255',
+            'contenido' => 'required',
+            'categoria' => 'required'
+        ]);
+
+        $post->update([
+            'titulo' => $request->titulo,
+            'contenido' => $request->contenido,
+            'categoria' => $request->categoria,
+        ]);
+
+        return redirect()->route('posts.show', $post)->with('success', 'Post actualizado');
     }
 
     /**
@@ -78,6 +101,12 @@ class PostController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $post = Post::findOrFail($id);
+        if (auth()->id() !== $post->user_id && auth()->user()->role !== 'admin') {
+            abort(403);
+        }
+
+        $post->delete();
+        return redirect()->route('posts.index')->with('success', 'Post eliminado');
     }
 }

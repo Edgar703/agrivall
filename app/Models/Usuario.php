@@ -11,7 +11,7 @@ class Usuario extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
-    //protected $table = 'usuarios';
+    protected $table = 'usuarios';
 
     /**
      * The attributes that are mass assignable.
@@ -46,5 +46,10 @@ class Usuario extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class, 'user_id');
     }
 }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -20,5 +21,10 @@ Route::middleware('auth')->group(function () {
 
 Route::resource('productos', ProductoController::class);
 Route::get('/catalogo',[ProductoController::class, 'catalogo'])->name('productos.catalogo');
+
+Route::resource('posts', PostController::class);
+Route::get('/casa-rural', function () {
+    return view('casa-rural');
+})->name('casa-rural');
 
 require __DIR__.'/auth.php';
