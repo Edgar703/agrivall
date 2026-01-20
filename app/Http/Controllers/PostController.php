@@ -86,6 +86,14 @@ class PostController extends Controller
             'contenido' => 'required',
             'categoria' => 'required'
         ]);
+        
+        if ($request->hasFile('imagen_file')) {
+            if ($post->imagen) {
+                Storage::disk('public')->delete($post->imagen);
+            }
+
+            $validated['imagen'] = $request->file('imagen_file')->store('productos', 'public');
+        }
 
         $post->update([
             'titulo' => $request->titulo,
