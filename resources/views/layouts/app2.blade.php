@@ -15,7 +15,7 @@
 
 @include('layouts.nav')
 
-<main class="container py-4 bg-transparent">
+<main class="container py-4 bg-transparent py-4">
     @if ($errors->any())
         <div class="alert alert-danger">
             <ul class="mb-0">

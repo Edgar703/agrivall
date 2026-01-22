@@ -16,6 +16,12 @@ class PostController extends Controller
         $posts = Post::orderBy('created_at', 'desc')->paginate(6);
             return view('posts.index', compact('posts'));
     }
+    public function index2()
+    {
+        //$posts = Post::orderBy('created_at', 'desc')->get();
+        $posts = Post::orderBy('created_at', 'desc')->paginate(6);
+            return view('posts.index', compact('posts'));
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -30,18 +36,18 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-            $request->validate([
+        $request->validate
+        ([
             'titulo' => 'required|string|max:255',
-            'contenido' => 'required',
-            'categoria' => 'required'
+            'contenido' => 'required|string|max:5000',
+            'categoria' => 'required|string|max:50'
         ]);
 
-        Post::create([
-            'user_id' => auth()->id(),
+        auth()->user()->posts()->create([
             'titulo' => $request->titulo,
             'contenido' => $request->contenido,
             'categoria' => $request->categoria,
-            'publicado_en' => now()
+            'publicado_en' => now(),
         ]);
 
         return redirect()->route('posts.index')->with('success', 'Post creado');

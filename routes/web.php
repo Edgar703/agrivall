@@ -26,5 +26,6 @@ Route::resource('posts', PostController::class);
 Route::get('/casa-rural', function () {
     return view('casa-rural');
 })->name('casa-rural');
+Route::get('/posts/index2', [PostController::class, 'index2'])->name('posts.index2');
 
 require __DIR__.'/auth.php';

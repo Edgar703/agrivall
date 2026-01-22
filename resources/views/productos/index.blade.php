@@ -5,7 +5,7 @@
 @section('contingut')
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h1 class="h3">Gestor de Productos</h1>
-    <a href="{{ route('productos.create') }}" class="btn btn-primary">+ Nuevo</a>
+    <a href="{{ route('productos.create') }}" class="btn btn-primary" style="background-color: #198754; border: 2px solid #735122; color: white;">+ Nuevo</a>
 </div>
 
 @if(session('success'))
@@ -52,13 +52,13 @@
                     @endif
                 </td>
                 <td class="text-end">
-                    <a href="{{ route('productos.edit', $producto) }}" class="btn btn-sm btn-warning">Editar</a>
+                    <a href="{{ route('productos.edit', $producto) }}" class="btn btn-sm btn-warning" style="background-color: #198754; border: 2px solid #735122; color: white;">Editar</a>
 
                     <form action="{{ route('productos.destroy', $producto) }}"
                           method="POST" class="d-inline">
                         @csrf
                         @method('DELETE')
-                        <button class="btn btn-sm btn-danger"
+                        <button class="btn btn-sm btn-danger" style="background-color: #735122; border: 2px solid #198754; color: white;"
                                 onclick="return confirm('¿Seguro que quieres borrarlo?')">
                             Borrar
                         </button>

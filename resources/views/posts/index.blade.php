@@ -54,8 +54,7 @@
   <div class="d-flex justify-content-center mt-4">
     {{ $posts->links() }}
   </div>
-@endsection
-<div class="modal fade" id="crearPostModal" tabindex="-1" aria-hidden="true">
+  <div class="modal fade" id="crearPostModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
 
@@ -98,3 +97,4 @@
     </div>
   </div>
 </div>
+@endsection

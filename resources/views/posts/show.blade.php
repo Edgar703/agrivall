@@ -33,7 +33,7 @@
                 <p class="card-text" style="height: fit-content; background-color: white; padding: 5px; border-radius: 5px;">{{ $post->contenido}}</p>
                 <p class="card-text"><small class="text-muted">Publicado el {{ $post->created_at->format('d/m/Y') }}</small></p>
 
-                <span class="card-text text-white rounded p-1" style="background-color: #715122;">Categoria: {{ $post->tipoPost->tipo }}</span>
+                {{-- <span class="card-text text-white rounded p-1" style="background-color: #715122;">Categoria: {{ $post->tipoPost->tipo }}</span> --}}
                 <span class="card-text text-white rounded p-1" style="background-color: #715122;"> Autor del post: <strong>{{ $post->usuario->name ?? 'Autor desconocido' }}</strong></span>
             </div>
         </div>
