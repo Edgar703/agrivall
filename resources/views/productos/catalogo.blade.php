@@ -28,16 +28,16 @@
         @forelse($productos as $producto)
             @if ($producto->disponible === 1)
                 <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
-                    <div class="card h-100 shadow-sm">
+                    <div class="card h-100 shadow-sm" style="border-radius: 15px;border: #198754 2px solid;">
                         {{-- Imagen --}}
                         @if($producto->imagen)
                             <a href="{{ route('productos.show', $producto) }}">
                                 <img src="{{ asset('storage/' . $producto->imagen) }}" class="card-img-top" alt="{{ $producto->nombre }}"
-                                style="height: 180px; object-fit: cover;">
+                                style="height: 180px; object-fit: cover; border-radius: 15px;">
                             </a>
                         @else
-                            <div class="bg-light d-flex align-items-center justify-content-center" style="height: 180px;">
-                                <span class="text-muted">Sin imagen</span>
+                            <div class="bg-light d-flex align-items-center justify-content-center" style="height: 180px; border-radius: 15px;">
+                                <span class="text-muted" style="border-radius: 15px;">Sin imagen</span>
                             </div>
                         @endif
 
@@ -50,16 +50,16 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <strong>{{ number_format($producto->precio, 2) }} €</strong>
 
-                                @if($producto->disponible)
+                                {{-- @if($producto->disponible)
                                     <span class="badge bg-success">Disponible</span>
                                 @else
                                     <span class="badge bg-secondary">No</span>
-                                @endif
+                                @endif --}}
                             </div>
                         </div>
                         @auth
                             @if (auth()->user()->role === 'admin')
-                                <div class="card-footer bg-white border-0 pt-0 pb-3 px-3">
+                                <div class="card-footer bg-white border-0 pt-0 pb-3 px-3" style="border-radius: 15px;">
                                     <div class="d-flex gap-2">
                                         <a href="{{ route('productos.edit', $producto) }}" class="btn btn-sm flex-grow-1" style="background-color: #198754; border: 2px solid #735122; color: white;">
                                             <strong>Editar</strong>

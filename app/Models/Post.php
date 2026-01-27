@@ -14,6 +14,7 @@ class Post extends Model
         'titulo',
         'contenido',
         'imagen',
+        'categoria',
         'fecha_public'
     ];
 

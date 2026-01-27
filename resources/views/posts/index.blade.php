@@ -6,7 +6,7 @@
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h1 style="color: #76501f">Blog</h1>
     @auth
-      <button class="btn" style="color: white; background-color: #76501f;" data-bs-toggle="modal"
+      <button class="btn" style="background-color: #735122; border: 2px solid #198754; color: white;" data-bs-toggle="modal"
         data-bs-target="#crearPostModal">
         Nuevo post
       </button>
@@ -31,20 +31,20 @@
   @endif
 
   @foreach ($posts as $post)
-    <div class="card mb-3">
+    <div class="card mb-3" style="border-radius: 15px;border: #198754 2px solid;">
       <div class="row g-0">
         @if($post->imagen)
           <div class="col-md-4">
             <img src="{{ asset('storage/' . $post->imagen) }}" class="img-fluid rounded-start" alt="{{ $post->titulo }}">
           </div>
         @endif
-        <div class="col-md-8">
+        <div class="col-md-12">
           <div class="card-body">
             <h5 class="card-title">{{ $post->titulo }}</h5>
             <p class="card-text">{{ Str::limit($post->contenido, 150) }}</p>
             <p class="card-text"><small class="text-muted">Publicado el
                 {{ $post->created_at->format('d/m/Y') }}</small></p>
-            <a href="{{ route('posts.show', $post->id) }}" class="btn" style="color: white; background-color: #76501f;">Leer
+            <a href="{{ route('posts.show', $post->id) }}" class="btn" style="color: white; background-color: #76501f; border: 2px solid #198754;">Leer
               más</a>
           </div>
         </div>
