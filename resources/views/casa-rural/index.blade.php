@@ -21,8 +21,11 @@
                         <a href="{{ route('index') }}" class="btn btn-agrivall-outline btn-lg">
                             Volver al Inicio
                         </a>
-                        <button class="btn btn-agrivall-secondary btn-lg"
+                        {{-- <button class="btn btn-agrivall-secondary btn-lg"
                             onclick="document.querySelector('#booking-widget').scrollIntoView({ behavior: 'smooth' })">
+                            Reservar Ahora
+                        </button> --}}
+                        <button class="btn btn-agrivall-secondary btn-lg" onclick="alert('Reserva no implementada aun.')">
                             Reservar Ahora
                         </button>
                     </div>
@@ -64,7 +67,7 @@
                         </div>
 
                         <button class="btn btn-agrivall-secondary w-100 btn-lg"
-                            onclick="alert('Reserva no disponible hasta completar la lógica')">
+                            onclick="alert('Reserva no implementada aun.')">
                             Continuar Reserva
                         </button>
                     </div>

@@ -22,7 +22,7 @@
                     <a class="nav-link" href="{{ route('casa-rural') }}">Casa Rural</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#contact">Contactar</a>
+                    <a class="nav-link" href="{{ route('contactar') }}">Contactar</a>
                 </li>
 
                 {{-- Solo admin ve gestion --}}

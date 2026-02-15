@@ -10,10 +10,6 @@ Route::get('/', function () {
     return view('index');
 })->name('index');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
-
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -30,6 +26,10 @@ Route::delete('/comments/{comentario}', [CommentController::class, 'destroy'])->
 Route::get('/casa-rural', function () {
     return view('casa-rural.index');
 })->name('casa-rural');
+
+Route::get('/contactar', function () {
+    return view('contactar');
+})->name('contactar');
 
 Route::get('/posts/index2', [PostController::class, 'index2'])->name('posts.index2');
 

@@ -13,6 +13,14 @@
             {{-- Columna derecha --}}
             <div class="col-md-6 text-md-end">
                 <ul class="list-inline mb-1" style="margin-bottom: 0.25rem !important;">
+
+                    <li class="list-inline-item">
+                        <a href="{{ route('index') }}" class="text-light text-decoration-none hover-underline"
+                            style="font-size: 0.85rem;">
+                            Inicio
+                        </a>
+                    </li>
+                    <li class="list-inline-item mx-1" style="font-size: 0.75rem;">·</li>
                     <li class="list-inline-item">
                         <a href="{{ route('productos.catalogo') }}"
                             class="text-light text-decoration-none hover-underline" style="font-size: 0.85rem;">
@@ -21,9 +29,23 @@
                     </li>
                     <li class="list-inline-item mx-1" style="font-size: 0.75rem;">·</li>
                     <li class="list-inline-item">
-                        <a href="{{ route('dashboard') }}" class="text-light text-decoration-none hover-underline"
+                        <a href="{{ route('posts.index') }}" class="text-light text-decoration-none hover-underline"
                             style="font-size: 0.85rem;">
-                            Dashboard
+                            Blog
+                        </a>
+                    </li>
+                    <li class="list-inline-item mx-1" style="font-size: 0.75rem;">·</li>
+                    <li class="list-inline-item">
+                        <a href="{{ route('casa-rural') }}" class="text-light text-decoration-none hover-underline"
+                            style="font-size: 0.85rem;">
+                            Casa Rural
+                        </a>
+                    </li>
+                    <li class="list-inline-item mx-1" style="font-size: 0.75rem;">·</li>
+                    <li class="list-inline-item">
+                        <a href="{{ route('contactar') }}" class="text-light text-decoration-none hover-underline"
+                            style="font-size: 0.85rem;">
+                            Contactar
                         </a>
                     </li>
                 </ul>
