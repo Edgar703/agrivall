@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -23,6 +24,9 @@ Route::resource('productos', ProductoController::class);
 Route::get('/catalogo',[ProductoController::class, 'catalogo'])->name('productos.catalogo');
 
 Route::resource('posts', PostController::class);
+Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->middleware('auth')->name('comments.store');
+Route::delete('/comments/{comentario}', [CommentController::class, 'destroy'])->middleware('auth')->name('comments.destroy');
+
 Route::get('/casa-rural', function () {
     return view('casa-rural.index');
 })->name('casa-rural');

@@ -105,28 +105,28 @@
                                     </a>
                                 </div>
                             </div>
-
+                            {{--
                             @auth
-                                @if (auth()->user()->role === 'admin')
-                                    <div class="card-footer bg-light border-0 p-3"
-                                        style="border-top: 1px solid var(--agrivall-gray-200) !important;">
-                                        <div class="d-flex gap-2 justify-content-between align-items-center">
-                                            <a href="{{ route('productos.edit', $producto) }}"
-                                                class="btn btn-agrivall-primary btn-sm flex-grow-1">
-                                                Editar
-                                            </a>
-                                            <form action="{{ route('productos.destroy', $producto) }}" method="POST" class="flex-grow-1">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="btn btn-agrivall-danger btn-sm w-100"
-                                                    onclick="return confirm('¿Seguro que quieres borrar este producto?')">
-                                                    Borrar
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                @endif
-                            @endauth
+                            @if (auth()->user()->role === 'admin')
+                            <div class="card-footer bg-light border-0 p-3"
+                                style="border-top: 1px solid var(--agrivall-gray-200) !important;">
+                                <div class="d-flex gap-2 justify-content-between align-items-center">
+                                    <a href="{{ route('productos.edit', $producto) }}"
+                                        class="btn btn-agrivall-primary btn-sm flex-grow-1">
+                                        Editar
+                                    </a>
+                                    <form action="{{ route('productos.destroy', $producto) }}" method="POST" class="flex-grow-1">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-agrivall-danger btn-sm w-100"
+                                            onclick="return confirm('¿Seguro que quieres borrar este producto?')">
+                                            Borrar
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            @endif
+                            @endauth --}}
                         </div>
                     </div>
                 @endif

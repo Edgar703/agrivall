@@ -230,8 +230,10 @@
                             Agrivall es más que un lugar. Es una forma de entender la vida.
                         </h2>
                         <div class="d-flex justify-content-center gap-3 flex-wrap">
-                            <a href="/productos" class="btn btn-light fw-bold">Descubre Nuestros Productos</a>
-                            <a href="/casa-rural" class="btn btn-outline-light fw-bold">Reserva tu Estancia</a>
+                            <a href="{{ route('productos.catalogo')}}" class="btn btn-light fw-bold">Descubre Nuestros
+                                Productos</a>
+                            <a href="{{ route('casa-rural')}}" class="btn btn-outline-light fw-bold">Reserva tu
+                                Estancia</a>
                         </div>
                     </div>
                 </div>
