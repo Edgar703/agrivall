@@ -3,38 +3,39 @@
 @section('titol', ' Detalle del Post')
 
 @section('contingut')
-
-    <div style="display: flex;">
-        <h1 class="h3 m-3">Post: <strong style="color: #715122;">{{ $post->titulo }}</strong></h1>
-        @auth
-            @if (auth()->user()->id === $post->user_id)
-                <div style="display: flex; align-items: center;">
-                    <a href="{{ route('posts.edit', $post) }}" class="btn btn-sm d-flex" style="background-color: #715122; color: white;">
+    <div class="container py-4">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+            <div>
+                <p class="text-uppercase text-muted mb-1" style="letter-spacing: 0.08em; font-size: 0.75rem;">
+                    Post Agrivall
+                </p>
+                <h1 class="h2 fw-bold mb-0" style="color: #715122;">{{ $post->titulo }}</h1>
+            </div>
+            @auth
+                @if (auth()->user()->id === $post->user_id)
+                    <a href="{{ route('posts.edit', $post) }}" class="btn btn-sm" style="background-color: #715122; color: white;">
                         Editar
                     </a>
-                </div>
-            @endif
-        @endauth
-    </div>
-    </div>
-    @if($errors->any())
-        <div class="alert alert-danger">
-            <ul class="mb-0">
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+                @endif
+            @endauth
         </div>
-    @endif
 
-    <div class="container" style="display: grid; grid-template-columns: 1fr; gap: 20px; height: 40vh">
-        <div class="col-md-8">
-            <div class="card-body">
-                <p class="card-text" style="height: fit-content; background-color: white; padding: 5px; border-radius: 5px;">{{ $post->contenido}}</p>
-                <p class="card-text"><small class="text-muted">Publicado el {{ $post->created_at->format('d/m/Y') }}</small></p>
+        <div class="card border-0 shadow-sm" style="border-radius: 16px;">
+            <div class="card-body p-4 p-lg-5">
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                    <span class="badge" style="background-color: #715122;">{{ $post->categoria }}</span>
+                    <span class="badge bg-light text-dark">Publicado {{ $post->created_at->format('d/m/Y') }}</span>
+                    <span class="badge bg-light text-dark">Autor: {{ $post->usuario->name ?? 'Autor desconocido' }}</span>
+                </div>
 
-                <span class="card-text text-white rounded p-1" style="background-color: #715122;">Categoria: {{ $post->tipoPost->tipo }}</span>
-                <span class="card-text text-white rounded p-1" style="background-color: #715122;"> Autor del post: <strong>{{ $post->usuario->name ?? 'Autor desconocido' }}</strong></span>
+                @if($post->imagen)
+                    <img src="{{ asset('storage/' . $post->imagen) }}" alt="{{ $post->titulo }}"
+                        class="img-fluid rounded-4 mb-4" style="width: 100%; max-height: 420px; object-fit: cover;">
+                @endif
+
+                <div class="fs-6" style="line-height: 1.9; color: #2b2b2b;">
+                    {{ $post->contenido }}
+                </div>
             </div>
         </div>
     </div>

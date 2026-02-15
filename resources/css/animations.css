@@ -1,0 +1,477 @@
+/**
+ * AGRIVALL - Animaciones y Transiciones
+ * Efectos suaves y microinteracciones modernas
+ */
+
+/* ========== KEYFRAMES ========== */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(-40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-5px);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translateX(5px);
+    }
+}
+
+@keyframes wiggle {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-3deg);
+    }
+    75% {
+        transform: rotate(3deg);
+    }
+}
+
+/* Animación de hoja girando (para loading) */
+@keyframes leafSpin {
+    0% {
+        transform: rotate(0deg);
+    }
+    50% {
+        transform: rotate(180deg) scale(1.1);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* ========== CLASES DE ANIMACIÓN ========== */
+
+.animate-fadeIn {
+    animation: fadeIn var(--transition-smooth) var(--ease-out);
+}
+
+.animate-fadeInUp {
+    animation: fadeInUp var(--transition-smooth) var(--ease-out);
+}
+
+.animate-fadeInDown {
+    animation: fadeInDown var(--transition-smooth) var(--ease-out);
+}
+
+.animate-slideUp {
+    animation: slideUp var(--transition-smooth) var(--ease-out);
+}
+
+.animate-slideInRight {
+    animation: slideInRight var(--transition-smooth) var(--ease-out);
+}
+
+.animate-scaleIn {
+    animation: scaleIn var(--transition-fast) var(--ease-out);
+}
+
+.animate-pulse {
+    animation: pulse 2s var(--ease-in-out) infinite;
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+.animate-leafSpin {
+    animation: leafSpin 2s var(--ease-in-out) infinite;
+}
+
+/* Animaciones con delay escalonado */
+.animate-stagger-1 {
+    animation-delay: 100ms;
+}
+
+.animate-stagger-2 {
+    animation-delay: 200ms;
+}
+
+.animate-stagger-3 {
+    animation-delay: 300ms;
+}
+
+.animate-stagger-4 {
+    animation-delay: 400ms;
+}
+
+/* ========== TRANSICIONES SUAVES ========== */
+
+.transition-all {
+    transition: all var(--transition-base);
+}
+
+.transition-smooth {
+    transition: all var(--transition-smooth);
+}
+
+.transition-fast {
+    transition: all var(--transition-fast);
+}
+
+.transition-colors {
+    transition: color var(--transition-base), background-color var(--transition-base), border-color var(--transition-base);
+}
+
+.transition-transform {
+    transition: transform var(--transition-base);
+}
+
+.transition-opacity {
+    transition: opacity var(--transition-base);
+}
+
+.transition-shadow {
+    transition: box-shadow var(--transition-base);
+}
+
+/* ========== EFECTOS HOVER ========== */
+
+/* Elevación de tarjetas */
+.hover-lift {
+    transition: transform var(--transition-smooth), box-shadow var(--transition-smooth);
+}
+
+.hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
+/* Escala sutil */
+.hover-scale {
+    transition: transform var(--transition-fast);
+}
+
+.hover-scale:hover {
+    transform: scale(1.02);
+}
+
+.hover-scale-lg {
+    transition: transform var(--transition-fast);
+}
+
+.hover-scale-lg:hover {
+    transform: scale(1.05);
+}
+
+/* Brillo al hover */
+.hover-brightness {
+    transition: filter var(--transition-fast);
+}
+
+.hover-brightness:hover {
+    filter: brightness(1.1);
+}
+
+/* Subrayado animado */
+.hover-underline {
+    position: relative;
+    text-decoration: none;
+}
+
+.hover-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background-color: currentColor;
+    transition: width var(--transition-smooth), left var(--transition-smooth);
+}
+
+.hover-underline:hover::after {
+    width: 100%;
+    left: 0;
+}
+
+/* Efecto glow en focus */
+.focus-glow:focus {
+    outline: none;
+    box-shadow: var(--shadow-focus);
+    transition: box-shadow var(--transition-fast);
+}
+
+/* ========== LOADING STATES ========== */
+
+/* Skeleton loader */
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        var(--agrivall-gray-200) 0%,
+        var(--agrivall-gray-100) 50%,
+        var(--agrivall-gray-200) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+    border-radius: var(--radius-md);
+}
+
+.skeleton-text {
+    height: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.skeleton-title {
+    height: 1.5rem;
+    width: 60%;
+    margin-bottom: 1rem;
+}
+
+.skeleton-image {
+    width: 100%;
+    padding-bottom: 75%;
+    position: relative;
+}
+
+/* Spinner de carga */
+.spinner {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--agrivall-gray-200);
+    border-top-color: var(--agrivall-green-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.spinner-sm {
+    width: 20px;
+    height: 20px;
+    border-width: 2px;
+}
+
+.spinner-lg {
+    width: 60px;
+    height: 60px;
+    border-width: 6px;
+}
+
+/* Spinner temático (hoja) */
+.spinner-leaf {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    color: var(--agrivall-green-primary);
+    animation: leafSpin 2s var(--ease-in-out) infinite;
+}
+
+.spinner-leaf::before {
+    content: '🍃';
+    font-size: 40px;
+}
+
+/* ========== RIPPLE EFFECT ========== */
+
+.ripple {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width var(--transition-smooth), height var(--transition-smooth), opacity var(--transition-smooth);
+    opacity: 0;
+}
+
+.ripple:active::after {
+    width: 300px;
+    height: 300px;
+    opacity: 1;
+    transition: width 0s, height 0s, opacity 0s;
+}
+
+/* ========== MICROINTERACCIONES DE BOTONES ========== */
+
+.btn-interactive {
+    position: relative;
+    overflow: hidden;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.btn-interactive:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-interactive:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Efecto shimmer en botones */
+.btn-shimmer {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-shimmer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+    );
+    transition: left var(--transition-slow);
+}
+
+.btn-shimmer:hover::before {
+    left: 100%;
+}
+
+/* ========== EFECTOS DE IMAGEN ========== */
+
+.img-zoom {
+    overflow: hidden;
+}
+
+.img-zoom img {
+    transition: transform var(--transition-slow);
+}
+
+.img-zoom:hover img {
+    transform: scale(1.1);
+}
+
+/* ========== UTILIDADES DE PERFORMANCE ========== */
+
+.will-change-transform {
+    will-change: transform;
+}
+
+.will-change-opacity {
+    will-change: opacity;
+}
+
+.gpu-accelerated {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+/* ========== REDUCIR MOVIMIENTO (Accesibilidad) ========== */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Models\Producto;
+use Illuminate\Support\Facades\File;
+
 
 class ProductoController extends Controller
 {
@@ -42,16 +44,31 @@ class ProductoController extends Controller
             'variedad'   => 'string|max:255',
             'formato'    => 'string|max:255',
             'precio'     => 'numeric|min:0',
-            'imagen'     => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'imagen_file'     => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'disponible' => 'nullable',
         ]);
 
         $validate['disponible'] = $request->has('disponible');
 
         if ($request->hasFile('imagen_file')) {
-            $path = $request->file('imagen_file')->store('productos', 'public');
+            $file = $request->file('imagen_file');
+
+            // nombre único para evitar colisiones
+            $filename = time() . '_' . $file->getClientOriginalName();
+
+            // guarda directamente en public/storage/productos
+            $path = $file->storeAs(
+                'productos',
+                $filename,
+                'public'
+            );
+
             $validate['imagen'] = $path;
+
+            // guarda en BD la ruta que luego usarás con asset('storage/...')
+            $validate['imagen'] = 'productos/' . $filename;
         }
+
 
         Producto::create($validate);
         return redirect()->route('productos.catalogo')->with('success', 'Producto creado exitosamente.✅');
@@ -91,16 +108,29 @@ class ProductoController extends Controller
         $validated['disponible'] = $request->has('disponible');
 
         if ($request->hasFile('imagen_file')) {
+
+            // 1) borrar imagen antigua si existe
             if ($producto->imagen) {
-                Storage::disk('public')->delete($producto->imagen);
+                $oldPath = public_path('storage/' . $producto->imagen);
+                if (File::exists($oldPath)) {
+                    File::delete($oldPath);
+                }
             }
 
-            $validated['imagen'] = $request->file('imagen_file')->store('productos', 'public');
+            // 2) guardar la nueva en public/storage/productos
+            $file = $request->file('imagen_file');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('storage/productos'), $filename);
+
+            // 3) guardar la ruta en BD (IMPORTANTE: $validated)
+            $validated['imagen'] = 'productos/' . $filename;
         }
 
         $producto->update($validated);
 
-        return redirect()->route('productos.catalogo')->with('success', 'Producto actualizado ✅');
+        return redirect()
+            ->route('productos.catalogo')
+            ->with('success', 'Producto actualizado ✅');
     }
 
     /**
@@ -108,12 +138,19 @@ class ProductoController extends Controller
      */
     public function destroy(Producto $producto)
     {
-        if($producto->imagen){
-            Storage::disk('public')->delete($producto->imagen);
+        // $producto->imagen guarda algo como: "productos/1769099215_manzana.jpg"
+        if ($producto->imagen) {
+            $fullPath = public_path('storage/' . $producto->imagen);
+
+            if (File::exists($fullPath)) {
+                File::delete($fullPath);
+            }
         }
 
         $producto->delete();
 
-        return redirect()->route('productos.catalogo')->with('success', 'Producto eliminado exitosamente.✅');
+        return redirect()
+            ->route('productos.catalogo')
+            ->with('success', 'Producto eliminado exitosamente.✅');
     }
 }

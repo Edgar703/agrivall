@@ -3,24 +3,31 @@
 @section('titol', 'Editar post')
 
 @section('contingut')
-<h1 class="h3 mb-3">Editar post</h1>
 
-@if($errors->any())
-    <div class="alert alert-danger">
-        <ul class="mb-0">
-            @foreach($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
+    <div class="d-flex justify-content-start mt-2 gap-3" style="bottom: 20px;">
+        <h1 class="h3 mb-3" style="color: #715122;">Editar post</h1>
+        <form action="{{ route('posts.destroy', $post) }}" method="POST"
+            onsubmit="return confirm('¿Estás seguro de que deseas eliminar este post?');">
+            @csrf
+            @method('DELETE')
+
+            <button type="submit" class="btn" style="background-color: #715122; color: white;">
+                Eliminar
+            </button>
+        </form>
     </div>
-@endif
 
-<form action="{{ route('posts.update', $post) }}" method="POST" enctype="multipart/form-data">
-    @csrf
-    @method('PUT')
+    <form action="{{ route('posts.update', $post) }}" method="POST">
+        @csrf
+        @method('PUT')
 
-    @include('posts.partials.form', ['post' => $post])
-    <button class="btn btn-primary">Actualizar</button>
-    <a href="{{ route('productos.index') }}" class="btn btn-secondary">Cancelar</a>
-</form>
+        @include('posts.partials.form', ['post' => $post])
+
+        <div class="d-flex gap-2 mt-3">
+            <button class="btn" style="background-color: #715122; color: white;">Actualizar</button>
+
+            <a href="{{ route('posts.show', $post) }}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+
 @endsection

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('index');
-});
+})->name('index');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -24,7 +24,9 @@ Route::get('/catalogo',[ProductoController::class, 'catalogo'])->name('productos
 
 Route::resource('posts', PostController::class);
 Route::get('/casa-rural', function () {
-    return view('casa-rural');
+    return view('casa-rural.index');
 })->name('casa-rural');
+
+Route::get('/posts/index2', [PostController::class, 'index2'])->name('posts.index2');
 
 require __DIR__.'/auth.php';

@@ -64,6 +64,37 @@ LOCK TABLES `cache_locks` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `comentarios`
+--
+
+DROP TABLE IF EXISTS `comentarios`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `comentarios` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `post_id` bigint unsigned NOT NULL,
+  `user_id` bigint unsigned NOT NULL,
+  `contenido` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `comentarios_post_id_foreign` (`post_id`),
+  KEY `comentarios_user_id_foreign` (`user_id`),
+  CONSTRAINT `comentarios_post_id_foreign` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `comentarios_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `comentarios`
+--
+
+LOCK TABLES `comentarios` WRITE;
+/*!40000 ALTER TABLE `comentarios` DISABLE KEYS */;
+/*!40000 ALTER TABLE `comentarios` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `failed_jobs`
 --
 
@@ -197,7 +228,7 @@ CREATE TABLE `migrations` (
   `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -206,7 +237,7 @@ CREATE TABLE `migrations` (
 
 LOCK TABLES `migrations` WRITE;
 /*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
-INSERT INTO `migrations` VALUES (1,'0001_01_01_000000_create_users_table',1),(2,'0001_01_01_000001_create_cache_table',1),(3,'0001_01_01_000002_create_jobs_table',1),(4,'2026_01_09_191445_create_productos_table',1),(5,'2026_01_09_191449_create_pedidos_table',1),(6,'2026_01_09_191450_create_tipo_post_table',1),(7,'2026_01_09_191452_create_linea_pedido_table',1),(8,'2026_01_09_191452_create_postsblog_table',1),(9,'2026_01_09_191452_create_semanascasilla_table',1);
+INSERT INTO `migrations` VALUES (1,'0001_01_01_000000_create_users_table',1),(2,'0001_01_01_000001_create_cache_table',1),(3,'0001_01_01_000002_create_jobs_table',1),(4,'2026_01_09_191445_create_productos_table',1),(5,'2026_01_09_191449_create_pedidos_table',1),(6,'2026_01_09_191450_create_tipo_post_table',1),(7,'2026_01_09_191452_create_linea_pedido_table',1),(8,'2026_01_09_191452_create_postsblog_table',1),(9,'2026_01_09_191452_create_semanascasilla_table',1),(10,'2026_01_20_134656_rename_users_to_usuarios_table',1),(11,'2026_01_20_135238_add_role_to_usuarios_table',1),(12,'2026_02_14_000001_add_user_id_to_posts_table',1),(13,'2026_02_14_000002_create_comentarios_table',1),(14,'2026_02_14_191100_add_contenido_and_categoria_to_posts_table',2),(15,'2026_02_14_200000_create_reservas_table',3),(16,'2026_02_15_000001_add_contenido_and_categoria_to_posts_table',4),(17,'2026_02_15_000002_make_tipo_post_id_nullable_on_posts_table',5),(18,'2026_02_15_000003_create_posts_table',6),(19,'2026_02_15_000004_drop_imagen_from_posts_table',6);
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -267,34 +298,39 @@ LOCK TABLES `pedidos` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `postsblog`
+-- Table structure for table `posts`
 --
 
-DROP TABLE IF EXISTS `postsblog`;
+DROP TABLE IF EXISTS `posts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `postsblog` (
+CREATE TABLE `posts` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `tipo_post_id` bigint unsigned NOT NULL,
+  `user_id` bigint unsigned NOT NULL,
+  `tipo_post_id` bigint unsigned DEFAULT NULL,
   `titulo` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `noticia` text COLLATE utf8mb4_unicode_ci,
-  `imagen` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `fecha_public` datetime DEFAULT CURRENT_TIMESTAMP,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
+  `contenido` text COLLATE utf8mb4_unicode_ci,
+  `categoria` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
-  KEY `postsblog_tipo_post_id_foreign` (`tipo_post_id`),
-  CONSTRAINT `postsblog_tipo_post_id_foreign` FOREIGN KEY (`tipo_post_id`) REFERENCES `tipo_post` (`id`) ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  KEY `posts_user_id_foreign` (`user_id`),
+  KEY `posts_tipo_post_id_foreign` (`tipo_post_id`),
+  CONSTRAINT `posts_tipo_post_id_foreign` FOREIGN KEY (`tipo_post_id`) REFERENCES `tipo_post` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `posts_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `postsblog`
+-- Dumping data for table `posts`
 --
 
-LOCK TABLES `postsblog` WRITE;
-/*!40000 ALTER TABLE `postsblog` DISABLE KEYS */;
-/*!40000 ALTER TABLE `postsblog` ENABLE KEYS */;
+LOCK TABLES `posts` WRITE;
+/*!40000 ALTER TABLE `posts` DISABLE KEYS */;
+INSERT INTO `posts` VALUES (1,1,NULL,'Titulo del post',NULL,'2026-02-14 23:18:28','2026-02-14 23:18:28','2026-02-14 23:18:28','Lorem ipsum, dolor sit amet consectetur adipisicing elit. Mollitia ad quam temporibus beatae repellat perspiciatis accusamus minima? Provident ratione tenetur dolore unde? Quis reiciendis reprehenderit, enim accusantium qui aspernatur eligendi!','noticia'),(21,1,NULL,'Nueva plataforma lanzada','Lanzamiento oficial','2026-02-14 23:37:22','2026-02-14 23:37:22','2026-02-14 23:37:22','Hoy lanzamos nuestra nueva plataforma.','Noticia'),(22,1,NULL,'Mejoras de rendimiento','Sistema optimizado','2026-02-14 23:37:22','2026-02-14 23:37:22','2026-02-14 23:37:22','Se optimiz el tiempo de carga.','Noticia'),(23,1,NULL,'Cambio de polticas','Actualizacin legal','2026-02-14 23:37:22','2026-02-14 23:37:22','2026-02-14 23:37:22','Hemos actualizado nuestras polticas.','Noticia'),(24,1,NULL,'Nuevo equipo de trabajo','Se suman talentos','2026-02-14 23:37:22','2026-02-14 23:37:22','2026-02-14 23:37:22','Presentamos al nuevo equipo.','Noticia'),(25,1,NULL,'Nueva seccin disponible','Nueva funcionalidad','2026-02-14 23:37:22','2026-02-14 23:37:22','2026-02-14 23:37:22','Se agreg una nueva seccin.','Noticia'),(26,1,NULL,'Mantenimiento programado','Aviso importante','2026-02-14 23:37:22','2026-02-14 23:37:22','2026-02-14 23:37:22','Habr mantenimiento este fin de semana.','Noticia'),(27,1,NULL,'Crecimiento de usuarios','Buenas noticias','2026-02-14 23:37:22','2026-02-14 23:37:22','2026-02-14 23:37:22','Superamos los 10k usuarios.','Noticia'),(28,1,NULL,'Evento de lanzamiento','Evento especial','2026-02-14 23:37:22','2026-02-14 23:37:22','2026-02-14 23:37:22','Te invitamos al evento de lanzamiento.','Evento'),(29,1,NULL,'Webinar gratuito','Capacitacin online','2026-02-14 23:37:22','2026-02-14 23:37:22','2026-02-14 23:37:22','Aprende a usar la plataforma.','Evento'),(30,1,NULL,'Charla tcnica','Tecnologa y futuro','2026-02-14 23:37:22','2026-02-14 23:37:22','2026-02-14 23:37:22','Charla con expertos del sector.','Evento'),(31,1,NULL,'Meetup presencial','Encuentro de usuarios','2026-02-14 23:37:22','2026-02-14 23:37:22','2026-02-14 23:37:22','Nos reunimos para compartir experiencias.','Evento'),(32,1,NULL,'Hackathon 2026','Competencia de desarrollo','2026-02-14 23:37:22','2026-02-14 23:37:22','2026-02-14 23:37:22','Participa en nuestro hackathon.','Evento'),(33,1,NULL,'Conferencia anual','Evento principal','2026-02-14 23:37:22','2026-02-14 23:37:22','2026-02-14 23:37:22','Nuestra conferencia ms importante.','Evento'),(34,1,NULL,'Actualizacin de seguridad','Parche aplicado','2026-02-14 23:37:22','2026-02-14 23:37:22','2026-02-14 23:37:22','Se corrigieron vulnerabilidades.','Actualizacin'),(35,1,NULL,'Nueva versin 2.1','Release oficial','2026-02-14 23:37:22','2026-02-14 23:37:22','2026-02-14 23:37:22','Disponible la versin 2.1.','Actualizacin'),(36,1,NULL,'Edicin de publicaciones','Nueva funcin','2026-02-14 23:37:22','2026-02-14 23:37:22','2026-02-14 23:37:22','Ahora puedes editar publicaciones.','Actualizacin'),(37,1,NULL,'Mejoras en el panel','UX optimizado','2026-02-14 23:37:22','2026-02-14 23:37:22','2026-02-14 23:37:22','Interfaz ms intuitiva.','Actualizacin'),(38,1,NULL,'Correccin de errores','Bugfixes','2026-02-14 23:37:22','2026-02-14 23:37:22','2026-02-14 23:37:22','Se corrigieron errores menores.','Actualizacin'),(39,1,NULL,'Optimizacin de base de datos','Mejor rendimiento','2026-02-14 23:37:22','2026-02-14 23:37:22','2026-02-14 23:37:22','Consultas ms rpidas.','Actualizacin');
+/*!40000 ALTER TABLE `posts` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -315,7 +351,7 @@ CREATE TABLE `productos` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -324,8 +360,41 @@ CREATE TABLE `productos` (
 
 LOCK TABLES `productos` WRITE;
 /*!40000 ALTER TABLE `productos` DISABLE KEYS */;
-INSERT INTO `productos` VALUES (9,'Manzanas','Golden','Kg',1.45,'productos/3Yhf61wnKjRwMJS6cye0PqeHOQMp7EhU7KbEDBIv.jpg',1,'2026-01-09 22:02:25','2026-01-09 22:02:25'),(10,'Melones','nose','Kg',2.00,'productos/sVB6D51vIMUA8WWzm4IuH1YlToEFQfe2CuUscUxD.jpg',1,'2026-01-09 22:08:20','2026-01-09 22:08:26'),(11,'Sandia','Malaga','Kg',2.45,'productos/8ChdCPWZ2rmbnc8GDANB0EMGhy82Y73kSbxxdaSJ.jpg',1,'2026-01-09 22:09:08','2026-01-09 22:09:08'),(12,'Uvas','Blanca','Kg',4.50,'productos/mNjmKoI6tsDDqTQfFDiGWGy7IzH1LL7cynADspV0.jpg',0,'2026-01-09 22:10:50','2026-01-09 22:10:50'),(13,'Naranjas','Normales','Kg',6.00,'productos/BoGDQlEJemAIEcKpxzTcrBPrvt9OiXg7Rx1Pk8Mk.jpg',0,'2026-01-09 22:12:02','2026-01-09 22:12:02'),(14,'Peras','Peras','Kg',3.50,'productos/JeKG5UxCa0qxNIZYYAIRugStT0bgerir7SLR9fWn.jpg',1,'2026-01-09 22:12:32','2026-01-09 22:12:32');
+INSERT INTO `productos` VALUES (3,'Manzanas','Golden','Kg',719.16,'productos/1771097894_manzana.jpg',1,'2026-02-14 19:38:14','2026-02-14 19:50:04'),(4,'Sandia','Golden','Kg',53.00,'productos/1771098785_sandia.jpeg',1,'2026-02-14 19:52:52','2026-02-14 19:53:05'),(5,'Uvas','Verdes','Kg',12.00,'productos/1771098857_uvas.jpeg',1,'2026-02-14 19:54:17','2026-02-14 19:55:01'),(6,'Platanos','Canarias','Pack 6',5.30,'productos/1771098942_platanos.jpeg',1,'2026-02-14 19:55:42','2026-02-14 19:55:42'),(7,'Kiwi','Verde','Malla',4.35,'productos/1771099873_kiwi.jpeg',1,'2026-02-14 20:11:13','2026-02-14 21:21:49'),(8,'Naranjas','Valencia','Kg',2.80,'productos/1771112758_descarga.jpeg',1,'2026-02-14 23:45:26','2026-02-14 23:45:58'),(9,'Limones','Fino','Kg',2.20,'productos/1771112778_limones.jpeg',1,'2026-02-14 23:45:26','2026-02-14 23:46:18'),(10,'Peras','Conferencia','Kg',3.10,'productos/1771112789_peras.jpeg',1,'2026-02-14 23:45:26','2026-02-14 23:46:29'),(11,'Fresas','Temporada','Bandeja 500g',4.50,'productos/1771112806_fresas.jpeg',1,'2026-02-14 23:45:26','2026-02-14 23:46:46'),(12,'Melón','Piel de Sapo','Unidad',6.90,'productos/1771112843_melon.jpeg',1,'2026-02-14 23:45:26','2026-02-14 23:47:23'),(13,'Aguacates','Hass','Pack 4',5.75,'productos/1771112860_aguacates.jpeg',1,'2026-02-14 23:45:26','2026-02-14 23:47:40'),(14,'Tomates','Rama','Kg',2.95,'productos/1771112884_tomates.jpeg',1,'2026-02-14 23:45:26','2026-02-14 23:48:04'),(15,'Lechuga','Romana','Unidad',1.40,'productos/1771112915_lechuga.jpeg',1,'2026-02-14 23:45:26','2026-02-14 23:48:35'),(16,'Zanahorias','Nacional','Bolsa 1Kg',1.85,'productos/1771112937_zanahoria.jpeg',1,'2026-02-14 23:45:26','2026-02-14 23:48:57'),(17,'Pimientos','Verdes','Kg',3.60,'productos/1771112961_pimineto verde.jpeg',1,'2026-02-14 23:45:26','2026-02-14 23:49:21');
 /*!40000 ALTER TABLE `productos` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `reservas`
+--
+
+DROP TABLE IF EXISTS `reservas`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `reservas` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint unsigned NOT NULL,
+  `fecha_inicio` date NOT NULL,
+  `fecha_fin` date NOT NULL,
+  `num_personas` tinyint NOT NULL DEFAULT '1',
+  `comentario` text COLLATE utf8mb4_unicode_ci,
+  `estado` enum('pendiente','confirmada','cancelada') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pendiente',
+  `precio_total` decimal(8,2) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `reservas_user_id_foreign` (`user_id`),
+  CONSTRAINT `reservas_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `reservas`
+--
+
+LOCK TABLES `reservas` WRITE;
+/*!40000 ALTER TABLE `reservas` DISABLE KEYS */;
+/*!40000 ALTER TABLE `reservas` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -383,7 +452,7 @@ CREATE TABLE `sessions` (
 
 LOCK TABLES `sessions` WRITE;
 /*!40000 ALTER TABLE `sessions` DISABLE KEYS */;
-INSERT INTO `sessions` VALUES ('7AqsJXxCJEGLGakZ4qKuJ8X6rEOD7Z7gnL8KsaLI',NULL,'172.19.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36','YTozOntzOjY6Il90b2tlbiI7czo0MDoiTXNXMlB3YlF2RkRyNGMxcDhDeEIwSVdaQUFSWWhpT0tzd2x2eWFWbSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MTY6Imh0dHA6Ly9sb2NhbGhvc3QiO3M6NToicm91dGUiO047fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=',1767997636),('PQPKuzLIxCLcmVXXwTXxCE1zgqbskB1JcJOhBbqU',NULL,'172.19.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36','YTozOntzOjY6Il90b2tlbiI7czo0MDoiaTluV3VGVzFjZXJkdHZleDJCY1ZORkR0YzRzaTFjWDhlVVpBcFc3MyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjU6Imh0dHA6Ly9sb2NhbGhvc3QvY2F0YWxvZ28iO3M6NToicm91dGUiO3M6MTg6InByb2R1Y3Rvcy5jYXRhbG9nbyI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=',1768862903);
+INSERT INTO `sessions` VALUES ('oGup2tmpFS9fxvr9tO03ImTAWOIuJBihazXp4gsu',1,'172.20.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36','YTo0OntzOjY6Il90b2tlbiI7czo0MDoiV05vdDFpeWN6QW5GellJWVNIdUVUU0c0a1loY2dFNHNpYmR1V09lSCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly9sb2NhbGhvc3QvY2FzYS1ydXJhbCI7czo1OiJyb3V0ZSI7czoxMDoiY2FzYS1ydXJhbCI7fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjE7fQ==',1771114816),('OMVOQOITkFQ5bXiOn39SDWdwLBTCv4xiGKJ1WxmZ',NULL,'172.20.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36','YTozOntzOjY6Il90b2tlbiI7czo0MDoiZjZHNmVZNzVsQjdDTW9BOUt3MGR6UGdrcllwNzNNbzZ2bEtLd1o1QiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MTY6Imh0dHA6Ly9sb2NhbGhvc3QiO3M6NToicm91dGUiO3M6NToiaW5kZXgiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19',1771108051);
 /*!40000 ALTER TABLE `sessions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -413,13 +482,13 @@ LOCK TABLES `tipo_post` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `users`
+-- Table structure for table `usuarios`
 --
 
-DROP TABLE IF EXISTS `users`;
+DROP TABLE IF EXISTS `usuarios`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `users` (
+CREATE TABLE `usuarios` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -428,18 +497,20 @@ CREATE TABLE `users` (
   `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
+  `role` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'user',
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_email_unique` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `users`
+-- Dumping data for table `usuarios`
 --
 
-LOCK TABLES `users` WRITE;
-/*!40000 ALTER TABLE `users` DISABLE KEYS */;
-/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+LOCK TABLES `usuarios` WRITE;
+/*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
+INSERT INTO `usuarios` VALUES (1,'Edgar Moreno','edgmormel@gmail.com',NULL,'$2y$12$UHmUn0rXohQ4wk5BdtdZsOj9EgPcRg5o81108xaQ7uIcEpSb3vKAO','SRhXPQKLSWLrUjHKROguVHeHFdM6sYiXAUzkXxSgzSBYYQXffwPXJpvFnl5j','2026-02-14 19:02:18','2026-02-14 19:02:18','admin');
+/*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -451,4 +522,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-01-19 22:50:07
+-- Dump completed on 2026-02-15  0:34:30

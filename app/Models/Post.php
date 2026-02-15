@@ -3,16 +3,21 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Post extends Model
 {
+    use HasFactory;
+
     protected $table = 'posts';
 
     protected $fillable = [
+        'user_id',
         'tipo_post_id',
         'titulo',
-        'notica',
+        'contenido',
         'imagen',
+        'categoria',
         'fecha_public'
     ];
 
@@ -23,5 +28,10 @@ class Post extends Model
     public function tipoPost()
     {
         return $this->belongsTo(TipoPost::class);
+    }
+
+    public function comentarios()
+    {
+        return $this->hasMany(Comentario::class);
     }
 }

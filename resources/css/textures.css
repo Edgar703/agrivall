@@ -1,0 +1,177 @@
+/**
+ * AGRIVALL - Texturas y Patrones Naturales
+ * Texturas sutiles SVG para evocar naturaleza
+ */
+
+/* ========== TEXTURA DE PAPEL NATURAL ========== */
+
+.texture-paper {
+    background-image: 
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/></filter><rect width="100" height="100" filter="url(%23noise)" opacity="0.05"/></svg>');
+}
+
+.texture-paper-light {
+    background-image: 
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/></filter><rect width="100" height="100" filter="url(%23noise)" opacity="0.03"/></svg>');
+}
+
+/* ========== PATRÓN DE LÍNEAS ORGÁNICAS ========== */
+
+.texture-lines {
+    background-image: 
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M0 10 Q 25 15, 50 10 T 100 10" stroke="rgba(45, 106, 79, 0.1)" stroke-width="1" fill="none"/><path d="M0 30 Q 25 25, 50 30 T 100 30" stroke="rgba(45, 106, 79, 0.08)" stroke-width="1" fill="none"/><path d="M0 50 Q 25 55, 50 50 T 100 50" stroke="rgba(45, 106, 79, 0.06)" stroke-width="1" fill="none"/></svg>');
+    background-size: 100px 60px;
+}
+
+/* ========== PATRÓN DE PUNTOS SUAVES ========== */
+
+.texture-dots {
+    background-image: 
+        radial-gradient(circle, rgba(45, 106, 79, 0.08) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+.texture-dots-sparse {
+    background-image: 
+        radial-gradient(circle, rgba(45, 106, 79, 0.05) 1px, transparent 1px);
+    background-size: 30px 30px;
+}
+
+/* ========== GRADIENTE CON TEXTURA ========== */
+
+.gradient-textured {
+    background: 
+        linear-gradient(135deg, var(--agrivall-green-primary) 0%, var(--agrivall-green-medium) 100%),
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" /></filter><rect width="100" height="100" filter="url(%23noise)" opacity="0.1"/></svg>');
+    background-blend-mode: overlay;
+}
+
+.gradient-earth-textured {
+    background: 
+        linear-gradient(135deg, var(--agrivall-earth-primary) 0%, var(--agrivall-earth-light) 100%),
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" /></filter><rect width="100" height="100" filter="url(%23noise)" opacity="0.1"/></svg>');
+    background-blend-mode: overlay;
+}
+
+/* ========== DECORACIONES CON PSEUDO-ELEMENTOS ========== */
+
+/* Hoja decorativa superior izquierda */
+.decoration-leaf-tl::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    width: 40px;
+    height: 40px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="rgba(45, 106, 79, 0.2)"><path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66C7.82 17.09 9.59 12.72 17 11V8zm0-4l-5 5h4v6.7c-2.29.86-3.93 2.07-5.08 3.3-1.4-1.96-3.5-3.59-6.92-4.78l-.66 1.89c4.18 1.45 4.89 3.46 5.66 4.89.66 1.24 1.35 2.53 3 3.91.71.6 1.51 1.04 2.38 1.34C16.6 21.85 18 19.84 18 17V8h3l-5-5z"/></svg>');
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Hoja decorativa inferior derecha */
+.decoration-leaf-br::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    right: -10px;
+    width: 40px;
+    height: 40px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="rgba(127, 85, 57, 0.2)"><path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66C7.82 17.09 9.59 12.72 17 11V8zm0-4l-5 5h4v6.7c-2.29.86-3.93 2.07-5.08 3.3-1.4-1.96-3.5-3.59-6.92-4.78l-.66 1.89c4.18 1.45 4.89 3.46 5.66 4.89.66 1.24 1.35 2.53 3 3.91.71.6 1.51 1.04 2.38 1.34C16.6 21.85 18 19.84 18 17V8h3l-5-5z"/></svg>');
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0.6;
+    pointer-events: none;
+    transform: rotate(180deg);
+}
+
+/* ========== OVERLAYS ========== */
+
+.overlay-dark {
+    position: relative;
+}
+
+.overlay-dark::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    transition: background var(--transition-smooth);
+    z-index: 1;
+}
+
+.overlay-dark:hover::before {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.overlay-gradient {
+    position: relative;
+}
+
+.overlay-gradient::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 0%, rgba(29, 106, 79, 0.7) 100%);
+    transition: opacity var(--transition-smooth);
+    z-index: 1;
+}
+
+.overlay-gradient:hover::before {
+    opacity: 0.5;
+}
+
+/* ========== FONDOS COMBINADOS ========== */
+
+.bg-natural {
+    background-color: var(--agrivall-cream-light);
+    background-image: 
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/></filter><rect width="100" height="100" filter="url(%23noise)" opacity="0.03"/></svg>');
+}
+
+.bg-natural-alt {
+    background-color: var(--agrivall-cream);
+    background-image: 
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/></filter><rect width="100" height="100" filter="url(%23noise)" opacity="0.03"/></svg>');
+}
+
+/* ========== BORDES DECORATIVOS ========== */
+
+.border-natural-top {
+    border-top: 3px solid var(--agrivall-green-primary);
+    position: relative;
+}
+
+.border-natural-top::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, 
+        var(--agrivall-green-primary) 0%, 
+        var(--agrivall-green-medium) 50%, 
+        var(--agrivall-green-primary) 100%
+    );
+}
+
+.border-earth-top {
+    border-top: 3px solid var(--agrivall-earth-primary);
+    position: relative;
+}
+
+.border-earth-top::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, 
+        var(--agrivall-earth-primary) 0%, 
+        var(--agrivall-earth-medium) 50%, 
+        var(--agrivall-earth-primary) 100%
+    );
+}
