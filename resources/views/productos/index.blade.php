@@ -13,7 +13,7 @@
 
         <div class="mb-4">
             <input type="text" id="searchInput" class="form-control-agrivall"
-                placeholder="🔍 Buscar por nombre, variedad o formato...">
+                placeholder="🔍 Buscar por nombre o categoria...">
         </div>
 
         @if (session('success'))
@@ -38,10 +38,9 @@
                     <tr>
                         <th>ID</th>
                         <th>Nombre</th>
-                        <th>Variedad</th>
-                        <th>Formato</th>
+                        <th>Categoria</th>
                         <th>Precio</th>
-                        <th>Disponible</th>
+                        <th>Activo</th>
                         <th class="text-end">Acciones</th>
                     </tr>
                 </thead>
@@ -50,14 +49,13 @@
                         <tr class="transition-colors">
                             <td class="fw-semibold">{{ $producto->id }}</td>
                             <td class="fw-medium">{{ $producto->nombre }}</td>
-                            <td>{{ $producto->variedad }}</td>
-                            <td>{{ $producto->formato }}</td>
+                            <td>{{ $producto->categoria?->nombre ?? 'Sin categoria' }}</td>
                             <td class="text-green fw-semibold">{{ number_format($producto->precio, 2) }} €</td>
                             <td>
-                                @if ($producto->disponible)
-                                    <span class="badge badge-available">Disponible</span>
+                                @if ($producto->activo)
+                                    <span class="badge badge-available">Activo</span>
                                 @else
-                                    <span class="badge badge-unavailable">No disponible</span>
+                                    <span class="badge badge-unavailable">Inactivo</span>
                                 @endif
                             </td>
                             <td class="text-end">

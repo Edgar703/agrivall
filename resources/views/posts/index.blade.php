@@ -5,9 +5,9 @@
 @section('contingut')
   <div class="posts-layout">
     <div class="row g-4">
-      <aside class="col-lg-3">
+      <aside class="col-lg-3 d-none d-lg-block">
         <div class="posts-sidebar">
-          <div class="card border-0">
+          <div class="card">
             <div class="card-body p-4">
               <h5 class="heading-4 text-earth mb-3">Filtrar posts</h5>
               <form action="{{ route('posts.index') }}" method="GET">
@@ -63,11 +63,17 @@
               <h1 class="heading-2 text-earth mb-1">Blog Agrivall</h1>
               <p class="text-muted mb-0">Noticias, artículos y novedades</p>
             </div>
-            @auth
-              <button class="btn btn-agrivall-secondary" data-bs-toggle="modal" data-bs-target="#crearPostModal">
-                ✏️ Nuevo Post
+            <div class="d-flex gap-2">
+              <button class="btn btn-agrivall-outline d-lg-none" data-bs-toggle="modal"
+                data-bs-target="#postFiltrosModal">
+                Filtros
               </button>
-            @endauth
+              @auth
+                <button class="btn btn-agrivall-secondary" data-bs-toggle="modal" data-bs-target="#crearPostModal">
+                  ✏️ Nuevo Post
+                </button>
+              @endauth
+            </div>
           </div>
 
           @if(session('success'))
@@ -154,6 +160,79 @@
       </div>
     </div>
   </div>
+
+  {{-- Modal Filtros (movil) --}}
+  <div class="modal fade" id="postFiltrosModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius: var(--radius-lg); overflow: hidden;">
+        <div class="modal-header" style="background: var(--gradient-earth); color: white;">
+          <h5 class="modal-title fw-semibold">Filtrar posts</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <form action="{{ route('posts.index') }}" method="GET" class="js-filter-modal-form">
+          <div class="modal-body p-4">
+            <div class="mb-3">
+              <label class="form-label-agrivall">Buscar</label>
+              <input type="text" name="q" class="form-control-agrivall" value="{{ request('q') }}"
+                placeholder="Titulo, contenido o autor">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label-agrivall">Categoria</label>
+              <select name="categoria" class="form-control-agrivall">
+                <option value="">Todas</option>
+                <option value="noticia" {{ request('categoria') == 'noticia' ? 'selected' : '' }}>📰 Noticia</option>
+                <option value="blog" {{ request('categoria') == 'blog' ? 'selected' : '' }}>✍️ Blog</option>
+                <option value="evento" {{ request('categoria') == 'evento' ? 'selected' : '' }}>📅 Evento</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label-agrivall">Fecha (rango)</label>
+              <div class="d-grid gap-2">
+                <input type="date" name="from" class="form-control-agrivall" value="{{ request('from') }}">
+                <input type="date" name="to" class="form-control-agrivall" value="{{ request('to') }}">
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label-agrivall">Fecha rapida</label>
+              <select name="preset" class="form-control-agrivall">
+                <option value="">Sin filtro</option>
+                <option value="7" {{ request('preset') == '7' ? 'selected' : '' }}>Ultimos 7 dias</option>
+                <option value="30" {{ request('preset') == '30' ? 'selected' : '' }}>Ultimos 30 dias</option>
+                <option value="90" {{ request('preset') == '90' ? 'selected' : '' }}>Ultimos 90 dias</option>
+              </select>
+              <small class="text-muted">Si eliges rango, tiene prioridad.</small>
+            </div>
+          </div>
+
+          <div class="modal-footer bg-light">
+            <a href="{{ route('posts.index') }}" class="btn btn-agrivall-outline">Limpiar</a>
+            <button type="submit" class="btn btn-agrivall-primary">Aplicar filtros</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      let forms = document.querySelectorAll('.js-filter-modal-form');
+      forms.forEach(function (form) {
+        form.addEventListener('submit', function () {
+          let modalEl = form.closest('.modal');
+          if (!modalEl) {
+            return;
+          }
+          let modal = bootstrap.Modal.getInstance(modalEl);
+          if (modal) {
+            modal.hide();
+          }
+        });
+      });
+    });
+  </script>
 
   {{-- Modal Crear Post --}}
   <div class="modal fade" id="crearPostModal" tabindex="-1" aria-hidden="true">

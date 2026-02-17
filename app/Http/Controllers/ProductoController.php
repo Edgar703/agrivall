@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Http\Request;
+use App\Models\Categoria;
 use App\Models\Producto;
-use Illuminate\Support\Facades\File;
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ProductoController extends Controller
 {
@@ -15,23 +15,57 @@ class ProductoController extends Controller
      */
     public function index()
     {
-        $productos = Producto::orderBy('created_at', 'desc')->get();
+        $productos = Producto::with('categoria')
+            ->orderBy('fecha_creacion', 'desc')
+            ->orderBy('id', 'desc')
+            ->get();
+
         return view('productos.index', compact('productos'));
     }
 
-    public function catalogo()
+    public function catalogo(Request $request)
     {
-        $productos = Producto::orderBy('created_at', 'desc')->get();
-        return view('productos.catalogo', compact('productos'));
-    }
+        $query = Producto::with('categoria')
+            ->where('activo', true);
 
+        if ($request->filled('q')) {
+            $term = trim($request->input('q'));
+            $query->where('nombre', 'like', "%{$term}%");
+        }
+
+        if ($request->filled('categoria_id')) {
+            $query->where('categoria_id', $request->input('categoria_id'));
+        }
+
+        $precioMin = $request->input('precio_min');
+        $precioMax = $request->input('precio_max');
+
+        if ($precioMin !== null && $precioMin !== '' && is_numeric($precioMin)) {
+            $query->where('precio', '>=', (float) $precioMin);
+        }
+
+        if ($precioMax !== null && $precioMax !== '' && is_numeric($precioMax)) {
+            $query->where('precio', '<=', (float) $precioMax);
+        }
+
+        $productos = $query
+            ->orderBy('fecha_creacion', 'desc')
+            ->orderBy('id', 'desc')
+            ->get();
+
+        $categorias = Categoria::orderBy('nombre')->get();
+
+        return view('productos.catalogo', compact('productos', 'categorias'));
+    }
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        return view('productos.create');
+        $categorias = Categoria::orderBy('nombre')->get();
+
+        return view('productos.create', compact('categorias'));
     }
 
     /**
@@ -40,37 +74,27 @@ class ProductoController extends Controller
     public function store(Request $request)
     {
         $validate = $request->validate([
-            'nombre'     => 'string|max:255',
-            'variedad'   => 'string|max:255',
-            'formato'    => 'string|max:255',
-            'precio'     => 'numeric|min:0',
-            'imagen_file'     => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'disponible' => 'nullable',
+            'nombre' => 'string|max:255',
+            'imagen_file' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'descripcion' => 'nullable|string',
+            'precio' => 'numeric|min:0',
+            'categoria_id' => 'nullable|exists:categorias,id',
+            'activo' => 'nullable|boolean',
+            'fecha_creacion' => 'nullable|date',
         ]);
 
-        $validate['disponible'] = $request->has('disponible');
+        $validate['activo'] = $request->boolean('activo');
+        $validate['fecha_creacion'] = $validate['fecha_creacion'] ?? now()->toDateString();
 
         if ($request->hasFile('imagen_file')) {
             $file = $request->file('imagen_file');
-
-            // nombre único para evitar colisiones
-            $filename = time() . '_' . $file->getClientOriginalName();
-
-            // guarda directamente en public/storage/productos
-            $path = $file->storeAs(
-                'productos',
-                $filename,
-                'public'
-            );
-
-            $validate['imagen'] = $path;
-
-            // guarda en BD la ruta que luego usarás con asset('storage/...')
+            $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('productos', $filename, 'public');
             $validate['imagen'] = 'productos/' . $filename;
         }
 
-
         Producto::create($validate);
+
         return redirect()->route('productos.catalogo')->with('success', 'Producto creado exitosamente.✅');
     }
 
@@ -79,7 +103,8 @@ class ProductoController extends Controller
      */
     public function show(string $id)
     {
-        $producto = Producto::findOrFail($id);
+        $producto = Producto::with('categoria')->findOrFail($id);
+
         return view('productos.show', compact('producto'));
     }
 
@@ -88,7 +113,9 @@ class ProductoController extends Controller
      */
     public function edit(Producto $producto)
     {
-        return view('productos.edit', compact('producto'));
+        $categorias = Categoria::orderBy('nombre')->get();
+
+        return view('productos.edit', compact('producto', 'categorias'));
     }
 
     /**
@@ -97,32 +124,26 @@ class ProductoController extends Controller
     public function update(Request $request, Producto $producto)
     {
         $validated = $request->validate([
-            'nombre'      => 'nullable|string|max:255',
-            'variedad'    => 'nullable|string|max:255',
-            'formato'     => 'nullable|string|max:255',
-            'precio'      => 'nullable|numeric|min:0',
+            'nombre' => 'nullable|string|max:255',
             'imagen_file' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'disponible'  => 'nullable',
+            'descripcion' => 'nullable|string',
+            'precio' => 'nullable|numeric|min:0',
+            'categoria_id' => 'nullable|exists:categorias,id',
+            'activo' => 'nullable|boolean',
+            'fecha_creacion' => 'nullable|date',
         ]);
 
-        $validated['disponible'] = $request->has('disponible');
+        $validated['activo'] = $request->boolean('activo');
+        $validated['fecha_creacion'] = $validated['fecha_creacion'] ?? $producto->fecha_creacion?->toDateString();
 
         if ($request->hasFile('imagen_file')) {
-
-            // 1) borrar imagen antigua si existe
             if ($producto->imagen) {
-                $oldPath = public_path('storage/' . $producto->imagen);
-                if (File::exists($oldPath)) {
-                    File::delete($oldPath);
-                }
+                Storage::disk('public')->delete($producto->imagen);
             }
 
-            // 2) guardar la nueva en public/storage/productos
             $file = $request->file('imagen_file');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('storage/productos'), $filename);
-
-            // 3) guardar la ruta en BD (IMPORTANTE: $validated)
+            $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('productos', $filename, 'public');
             $validated['imagen'] = 'productos/' . $filename;
         }
 
@@ -138,13 +159,8 @@ class ProductoController extends Controller
      */
     public function destroy(Producto $producto)
     {
-        // $producto->imagen guarda algo como: "productos/1769099215_manzana.jpg"
         if ($producto->imagen) {
-            $fullPath = public_path('storage/' . $producto->imagen);
-
-            if (File::exists($fullPath)) {
-                File::delete($fullPath);
-            }
+            Storage::disk('public')->delete($producto->imagen);
         }
 
         $producto->delete();
