@@ -21,13 +21,10 @@
                         <a href="{{ route('index') }}" class="btn btn-agrivall-outline btn-lg">
                             Volver al Inicio
                         </a>
-                        {{-- <button class="btn btn-agrivall-secondary btn-lg"
-                            onclick="document.querySelector('#booking-widget').scrollIntoView({ behavior: 'smooth' })">
+                        <a href="{{ auth()->check() ? route('reservas.create') : route('login') }}"
+                            class="btn btn-agrivall-secondary btn-lg">
                             Reservar Ahora
-                        </button> --}}
-                        <button class="btn btn-agrivall-secondary btn-lg" onclick="alert('Reserva no implementada aun.')">
-                            Reservar Ahora
-                        </button>
+                        </a>
                     </div>
                 </div>
 
@@ -67,7 +64,7 @@
                         </div>
 
                         <button class="btn btn-agrivall-secondary w-100 btn-lg"
-                            onclick="alert('Reserva no implementada aun.')">
+                            onclick="location.href='{{ auth()->check() ? route('reservas.create') : route('login') }}'">
                             Continuar Reserva
                         </button>
                     </div>

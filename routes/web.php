@@ -4,6 +4,7 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\ReservaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -52,6 +53,17 @@ Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->midd
 Route::delete('/comments/{comentario}', [CommentController::class, 'destroy'])->middleware('auth')->name('comments.destroy');
 
 // ============================================================================
+// RESERVAS DE CASA RURAL
+// ============================================================================
+
+Route::middleware('auth')->group(function () {
+    Route::resource('reservas', ReservaController::class);
+    Route::patch('/reservas/{reserva}/estado', [ReservaController::class, 'cambiarEstado'])->name('reservas.cambiarEstado');
+    // Admin panel - same controller, filtra por rol
+    Route::get('/admin/reservas', [ReservaController::class, 'index'])->name('admin.reservas.index');
+});
+
+// ============================================================================
 // PÁGINAS ESTÁTICAS
 // ============================================================================
 
@@ -59,9 +71,8 @@ Route::get('/casa-rural', function () {
     return view('casa-rural.index');
 })->name('casa-rural');
 
-Route::get('/contactar', function () {
-    return view('contactar');
-})->name('contactar');
+Route::get('/contactar', [\App\Http\Controllers\ContactoController::class, 'mostrar'])->name('contactar');
+Route::post('/contactar', [\App\Http\Controllers\ContactoController::class, 'enviar'])->name('contactar.enviar');
 
 // ============================================================================
 // AUTENTICACIÓN

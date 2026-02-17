@@ -3,7 +3,26 @@
 @section('titol', 'Blog')
 
 @section('contingut')
-  <div class="posts-layout">
+  <div class="animate-fadeInUp">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h1 class="heading-2 text-green mb-1">Blog Agrivall</h1>
+        <p class="text-muted mb-0">Noticias, artículos y novedades</p>
+      </div>
+
+      <div class="d-flex gap-2">
+        <button class="btn btn-agrivall-outline d-lg-none" data-bs-toggle="modal"
+          data-bs-target="#postFiltrosModal">
+          Filtros
+        </button>
+        @auth
+          <button class="btn btn-agrivall-primary" data-bs-toggle="modal" data-bs-target="#crearPostModal">
+            ✏️ Nuevo Post
+          </button>
+        @endauth
+      </div>
+    </div>
+
     <div class="row g-4">
       <aside class="col-lg-3 d-none d-lg-block">
         <div class="posts-sidebar">
@@ -58,23 +77,6 @@
 
       <div class="col-lg-9">
         <div class="animate-fadeInUp">
-          <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-              <h1 class="heading-2 text-earth mb-1">Blog Agrivall</h1>
-              <p class="text-muted mb-0">Noticias, artículos y novedades</p>
-            </div>
-            <div class="d-flex gap-2">
-              <button class="btn btn-agrivall-outline d-lg-none" data-bs-toggle="modal"
-                data-bs-target="#postFiltrosModal">
-                Filtros
-              </button>
-              @auth
-                <button class="btn btn-agrivall-secondary" data-bs-toggle="modal" data-bs-target="#crearPostModal">
-                  ✏️ Nuevo Post
-                </button>
-              @endauth
-            </div>
-          </div>
 
           @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show animate-slideUp" role="alert">

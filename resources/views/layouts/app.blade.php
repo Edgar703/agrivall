@@ -12,6 +12,7 @@
 
     {{-- Sistema de diseño Agrivall --}}
     @vite(['resources/css/app.css'])
+    @stack('styles')
 </head>
 
 <body class="min-vh-100 d-grid" style="grid-template-rows: auto 1fr auto;">

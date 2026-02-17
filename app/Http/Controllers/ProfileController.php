@@ -16,8 +16,16 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $user = $request->user();
+        
+        // Cargar reservas del usuario ordenadas por fecha
+        $reservas = $user->reservas()
+            ->orderBy('fecha_inicio', 'desc')
+            ->get();
+        
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
+            'reservas' => $reservas,
         ]);
     }
 

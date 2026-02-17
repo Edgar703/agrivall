@@ -28,8 +28,19 @@
                 {{-- Solo admin ve gestion --}}
                 @auth
                     @if (auth()->user()->role === 'admin')
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('productos.index') }}">Gestion de productos</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Admin
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownAdmin">
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('productos.index') }}">Gestionar Productos</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('admin.reservas.index') }}">Gestionar Reservas</a>
+                                </li>
+                            </ul>
                         </li>
                     @endif
                 @endauth
