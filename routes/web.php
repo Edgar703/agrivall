@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ReservaController;
+use App\Http\Controllers\AdminUsuarioController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -67,8 +68,17 @@ Route::post('/api/reservas/calcular-precio', [ReservaController::class, 'calcula
 Route::middleware('auth')->group(function () {
     Route::resource('reservas', ReservaController::class);
     Route::patch('/reservas/{reserva}/estado', [ReservaController::class, 'cambiarEstado'])->name('reservas.cambiarEstado');
-    // Admin panel - same controller, filtra por rol
-    Route::get('/admin/reservas', [ReservaController::class, 'index'])->name('admin.reservas.index');
+
+    Route::prefix('admin')->name('admin.')->group(function () {
+        // Admin panel - same controller, filtra por rol
+        Route::get('/reservas', [ReservaController::class, 'index'])->name('reservas.index');
+
+        // Gestión de usuarios
+        Route::get('/usuarios', [AdminUsuarioController::class, 'index'])->name('usuarios.index');
+        Route::get('/usuarios/{usuario}', [AdminUsuarioController::class, 'show'])->name('usuarios.show');
+        Route::get('/usuarios/{usuario}/edit', [AdminUsuarioController::class, 'edit'])->name('usuarios.edit');
+        Route::patch('/usuarios/{usuario}', [AdminUsuarioController::class, 'update'])->name('usuarios.update');
+    });
 });
 
 // ============================================================================
