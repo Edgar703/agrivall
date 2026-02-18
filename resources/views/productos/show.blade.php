@@ -23,10 +23,10 @@
             @endauth
         </div>
 
-        @if($errors->any())
+        @if ($errors->any())
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <ul class="mb-0">
-                    @foreach($errors->all() as $error)
+                    @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
@@ -39,10 +39,11 @@
             <div class="col-lg-6">
                 <div class="card-agrivall">
                     @php
-                        $productoImagen = ($producto->imagen
-                            && \Illuminate\Support\Facades\Storage::disk('public')->exists($producto->imagen))
-                            ? asset('storage/' . $producto->imagen)
-                            : asset('assets/img/Agrivall_Logo.png');
+                        $productoImagen =
+                            $producto->imagen &&
+                            \Illuminate\Support\Facades\Storage::disk('public')->exists($producto->imagen)
+                                ? asset('storage/' . $producto->imagen)
+                                : asset('assets/img/Agrivall_Logo.png');
                     @endphp
                     <div class="img-zoom">
                         <img src="{{ $productoImagen }}" alt="{{ $producto->nombre }}" class="w-100"
@@ -79,7 +80,7 @@
                                 <div class="flex-grow-1">
                                     <span class="text-muted small">Estado</span>
                                     <p class="mb-0 fw-semibold">
-                                        @if($producto->activo)
+                                        @if ($producto->activo)
                                             <span class="text-success">Activo</span>
                                         @else
                                             <span class="text-danger">Inactivo</span>
@@ -94,8 +95,9 @@
                             <a href="{{ route('productos.catalogo') }}" class="btn btn-agrivall-outline flex-grow-1">
                                 ← Volver al catálogo
                             </a>
-                            @if($producto->activo)
-                                <button class="btn btn-agrivall-primary flex-grow-1" disabled>
+                            @if ($producto->activo)
+                                <button class="btn btn-agrivall-primary flex-grow-1"
+                                    onclick="alert('Funcionalidad de añadir a reserva no implementada aún')">
                                     🛒 Añadir a reserva
                                 </button>
                             @endif

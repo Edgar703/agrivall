@@ -37,6 +37,10 @@ Route::middleware('auth')->group(function () {
 
 Route::resource('productos', ProductoController::class);
 Route::get('/catalogo', [ProductoController::class, 'catalogo'])->name('productos.catalogo');
+Route::middleware('auth')->group(function () {
+    Route::post('/categorias', [ProductoController::class, 'storeCategoria'])->name('categorias.store');
+    Route::delete('/categorias/{categoria}', [ProductoController::class, 'destroyCategoria'])->name('categorias.destroy');
+});
 
 // ============================================================================
 // POSTS
@@ -55,6 +59,10 @@ Route::delete('/comments/{comentario}', [CommentController::class, 'destroy'])->
 // ============================================================================
 // RESERVAS DE CASA RURAL
 // ============================================================================
+
+// API pública para el widget de reservas
+Route::get('/api/reservas/fechas-bloqueadas', [ReservaController::class, 'fechasBloqueadas'])->name('api.reservas.fechas-bloqueadas');
+Route::post('/api/reservas/calcular-precio', [ReservaController::class, 'calcularPrecioApi'])->name('api.reservas.calcular-precio');
 
 Route::middleware('auth')->group(function () {
     Route::resource('reservas', ReservaController::class);
@@ -78,4 +86,4 @@ Route::post('/contactar', [\App\Http\Controllers\ContactoController::class, 'env
 // AUTENTICACIÓN
 // ============================================================================
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

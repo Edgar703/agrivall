@@ -29,7 +29,7 @@ class ReservaController extends Controller
             $reservas = Reserva::with(['usuario', 'semanaCasilla'])
                 ->orderBy('created_at', 'desc')
                 ->get();
-            
+
             // Si viene por ruta admin, usa vista admin
             if (request()->routeIs('admin.reservas.index')) {
                 return view('admin.reservas.index', compact('reservas'));
@@ -48,11 +48,21 @@ class ReservaController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
         $rangosNoDisponibles = $this->getDisabledRanges();
 
-        return view('reservas.create', compact('rangosNoDisponibles'));
+        // Capturar datos del widget (query params)
+        $fechaInicio = $request->query('fecha_inicio');
+        $fechaFin = $request->query('fecha_fin');
+        $numPersonas = $request->query('num_personas');
+
+        return view('reservas.create', compact(
+            'rangosNoDisponibles',
+            'fechaInicio',
+            'fechaFin',
+            'numPersonas'
+        ));
     }
 
     /**
@@ -84,7 +94,7 @@ class ReservaController extends Controller
         $preciosPorNoche = config('reservas.precio_por_noche', 50);
         $numNoches = $fechaFin->diffInDays($fechaInicio) ?: 1;
         $numPersonas = $request->num_personas;
-        
+
         // Multiplicador: +10% por cada persona adicional
         $multiplicador = 1 + (($numPersonas - 1) * 0.10);
         $precioTotal = $preciosPorNoche * $numNoches * $multiplicador;
@@ -160,7 +170,7 @@ class ReservaController extends Controller
         $numNoches = $fechaFin->diffInDays($fechaInicio) ?: 1;
         $numPersonas = $request->num_personas;
         $preciosPorNoche = $reserva->precio_por_noche ?? config('reservas.precio_por_noche', 50);
-        
+
         // Multiplicador: +10% por cada persona adicional
         $multiplicador = 1 + (($numPersonas - 1) * 0.10);
         $precioTotal = $preciosPorNoche * $numNoches * $multiplicador;
@@ -234,5 +244,63 @@ class ReservaController extends Controller
                 ];
             })
             ->all();
+    }
+
+    /**
+     * API: Obtener fechas bloqueadas para el widget de reservas
+     */
+    public function fechasBloqueadas()
+    {
+        $rangos = $this->getDisabledRanges();
+
+        return response()->json([
+            'success' => true,
+            'fechas_bloqueadas' => $rangos
+        ]);
+    }
+
+    /**
+     * API: Calcular precio de reserva basado en fechas y personas
+     */
+    public function calcularPrecioApi(Request $request)
+    {
+        $request->validate([
+            'fecha_inicio' => 'required|date|after_or_equal:today',
+            'fecha_fin' => 'required|date|after:fecha_inicio',
+            'num_personas' => 'required|integer|min:1|max:10',
+        ]);
+
+        $fechaInicio = Carbon::parse($request->fecha_inicio);
+        $fechaFin = Carbon::parse($request->fecha_fin);
+        $numPersonas = $request->num_personas;
+
+        // Calcular noches
+        $numNoches = $fechaFin->diffInDays($fechaInicio);
+
+        // Validar mínimo 7 días
+        if ($numNoches < 7) {
+            return response()->json([
+                'success' => false,
+                'error' => 'La estancia mínima es de 7 días'
+            ], 422);
+        }
+
+        // Obtener precio base desde config
+        $precioBase = config('reservas.precio_por_noche', 50);
+
+        // Calcular multiplicador: +10% por cada persona adicional
+        $multiplicador = 1 + (($numPersonas - 1) * 0.10);
+
+        // Calcular precio total
+        $precioTotal = $precioBase * $numNoches * $multiplicador;
+
+        return response()->json([
+            'success' => true,
+            'precio_base_noche' => $precioBase,
+            'num_noches' => $numNoches,
+            'num_personas' => $numPersonas,
+            'multiplicador' => round($multiplicador, 2),
+            'precio_total' => round($precioTotal, 2)
+        ]);
     }
 }

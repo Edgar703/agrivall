@@ -4,7 +4,7 @@
 
 @section('contingut')
     {{-- HERO SECTION --}}
-    <section class="casa-rural-hero position-relative d-flex align-items-center justify-content-between"
+    <section class="casa-rural-hero position-relative d-flex align-items-center justify-content-between rounded-3"
         style="background-image: url({{ asset('assets/img/hero.png') }}); background-repeat: no-repeat; background-size: cover; background-position: center;">
         <div class="container-fluid h-100 d-flex align-items-center" style="padding: 0;">
             <div class="row w-100 h-100 align-items-center" style="margin: 0;">
@@ -33,40 +33,55 @@
                     <div class="card-agrivall" style="width: 100%; max-width: 380px; padding: 2rem; background: white;">
                         <h3 class="h5 fw-bold mb-4" style="color: var(--agrivall-gray-800);">Reservar Casa Rural</h3>
 
-                        <div class="row g-2 mb-4">
-                            <div class="col-6">
-                                <label class="form-label small text-muted">Fecha de Entrada</label>
-                                <div class="input-group">
-                                    <input type="date" class="form-control form-control-sm" value="2024-04-24" disabled>
-                                    <span class="input-group-text"
-                                        style="border-color: #ddd; background: #f9f9f9; font-size: 1rem;">
-                                        📅
-                                    </span>
+                        <form id="widget-reserva-form">
+                            <div class="row g-2 mb-4">
+                                <div class="col-12">
+                                    <label class="form-label small text-muted">Fechas de Estancia</label>
+                                    <div class="input-group">
+                                        <input type="text" id="widget-fechas" class="form-control form-control-sm"
+                                            placeholder="Selecciona fechas" readonly
+                                            data-precio-base="{{ config('reservas.precio_por_noche', 50) }}">
+                                        <span class="input-group-text"
+                                            style="border-color: #ddd; background: #f9f9f9; font-size: 1rem;">
+                                            📅
+                                        </span>
+                                    </div>
+                                    <small id="widget-error-fechas" class="text-danger" style="display: none;"></small>
                                 </div>
                             </div>
-                            <div class="col-6">
-                                <label class="form-label small text-muted">Fecha de Salida</label>
-                                <div class="input-group">
-                                    <input type="date" class="form-control form-control-sm" value="2024-04-27" disabled>
-                                    <span class="input-group-text"
-                                        style="border-color: #ddd; background: #f9f9f9; font-size: 1rem;">
-                                        📅
-                                    </span>
+
+                            <div class="mb-4">
+                                <label class="form-label small text-muted">Número de Personas</label>
+                                <select id="widget-personas" class="form-select form-select-sm">
+                                    <option value="1">1 persona</option>
+                                    <option value="2" selected>2 personas</option>
+                                    <option value="3">3 personas</option>
+                                    <option value="4">4 personas</option>
+                                    <option value="5">5 personas</option>
+                                    <option value="6">6 personas</option>
+                                    <option value="7">7 personas</option>
+                                    <option value="8">8 personas</option>
+                                    <option value="9">9 personas</option>
+                                    <option value="10">10 personas</option>
+                                </select>
+                            </div>
+
+                            <div id="widget-precio-container" class="mb-4" style="display: none;">
+                                <div class="bg-light p-3 rounded"
+                                    style="background: var(--agrivall-cream-light) !important;">
+                                    <p class="text-muted small mb-1">Precio estimado</p>
+                                    <h4 class="fw-bold mb-1" style="color: var(--agrivall-green-primary);">
+                                        <span id="widget-precio-total">--</span> €
+                                    </h4>
+                                    <small class="text-muted" id="widget-precio-detalle"></small>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="mb-4">
-                            <label class="form-label small text-muted">Personas</label>
-                            <select class="form-select form-select-sm" disabled>
-                                <option selected>2 adultos</option>
-                            </select>
-                        </div>
-
-                        <button class="btn btn-agrivall-secondary w-100 btn-lg"
-                            onclick="location.href='{{ auth()->check() ? route('reservas.create') : route('login') }}'">
-                            Continuar Reserva
-                        </button>
+                            <button type="button" id="widget-btn-continuar"
+                                class="btn btn-agrivall-secondary w-100 btn-lg">
+                                Continuar Reserva
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -119,7 +134,8 @@
                             <div class="d-flex gap-3">
                                 <div style="font-size: 2rem; min-width: 50px; flex-shrink: 0;">🏡</div>
                                 <div>
-                                    <h4 class="fw-bold mb-2" style="color: var(--agrivall-green-primary);">Confort y Calidez
+                                    <h4 class="fw-bold mb-2" style="color: var(--agrivall-green-primary);">Confort y
+                                        Calidez
                                     </h4>
                                     <p class="text-muted small">3 habitaciones acogedoras y chimenea para noches cálidas.
                                     </p>
@@ -144,7 +160,8 @@
                             <div class="d-flex gap-3">
                                 <div style="font-size: 2rem; min-width: 50px; flex-shrink: 0;">🥾</div>
                                 <div>
-                                    <h4 class="fw-bold mb-2" style="color: var(--agrivall-green-primary);">Actividades</h4>
+                                    <h4 class="fw-bold mb-2" style="color: var(--agrivall-green-primary);">Actividades
+                                    </h4>
                                     <p class="text-muted small">Senderismo rurales y experiencias únicas.</p>
                                 </div>
                             </div>
@@ -161,7 +178,8 @@
             <div class="row align-items-center g-4 flex-column-reverse flex-lg-row">
                 <div class="col-lg-6 col-12">
                     <img src="{{ asset('assets/img/casa/fachada.jpg') }}" class="rounded img-fluid"
-                        style="width: 100%; height: auto; box-shadow: 0 8px 24px rgba(0,0,0,0.15);" alt="Vista panorámica">
+                        style="width: 100%; height: auto; box-shadow: 0 8px 24px rgba(0,0,0,0.15);"
+                        alt="Vista panorámica">
                 </div>
                 <div class="col-lg-6 col-12">
                     <h3 class="h3 fw-bold mb-4" style="color: var(--agrivall-gray-800);">
@@ -174,9 +192,9 @@
                     </p>
 
                     <div class="bg-light p-4 rounded mb-4" style="background: var(--agrivall-cream-light) !important;">
-                        <p class="text-muted small mb-2">Precio estimado para 3 noches</p>
+                        <p class="text-muted small mb-2">Precio estimado por semana para 4 personas</p>
                         <h2 class="display-6 fw-bold mb-0" style="color: var(--agrivall-green-primary);">
-                            295 €
+                            585 €
                         </h2>
                     </div>
 
@@ -205,12 +223,14 @@
                     ];
                 @endphp
 
-                @foreach($imagenes as $imagen)
+                @foreach ($imagenes as $imagen)
                     <div class="col-6 col-md-4">
-                        <div class="overflow-hidden rounded" style="height: 200px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <div class="overflow-hidden rounded"
+                            style="height: 200px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                             <img src="{{ $imagen }}" alt="Galería" class="w-100 h-100"
                                 style="object-fit: cover; transition: transform 0.3s ease; cursor: pointer;"
-                                onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                                onmouseover="this.style.transform='scale(1.05)'"
+                                onmouseout="this.style.transform='scale(1)'">
                         </div>
                     </div>
                 @endforeach
@@ -405,4 +425,154 @@
             }
         }
     </style>
+
+    {{-- CSS de Flatpickr --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/light.css">
+
+    {{-- JavaScript de Flatpickr --}}
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const widgetFechas = document.getElementById('widget-fechas');
+            const widgetPersonas = document.getElementById('widget-personas');
+            const widgetPrecioContainer = document.getElementById('widget-precio-container');
+            const widgetPrecioTotal = document.getElementById('widget-precio-total');
+            const widgetPrecioDetalle = document.getElementById('widget-precio-detalle');
+            const widgetErrorFechas = document.getElementById('widget-error-fechas');
+            const widgetBtnContinuar = document.getElementById('widget-btn-continuar');
+
+            const precioBase = parseFloat(widgetFechas.dataset.precioBase) || 50;
+
+            let fechaInicio = null;
+            let fechaFin = null;
+            let fechasBloqueadas = [];
+
+            // Cargar fechas bloqueadas desde el servidor
+            fetch('/api/reservas/fechas-bloqueadas')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        fechasBloqueadas = data.fechas_bloqueadas || [];
+                        inicializarFlatpickr();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error cargando fechas bloqueadas:', error);
+                    inicializarFlatpickr();
+                });
+
+            function inicializarFlatpickr() {
+                flatpickr(widgetFechas, {
+                    mode: 'range',
+                    minDate: 'today',
+                    dateFormat: 'Y-m-d',
+                    locale: 'es',
+                    disable: fechasBloqueadas,
+                    onChange: function(selectedDates, dateStr, instance) {
+                        widgetErrorFechas.style.display = 'none';
+
+                        if (selectedDates.length === 2) {
+                            fechaInicio = selectedDates[0];
+                            fechaFin = selectedDates[1];
+
+                            // Validar mínimo 7 días
+                            const diffDays = Math.floor((fechaFin - fechaInicio) / (1000 * 60 * 60 *
+                                24));
+
+                            if (diffDays < 7) {
+                                widgetErrorFechas.textContent = 'La estancia mínima es de 7 días';
+                                widgetErrorFechas.style.display = 'block';
+                                widgetPrecioContainer.style.display = 'none';
+                                return;
+                            }
+
+                            calcularPrecio();
+                        } else {
+                            widgetPrecioContainer.style.display = 'none';
+                        }
+                    }
+                });
+            }
+
+            // Event listener para cambio de personas
+            widgetPersonas.addEventListener('change', function() {
+                if (fechaInicio && fechaFin) {
+                    calcularPrecio();
+                }
+            });
+
+            // Función para calcular precio
+            function calcularPrecio() {
+                const numPersonas = parseInt(widgetPersonas.value);
+
+                if (!fechaInicio || !fechaFin) {
+                    return;
+                }
+
+                const fechaInicioStr = fechaInicio.toISOString().split('T')[0];
+                const fechaFinStr = fechaFin.toISOString().split('T')[0];
+
+                // Mostrar loader
+                widgetPrecioTotal.textContent = '...';
+                widgetPrecioContainer.style.display = 'block';
+
+                // Llamar al API
+                fetch('/api/reservas/calcular-precio', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                'content')
+                        },
+                        body: JSON.stringify({
+                            fecha_inicio: fechaInicioStr,
+                            fecha_fin: fechaFinStr,
+                            num_personas: numPersonas
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            widgetPrecioTotal.textContent = data.precio_total.toFixed(0);
+                            widgetPrecioDetalle.textContent =
+                                `${data.num_noches} noches × ${data.precio_base_noche}€ × ${data.multiplicador}x`;
+                        } else {
+                            widgetErrorFechas.textContent = data.error || 'Error al calcular el precio';
+                            widgetErrorFechas.style.display = 'block';
+                            widgetPrecioContainer.style.display = 'none';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error calculando precio:', error);
+                        widgetPrecioTotal.textContent = '--';
+                        widgetPrecioDetalle.textContent = 'Error al calcular';
+                    });
+            }
+
+            // Botón continuar reserva
+            widgetBtnContinuar.addEventListener('click', function() {
+                @if (auth()->check())
+                    if (!fechaInicio || !fechaFin) {
+                        widgetErrorFechas.textContent = 'Por favor selecciona las fechas de tu estancia';
+                        widgetErrorFechas.style.display = 'block';
+                        return;
+                    }
+
+                    const fechaInicioStr = fechaInicio.toISOString().split('T')[0];
+                    const fechaFinStr = fechaFin.toISOString().split('T')[0];
+                    const numPersonas = widgetPersonas.value;
+
+                    // Construir URL con query params
+                    const url =
+                        `{{ route('reservas.create') }}?fecha_inicio=${fechaInicioStr}&fecha_fin=${fechaFinStr}&num_personas=${numPersonas}`;
+                    window.location.href = url;
+                @else
+                    window.location.href = '{{ route('login') }}';
+                @endif
+            });
+        });
+    </script>
 @endsection

@@ -17,7 +17,8 @@
                 </button>
                 @auth
                     @if (auth()->user()->role === 'admin')
-                        <a href="{{ route('productos.create') }}" class="btn btn-agrivall-primary">
+                        <a href="{{ route('productos.create', ['return_to' => url()->full()]) }}"
+                            class="btn btn-agrivall-primary">
                             + Nuevo Producto
                         </a>
                     @endif
@@ -31,7 +32,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             <script>
-                setTimeout(function () {
+                setTimeout(function() {
                     let alert = document.querySelector('.alert-success');
                     if (alert) {
                         let bsAlert = new bootstrap.Alert(alert);
@@ -49,8 +50,8 @@
                         <form action="{{ route('productos.catalogo') }}" method="GET">
                             <div class="mb-3">
                                 <label class="form-label-agrivall">Buscar</label>
-                                <input type="text" name="q" class="form-control-agrivall" value="{{ request('q') }}"
-                                    placeholder="Nombre del producto">
+                                <input type="text" name="q" class="form-control-agrivall"
+                                    value="{{ request('q') }}" placeholder="Nombre del producto">
                             </div>
 
                             <div class="mb-3">
@@ -78,7 +79,8 @@
 
                             <div class="d-grid gap-2">
                                 <button type="submit" class="btn btn-agrivall-primary btn-sm">Aplicar filtros</button>
-                                <a href="{{ route('productos.catalogo') }}" class="btn btn-agrivall-outline btn-sm">Limpiar</a>
+                                <a href="{{ route('productos.catalogo') }}"
+                                    class="btn btn-agrivall-outline btn-sm">Limpiar</a>
                             </div>
                         </form>
                     </div>
@@ -89,14 +91,15 @@
                 <div class="row g-4">
                     @php $delay = 0; @endphp
                     @forelse($productos as $producto)
-                        <div class="col-12 col-sm-6 col-lg-4 col-xl-3 animate-fadeInUp animate-stagger-{{ $delay % 4 + 1 }}">
+                        <div
+                            class="col-12 col-sm-6 col-lg-4 col-xl-3 animate-fadeInUp animate-stagger-{{ ($delay % 4) + 1 }}">
                             @php $delay++; @endphp
                             <div class="product-card h-100 d-flex flex-column">
                                 @php
-                                    $productoImagen = ($producto->imagen
-                                        && \Illuminate\Support\Facades\Storage::disk('public')->exists($producto->imagen))
-                                        ? \Illuminate\Support\Facades\Storage::disk('public')->url($producto->imagen)
-                                        : asset('assets/img/Agrivall_Logo.png');
+                                    $productoImagen =
+                                        $producto->imagen && Storage::disk('public')->exists($producto->imagen)
+                                            ? asset('storage/' . ltrim($producto->imagen, '/'))
+                                            : asset('assets/img/Agrivall_Logo.png');
                                 @endphp
                                 <div class="position-relative overflow-hidden" style="height: 200px;">
                                     <a href="{{ route('productos.show', $producto) }}" class="d-block h-100">
@@ -104,14 +107,16 @@
                                             alt="{{ $producto->nombre }}" style="object-fit: cover;">
                                     </a>
                                 </div>
-                                <div class="p-4 border-bottom" style="background: linear-gradient(135deg, #f4f7f2 0%, #ffffff 100%);">
-                                    <h5 class="mt-2 mb-0 fw-bold" style="color: var(--agrivall-gray-900); font-size: 1.2rem;">
+                                <div class="p-4 border-bottom"
+                                    style="background: linear-gradient(135deg, #f4f7f2 0%, #ffffff 100%);">
+                                    <h5 class="mt-2 mb-0 fw-bold"
+                                        style="color: var(--agrivall-gray-900); font-size: 1.2rem;">
                                         {{ $producto->nombre }}
                                     </h5>
                                 </div>
 
                                 <div class="card-body p-4 d-flex flex-column flex-grow-1">
-                                    {{-- @if($producto->descripcion)
+                                    {{-- @if ($producto->descripcion)
                                     <p class="text-muted mb-3" style="font-size: 0.9rem;">
                                         {{ \Illuminate\Support\Str::limit($producto->descripcion, 120) }}
                                     </p>
@@ -119,10 +124,12 @@
 
                                     <div class="d-flex justify-content-between align-items-center mb-3">
                                         <div>
-                                            <div class="text-muted" style="font-size: 0.75rem; font-weight: 500;">PRECIO</div>
+                                            <div class="text-muted" style="font-size: 0.75rem; font-weight: 500;">PRECIO
+                                            </div>
                                             <div class="fw-bold"
                                                 style="color: var(--agrivall-green-primary); font-size: 1.5rem; line-height: 1;">
-                                                {{ number_format($producto->precio, 2) }}<span style="font-size: 0.9rem;"> €</span>
+                                                {{ number_format($producto->precio, 2) }}<span style="font-size: 0.9rem;">
+                                                    €</span>
                                             </div>
                                             <div class="text-muted"
                                                 style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px;">
@@ -167,7 +174,8 @@
                                 @auth
                                     @if (auth()->user()->role === 'admin')
                                         <p class="text-muted mb-3">Comienza creando tu primer producto</p>
-                                        <a href="{{ route('productos.create') }}" class="btn btn-agrivall-primary">
+                                        <a href="{{ route('productos.create', ['return_to' => url()->full()]) }}"
+                                            class="btn btn-agrivall-primary">
                                             + Crear Producto
                                         </a>
                                     @endif
@@ -192,8 +200,8 @@
                     <div class="modal-body p-4">
                         <div class="mb-3">
                             <label class="form-label-agrivall">Buscar</label>
-                            <input type="text" name="q" class="form-control-agrivall" value="{{ request('q') }}"
-                                placeholder="Nombre del producto">
+                            <input type="text" name="q" class="form-control-agrivall"
+                                value="{{ request('q') }}" placeholder="Nombre del producto">
                         </div>
 
                         <div class="mb-3">
@@ -230,10 +238,10 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             let forms = document.querySelectorAll('.js-filter-modal-form');
-            forms.forEach(function (form) {
-                form.addEventListener('submit', function () {
+            forms.forEach(function(form) {
+                form.addEventListener('submit', function() {
                     let modalEl = form.closest('.modal');
                     if (!modalEl) {
                         return;

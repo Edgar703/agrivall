@@ -5,11 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\Categoria;
 use App\Models\Producto;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ProductoController extends Controller
 {
+    private function ensureAdmin(): void
+    {
+        abort_unless(Auth::check() && Auth::user()->role === 'admin', 403);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -20,7 +27,9 @@ class ProductoController extends Controller
             ->orderBy('id', 'desc')
             ->get();
 
-        return view('productos.index', compact('productos'));
+        $categorias = Categoria::orderBy('nombre')->get();
+
+        return view('productos.index', compact('productos', 'categorias'));
     }
 
     public function catalogo(Request $request)
@@ -61,11 +70,47 @@ class ProductoController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
         $categorias = Categoria::orderBy('nombre')->get();
+        $returnTo = $this->resolveReturnTo($request->query('return_to'));
 
-        return view('productos.create', compact('categorias'));
+        return view('productos.create', compact('categorias', 'returnTo'));
+    }
+
+    public function storeCategoria(Request $request)
+    {
+        $this->ensureAdmin();
+
+        $validated = $request->validate([
+            'nombre' => ['required', 'string', 'max:255', Rule::unique('categorias', 'nombre')],
+            'descripcion' => 'nullable|string',
+        ]);
+
+        Categoria::create($validated);
+
+        return redirect()
+            ->route('productos.index')
+            ->with('success', 'Categoría creada correctamente.✅');
+    }
+
+    public function destroyCategoria(Categoria $categoria)
+    {
+        $this->ensureAdmin();
+
+        $productosAfectados = $categoria->productos()->count();
+
+        $categoria->delete();
+
+        $message = 'Categoría eliminada correctamente.✅';
+
+        if ($productosAfectados > 0) {
+            $message .= ' ' . $productosAfectados . ' producto(s) quedaron sin categoría.';
+        }
+
+        return redirect()
+            ->route('productos.index')
+            ->with('success', $message);
     }
 
     /**
@@ -81,6 +126,7 @@ class ProductoController extends Controller
             'categoria_id' => 'nullable|exists:categorias,id',
             'activo' => 'nullable|boolean',
             'fecha_creacion' => 'nullable|date',
+            'return_to' => 'nullable|string|max:2048',
         ]);
 
         $validate['activo'] = $request->boolean('activo');
@@ -95,7 +141,27 @@ class ProductoController extends Controller
 
         Producto::create($validate);
 
-        return redirect()->route('productos.catalogo')->with('success', 'Producto creado exitosamente.✅');
+        $returnTo = $this->resolveReturnTo($validate['return_to'] ?? null);
+
+        return redirect()->to($returnTo)->with('success', 'Producto creado exitosamente.✅');
+    }
+
+    private function resolveReturnTo(?string $returnTo): string
+    {
+        $fallback = route('productos.catalogo');
+
+        if (!$returnTo) {
+            return $fallback;
+        }
+
+        $allowedBases = [
+            route('productos.catalogo'),
+            route('productos.index'),
+        ];
+
+        $baseUrl = strtok($returnTo, '?');
+
+        return in_array($baseUrl, $allowedBases, true) ? $returnTo : $fallback;
     }
 
     /**

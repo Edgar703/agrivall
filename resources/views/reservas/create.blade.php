@@ -4,16 +4,16 @@
 
 @section('contingut')
     <div class="animate-fadeInUp">
-        <div class="mb-4">
-            <h1 class="heading-2 text-green mb-1">Nueva Reserva de Casa Rural</h1>
-            <p class="text-muted">Selecciona un rango de fechas disponible para reservar</p>
+        <div class="mb-3 mb-md-4">
+            <h1 class="heading-2 text-green mb-1 fs-3 fs-md-2">Nueva Reserva de Casa Rural</h1>
+            <p class="text-muted small mb-0">Selecciona un rango de fechas disponible para reservar</p>
         </div>
 
-        @if($errors->any())
+        @if ($errors->any())
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <strong>¡Atención!</strong> Corrige los siguientes errores:
                 <ul class="mb-0 mt-2">
-                    @foreach($errors->all() as $error)
+                    @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
@@ -29,20 +29,22 @@
         @endif
 
         <div class="card-agrivall">
-            <div class="card-body p-4">
+            <div class="card-body p-3 p-md-4">
                 <form action="{{ route('reservas.store') }}" method="POST">
                     @csrf
 
-                    <div class="mb-4">
-                        <label for="rango_fechas" class="form-label fw-semibold">
+                    <div class="mb-3 mb-md-4">
+                        <label for="rango_fechas" class="form-label fw-semibold small">
                             Selecciona Fechas Disponibles <span class="text-danger">*</span>
                         </label>
                         <input type="text" id="rango_fechas" autocomplete="off"
                             class="form-control-agrivall @error('fecha_inicio') is-invalid @enderror @error('fecha_fin') is-invalid @enderror"
                             placeholder="Desde - Hasta" required>
-                        <input type="hidden" name="fecha_inicio" id="fecha_inicio" value="{{ old('fecha_inicio') }}">
-                        <input type="hidden" name="fecha_fin" id="fecha_fin" value="{{ old('fecha_fin') }}">
-                        <div class="form-text">Minimo 7 dias. Solo desde el mes actual en adelante.</div>
+                        <input type="hidden" name="fecha_inicio" id="fecha_inicio"
+                            value="{{ old('fecha_inicio', $fechaInicio ?? '') }}">
+                        <input type="hidden" name="fecha_fin" id="fecha_fin"
+                            value="{{ old('fecha_fin', $fechaFin ?? '') }}">
+                        <div class="form-text small">Minimo 7 dias. Solo desde el mes actual en adelante.</div>
                         <div id="rango_error" class="invalid-feedback d-block"></div>
                         @error('fecha_inicio')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -52,75 +54,75 @@
                         @enderror
                     </div>
 
-                    <div class="mb-4">
-                        <label for="num_personas" class="form-label fw-semibold">
+                    <div class="mb-3 mb-md-4">
+                        <label for="num_personas" class="form-label fw-semibold small">
                             Número de Personas <span class="text-danger">*</span>
                         </label>
                         <input type="number" name="num_personas" id="num_personas"
-                            class="form-control-agrivall @error('num_personas') is-invalid @enderror" min="1" max="10"
-                            value="{{ old('num_personas', 1) }}" required>
+                            class="form-control-agrivall @error('num_personas') is-invalid @enderror" min="1"
+                            max="10" value="{{ old('num_personas', $numPersonas ?? 1) }}" required>
                         @error('num_personas')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <!-- Estimación de Precio -->
-                    <div class="card mb-4" style="border: 2px solid #10b981; border-radius: 12px;">
-                        <div class="card-header" style="background-color: #f0fdf4; border-bottom: 2px solid #10b981;">
-                            <h6 class="mb-0 fw-bold text-green">Estimación de Precio</h6>
+                    <div class="card mb-3 mb-md-4" style="border: 2px solid #10b981; border-radius: 12px;">
+                        <div class="card-header py-2 px-3"
+                            style="background-color: #f0fdf4; border-bottom: 2px solid #10b981;">
+                            <h6 class="mb-0 fw-bold text-green small">Estimación de Precio</h6>
                         </div>
-                        <div class="card-body">
-                            <div class="row mb-2">
+                        <div class="card-body p-3">
+                            <div class="row g-2 mb-2">
                                 <div class="col-6">
                                     <p class="text-muted small mb-1">Precio por noche:</p>
-                                    <p class="fw-semibold" id="precio_noche">
+                                    <p class="fw-semibold mb-0 small" id="precio_noche">
                                         ${{ number_format(config('reservas.precio_por_noche', 50), 2) }}</p>
                                 </div>
                                 <div class="col-6">
                                     <p class="text-muted small mb-1">Número de noches:</p>
-                                    <p class="fw-semibold" id="num_noches">-</p>
+                                    <p class="fw-semibold mb-0 small" id="num_noches">-</p>
                                 </div>
                             </div>
-                            <div class="row mb-3">
+                            <div class="row g-2 mb-2">
                                 <div class="col-6">
                                     <p class="text-muted small mb-1">Personas:</p>
-                                    <p class="fw-semibold" id="personas_display">1</p>
+                                    <p class="fw-semibold mb-0 small" id="personas_display">1</p>
                                 </div>
                                 <div class="col-6">
-                                    <p class="text-muted small mb-1">Multiplicador (+10% por persona):</p>
-                                    <p class="fw-semibold text-green" id="multiplicador_display">1.00x</p>
+                                    <p class="text-muted small mb-1">Multiplicador:</p>
+                                    <p class="fw-semibold text-green mb-0 small" id="multiplicador_display">1.00x</p>
                                 </div>
                             </div>
-                            <hr style="border-color: #e5e7eb;">
+                            <hr style="border-color: #e5e7eb; margin: 0.75rem 0;">
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="fw-bold" style="font-size: 1.1rem;">Total Estimado:</span>
-                                <span class="fw-bold text-green" style="font-size: 1.5rem;" id="precio_total">-</span>
+                                <span class="fw-bold small">Total Estimado:</span>
+                                <span class="fw-bold text-green fs-5" id="precio_total">-</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="mb-4">
-                        <label for="comentario" class="form-label fw-semibold">
+                    <div class="mb-3 mb-md-4">
+                        <label for="comentario" class="form-label fw-semibold small">
                             Comentarios Adicionales
                         </label>
-                        <textarea name="comentario" id="comentario"
-                            class="form-control-agrivall @error('comentario') is-invalid @enderror" rows="4"
-                            placeholder="Ejemplo: Llegada después de las 16:00, personas con mascotas, etc.">{{ old('comentario') }}</textarea>
+                        <textarea name="comentario" id="comentario" class="form-control-agrivall @error('comentario') is-invalid @enderror"
+                            rows="4" placeholder="Ejemplo: Llegada después de las 16:00, personas con mascotas, etc.">{{ old('comentario') }}</textarea>
                         @error('comentario')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <div class="alert alert-info" role="alert">
-                        <strong>Información importante:</strong>
-                        <ul class="mb-0">
+                    <div class="alert alert-info py-2 px-3" role="alert">
+                        <strong class="small">Información importante:</strong>
+                        <ul class="mb-0 mt-1 small">
                             <li>La reserva se confirmará automáticamente al completar el proceso.</li>
                             <li>Recibirás un correo de confirmación con los detalles.</li>
                             <li>Puedes cancelar la reserva desde tu panel en cualquier momento.</li>
                         </ul>
                     </div>
 
-                    <div class="d-flex gap-2 mt-4">
+                    <div class="d-flex flex-column flex-md-row gap-2 mt-3 mt-md-4">
                         <button type="submit" class="btn btn-agrivall-primary">Confirmar Reserva</button>
                         <a href="{{ route('casa-rural') }}" class="btn btn-agrivall-outline">Cancelar</a>
                     </div>
@@ -139,7 +141,7 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
     <script>
         const PRECIO_POR_NOCHE = {{ config('reservas.precio_por_noche', 50) }};
-        const INCREMENTO_POR_PERSONA = {{ config('reservas.incremento_por_persona', 0.10) }};
+        const INCREMENTO_POR_PERSONA = {{ config('reservas.incremento_por_persona', 0.1) }};
 
         function calcularPrecio() {
             const fechaInicio = document.getElementById('fecha_inicio').value;
@@ -172,7 +174,7 @@
             document.getElementById('precio_total').textContent = '$' + precioTotal.toFixed(2);
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             flatpickr.localize(flatpickr.l10ns.es);
 
             const input = document.getElementById('rango_fechas');
@@ -188,7 +190,7 @@
                 minDate: 'today',
                 disable: disabledRanges,
                 defaultDate: startInput.value && endInput.value ? [startInput.value, endInput.value] : null,
-                onChange: function (selectedDates, dateStr, instance) {
+                onChange: function(selectedDates, dateStr, instance) {
                     errorBox.textContent = '';
 
                     if (selectedDates.length === 2) {
