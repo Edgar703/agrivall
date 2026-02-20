@@ -147,22 +147,24 @@
 
                     <!-- Card 4: Compromiso -->
                     <div class="col-md-6 col-lg-3">
-                        <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden transition-hover"
-                            style="cursor: pointer;">
-                            <div class="bg-light rounded-3 m-3" style="height: 200px; overflow: hidden;">
-                                <img src="{{ asset('assets/img/compromiso.png') }}" alt="Productos Locales"
-                                    class="w-100 h-100" style="object-fit: cover;">
-                            </div>
-                            <div class="card-body">
-                                <div class="mb-3">
-                                    <span style="font-size: 2rem;">🤝</span>
+                        <a href=" {{ route('contactar') }} ">
+                            <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden transition-hover"
+                                style="cursor: pointer;">
+                                <div class="bg-light rounded-3 m-3" style="height: 200px; overflow: hidden;">
+                                    <img src="{{ asset('assets/img/compromiso.png') }}" alt="Productos Locales"
+                                        class="w-100 h-100" style="object-fit: cover;">
                                 </div>
-                                <h5 class="card-title fw-bold" style="color: #2d5016;">Compromiso</h5>
-                                <p class="card-text text-muted" style="font-size: 0.95rem;">
-                                    Compromiso con el territorio, las personas y la sostenibilidad ambiental.
-                                </p>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <span style="font-size: 2rem;">🤝</span>
+                                    </div>
+                                    <h5 class="card-title fw-bold" style="color: #2d5016;">Compromiso</h5>
+                                    <p class="card-text text-muted" style="font-size: 0.95rem;">
+                                        Compromiso con el territorio, las personas y la sostenibilidad ambiental.
+                                    </p>
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -230,9 +232,9 @@
                             Agrivall es más que un lugar. Es una forma de entender la vida.
                         </h2>
                         <div class="d-flex justify-content-center gap-3 flex-wrap">
-                            <a href="{{ route('productos.catalogo')}}" class="btn btn-light fw-bold">Descubre Nuestros
+                            <a href="{{ route('productos.catalogo') }}" class="btn btn-light fw-bold">Descubre Nuestros
                                 Productos</a>
-                            <a href="{{ route('casa-rural')}}" class="btn btn-outline-light fw-bold">Reserva tu
+                            <a href="{{ route('casa-rural') }}" class="btn btn-outline-light fw-bold">Reserva tu
                                 Estancia</a>
                         </div>
                     </div>
@@ -288,4 +290,4 @@
             }
         </style>
 
-@endsection
+    @endsection

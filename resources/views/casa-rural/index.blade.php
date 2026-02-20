@@ -223,11 +223,13 @@
                     ];
                 @endphp
 
-                @foreach ($imagenes as $imagen)
+                @foreach ($imagenes as $index => $imagen)
                     <div class="col-6 col-md-4">
                         <div class="overflow-hidden rounded"
                             style="height: 200px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                            <img src="{{ $imagen }}" alt="Galería" class="w-100 h-100"
+                            <img src="{{ $imagen }}" alt="Galería {{ $index + 1 }}"
+                                class="w-100 h-100 gallery-image" data-gallery-image
+                                data-image-index="{{ $index }}"
                                 style="object-fit: cover; transition: transform 0.3s ease; cursor: pointer;"
                                 onmouseover="this.style.transform='scale(1.05)'"
                                 onmouseout="this.style.transform='scale(1)'">
@@ -237,6 +239,25 @@
             </div>
         </div>
     </section>
+
+    {{-- LIGHTBOX GALERÍA --}}
+    <div class="modal fade lightbox-modal" id="gallery-lightbox" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <button type="button" class="btn-close btn-close-white lightbox-close" data-bs-dismiss="modal"
+                    aria-label="Cerrar"></button>
+                <button type="button" class="lightbox-nav lightbox-prev" id="lightbox-prev"
+                    aria-label="Imagen anterior">
+                    &#10094;
+                </button>
+                <img id="lightbox-image" class="lightbox-image" src="" alt="Imagen ampliada de la galería">
+                <button type="button" class="lightbox-nav lightbox-next" id="lightbox-next"
+                    aria-label="Imagen siguiente">
+                    &#10095;
+                </button>
+            </div>
+        </div>
+    </div>
 
     <style>
         /* ESTILOS PERSONALIZADOS PARA CASA RURAL */
@@ -277,6 +298,78 @@
         .input-group-text {
             background-color: #f9f9f9;
             border-color: #ddd;
+        }
+
+        .lightbox-modal .modal-dialog {
+            max-width: min(95vw, 1200px);
+        }
+
+        .lightbox-modal .modal-content {
+            background: transparent;
+            border: 0;
+            box-shadow: none;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 70vh;
+        }
+
+        .lightbox-image {
+            max-width: 100%;
+            max-height: 80vh;
+            width: auto;
+            height: auto;
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            object-fit: contain;
+            user-select: none;
+        }
+
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 44px;
+            height: 44px;
+            border: 0;
+            border-radius: 999px;
+            background: rgba(0, 0, 0, 0.45);
+            color: #fff;
+            font-size: 1.8rem;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .lightbox-nav:hover {
+            background: rgba(0, 0, 0, 0.65);
+        }
+
+        .lightbox-prev {
+            left: 0.25rem;
+        }
+
+        .lightbox-next {
+            right: 0.25rem;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            z-index: 3;
+            background-color: rgba(0, 0, 0, 0.45);
+            border-radius: 999px;
+            padding: 0.6rem;
+        }
+
+        body.lightbox-open .modal-backdrop.show {
+            background-color: rgba(15, 23, 42, 0.58);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
         }
 
         /* ESTILOS TABLET (991px y menor) */
@@ -320,6 +413,20 @@
 
             .row.flex-column-reverse {
                 flex-direction: column-reverse;
+            }
+
+            .lightbox-nav {
+                width: 40px;
+                height: 40px;
+                font-size: 1.5rem;
+            }
+
+            .lightbox-prev {
+                left: 0;
+            }
+
+            .lightbox-next {
+                right: 0;
             }
         }
 
@@ -422,6 +529,15 @@
 
             .d-flex.flex-wrap {
                 flex-wrap: wrap;
+            }
+
+            .lightbox-image {
+                max-height: 72vh;
+            }
+
+            .lightbox-close {
+                top: 0.5rem;
+                right: 0.5rem;
             }
         }
     </style>
@@ -573,6 +689,58 @@
                     window.location.href = '{{ route('login') }}';
                 @endif
             });
+
+            // Lightbox de galería
+            const galleryLightboxEl = document.getElementById('gallery-lightbox');
+            const lightboxImage = document.getElementById('lightbox-image');
+            const lightboxPrev = document.getElementById('lightbox-prev');
+            const lightboxNext = document.getElementById('lightbox-next');
+            const galleryImages = Array.from(document.querySelectorAll('[data-gallery-image]'));
+
+            if (galleryLightboxEl && lightboxImage && lightboxPrev && lightboxNext && galleryImages.length) {
+                const galleryLightbox = new bootstrap.Modal(galleryLightboxEl);
+                let currentImageIndex = 0;
+
+                const updateLightboxImage = (newIndex) => {
+                    const total = galleryImages.length;
+                    currentImageIndex = (newIndex + total) % total;
+                    const selectedImage = galleryImages[currentImageIndex];
+                    lightboxImage.src = selectedImage.getAttribute('src') || '';
+                    lightboxImage.alt = selectedImage.getAttribute('alt') || 'Imagen ampliada de la galería';
+                };
+
+                galleryImages.forEach((imageElement, index) => {
+                    imageElement.addEventListener('click', () => {
+                        updateLightboxImage(index);
+                        galleryLightbox.show();
+                    });
+                });
+
+                lightboxPrev.addEventListener('click', () => updateLightboxImage(currentImageIndex - 1));
+                lightboxNext.addEventListener('click', () => updateLightboxImage(currentImageIndex + 1));
+
+                galleryLightboxEl.addEventListener('shown.bs.modal', () => {
+                    document.body.classList.add('lightbox-open');
+                });
+
+                galleryLightboxEl.addEventListener('hidden.bs.modal', () => {
+                    document.body.classList.remove('lightbox-open');
+                });
+
+                document.addEventListener('keydown', (event) => {
+                    if (!galleryLightboxEl.classList.contains('show')) {
+                        return;
+                    }
+
+                    if (event.key === 'ArrowLeft') {
+                        updateLightboxImage(currentImageIndex - 1);
+                    }
+
+                    if (event.key === 'ArrowRight') {
+                        updateLightboxImage(currentImageIndex + 1);
+                    }
+                });
+            }
         });
     </script>
 @endsection
