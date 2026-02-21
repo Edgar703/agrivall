@@ -1,9 +1,4 @@
-/**
- * AGRIVALL - Animaciones y Transiciones
- * Efectos suaves y microinteracciones modernas
- */
-
-/* ========== KEYFRAMES ========== */
+/* ========== Animaciones ========== */
 
 @keyframes fadeIn {
     from {
@@ -129,7 +124,7 @@
     }
 }
 
-/* Animación de hoja girando (para loading) */
+/* Animación de cargando */
 @keyframes leafSpin {
     0% {
         transform: rotate(0deg);
@@ -142,7 +137,7 @@
     }
 }
 
-/* ========== CLASES DE ANIMACIÓN ========== */
+/* ========== CLASES ========== */
 
 .animate-fadeIn {
     animation: fadeIn var(--transition-smooth) var(--ease-out);
