@@ -1,12 +1,11 @@
 /**
  * AGRIVALL - Estilos Maestros
- * Sistema de diseño completo para una experiencia natural y profesional
  */
 
 /* ========== IMPORTACIONES ========== */
-@import './design-system.css';
-@import './textures.css';
-@import './animations.css';
+@import "./design-system.css";
+@import "./textures.css";
+@import "./animations.css";
 
 /* ========== BOTONES AGRIVALL ========== */
 
@@ -149,7 +148,7 @@
 }
 
 .card-agrivall::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -226,7 +225,9 @@
     background-clip: padding-box;
     border: 2px solid var(--agrivall-gray-300);
     border-radius: var(--radius-md);
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast);
 }
 
 .form-control-agrivall:focus {
@@ -348,14 +349,16 @@
 }
 
 .navbar-agrivall .nav-link::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: 0;
     left: 50%;
     width: 0;
     height: 2px;
     background-color: white;
-    transition: width var(--transition-smooth), left var(--transition-smooth);
+    transition:
+        width var(--transition-smooth),
+        left var(--transition-smooth);
 }
 
 .navbar-agrivall .nav-link:hover {
@@ -389,7 +392,9 @@
 .navbar-agrivall .dropdown-item {
     color: rgba(255, 255, 255, 0.9);
     padding: 0.5rem 1.5rem;
-    transition: background-color var(--transition-fast), color var(--transition-fast);
+    transition:
+        background-color var(--transition-fast),
+        color var(--transition-fast);
 }
 
 .navbar-agrivall .dropdown-item:hover {
@@ -482,7 +487,7 @@
 }
 
 .section-hero::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
     background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" /></filter><rect width="100" height="100" filter="url(%23noise)" opacity="0.1"/></svg>');
@@ -554,19 +559,21 @@
         margin-bottom: 1.5rem;
     }
 
-    h1, .heading-1 {
+    h1,
+    .heading-1 {
         font-size: var(--font-3xl);
     }
-    
-    h2, .heading-2 {
+
+    h2,
+    .heading-2 {
         font-size: var(--font-2xl);
     }
-    
+
     .section-natural,
     .section-natural-alt {
         padding: 2rem 0;
     }
-    
+
     .section-hero {
         padding: 3rem 0;
     }

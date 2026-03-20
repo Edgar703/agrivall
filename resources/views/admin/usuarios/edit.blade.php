@@ -7,7 +7,7 @@
         <div
             class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 mb-md-4 gap-2">
             <div>
-                <h1 class="heading-2 text-green mb-0 fs-3 fs-md-2">Editar usuario #{{ $usuario->id }}</h1>
+                <h1 class="heading-2 text-green mb-0 fs-3 fs-md-2">Editar usuario <strong>{{ $usuario->name }}</strong></h1>
             </div>
             <a href="{{ route('admin.usuarios.show', $usuario->id) }}" class="btn btn-agrivall-secondary btn-sm">
                 ← Volver
