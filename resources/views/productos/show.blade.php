@@ -95,12 +95,18 @@
                             <a href="{{ route('productos.catalogo') }}" class="btn btn-agrivall-outline flex-grow-1">
                                 ← Volver al catálogo
                             </a>
-                            @if ($producto->activo)
-                                <button class="btn btn-agrivall-primary flex-grow-1"
-                                    onclick="alert('Funcionalidad de añadir a reserva no implementada aún')">
-                                    🛒 Añadir a reserva
-                                </button>
-                            @endif
+                            @auth
+                                @if ($producto->activo)
+                                    <form action="{{ route('carrito.add') }}" method="POST" class="flex-grow-1">
+                                        @csrf
+                                        <input type="hidden" name="producto_id" value="{{ $producto->id }}">
+                                        <input type="hidden" name="cantidad" value="1">
+                                        <button type="submit" class="btn btn-agrivall-primary w-100">
+                                            🛒 Añadir al carrito
+                                        </button>
+                                    </form>
+                                @endif
+                            @endauth
                         </div>
                     </div>
                 </div>

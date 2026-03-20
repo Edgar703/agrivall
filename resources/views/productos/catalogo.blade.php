@@ -142,6 +142,17 @@
                                         class="btn btn-agrivall-primary btn-sm px-3 mt-auto" style="font-size: 0.85rem;">
                                         Ver más
                                     </a>
+                                    @auth
+                                        <form action="{{ route('carrito.add') }}" method="POST" class="mt-2">
+                                            @csrf
+                                            <input type="hidden" name="producto_id" value="{{ $producto->id }}">
+                                            <input type="hidden" name="cantidad" value="1">
+                                            <button type="submit" class="btn btn-agrivall-outline btn-sm w-100"
+                                                style="font-size: 0.85rem;">
+                                                🛒 Añadir al carrito
+                                            </button>
+                                        </form>
+                                    @endauth
                                 </div>
                                 {{--
                                 @auth

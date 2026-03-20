@@ -62,4 +62,9 @@ class Usuario extends Authenticatable
     {
         return $this->hasMany(Reserva::class, 'user_id');
     }
+
+    public function pedidos()
+    {
+        return $this->hasMany(Pedido::class, 'user_id');
+    }
 }

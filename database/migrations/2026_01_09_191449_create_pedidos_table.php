@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('direccion_envio');
             $table->decimal('precio_pedido', 8, 2);
 
-            $table->enum('estado', ['Pendiente', 'Pagado', 'Enviado', 'Cancelado'])->default('Pendiente');
+            $table->enum('estado', ['Iniciado', 'En proceso', 'Reparto', 'Finalizado'])->default('Iniciado');
 
             $table->timestamps();
         });

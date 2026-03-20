@@ -124,6 +124,19 @@
                                         Gestionar Usuarios
                                     </a>
                                 </li>
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-2"
+                                        href="{{ route('admin.pedidos.index') }}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            fill="currentColor" class="bi bi-cart-check" viewBox="0 0 16 16">
+                                            <path
+                                                d="M11.354 6.354a.5.5 0 0 0-.708-.708L8 8.293 6.854 7.146a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0z" />
+                                            <path
+                                                d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1zm3.915 10L3.102 4h10.796l-1.313 7zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0m7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0" />
+                                        </svg>
+                                        Gestionar Pedidos
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                     @endif
@@ -132,6 +145,21 @@
 
             <div class="d-flex flex-column flex-lg-row gap-2 align-items-lg-center ms-lg-3 mt-2 mt-lg-0">
                 @auth
+                    <a href="{{ route('carrito.index') }}" class="btn btn-sm position-relative text-white" title="Carrito">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                            class="bi bi-cart3" viewBox="0 0 16 16">
+                            <path
+                                d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l.84 4.479 9.144-.459L13.89 4zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
+                        </svg>
+                        @php $carritoCount = count(session('carrito', [])); @endphp
+                        @if ($carritoCount > 0)
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                style="font-size: 0.65rem;">
+                                {{ $carritoCount }}
+                            </span>
+                        @endif
+                    </a>
+
                     <span class="navbar-text text-white">
                         <a href="{{ route('profile.edit') }}" class="text-white text-decoration-none hover-underline">Mi
                             Cuenta</a>
