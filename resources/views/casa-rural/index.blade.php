@@ -198,10 +198,10 @@
                         </h2>
                     </div>
 
-                    <button class="btn btn-agrivall-secondary btn-lg w-100"
-                        onclick="document.querySelector('#booking-widget').scrollIntoView({ behavior: 'smooth' })">
+                    <a href="{{ auth()->check() ? route('reservas.create') : route('login') }}"
+                        class="btn btn-agrivall-secondary btn-lg w-100">
                         Reservar Ahora
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
