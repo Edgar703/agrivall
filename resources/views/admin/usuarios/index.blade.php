@@ -9,9 +9,9 @@
             <div>
                 <h1 class="heading-2 text-green mb-0 fs-3 fs-md-2">Panel de Administración - Usuarios</h1>
             </div>
-            <a href="{{ route('index') }}" class="btn btn-agrivall-secondary btn-sm">
+            {{-- <a href="{{ route('index') }}" class="btn btn-agrivall-secondary btn-sm">
                 ← Volver
-            </a>
+            </a> --}}
         </div>
 
         <div class="row g-2 g-md-3 mb-3 mb-md-4">

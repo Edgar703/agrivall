@@ -11,12 +11,6 @@ use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\AdminPedidoController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Rutas Web de Agrivall
-|--------------------------------------------------------------------------
-*/
-
 // ============================================================================
 // PÁGINA PRINCIPAL
 // ============================================================================
@@ -39,15 +33,11 @@ Route::middleware('auth')->group(function () {
 // PRODUCTOS
 // ============================================================================
 
-Route::resource('productos', ProductoController::class);
+// Catálogo público de productos
 Route::get('/catalogo', [ProductoController::class, 'catalogo'])->name('productos.catalogo');
-Route::middleware('auth')->group(function () {
-    Route::post('/categorias', [ProductoController::class, 'storeCategoria'])->name('categorias.store');
-    Route::delete('/categorias/{categoria}', [ProductoController::class, 'destroyCategoria'])->name('categorias.destroy');
-});
 
 // ============================================================================
-// POSTS
+// BLOG POSTS
 // ============================================================================
 
 Route::resource('posts', PostController::class);
@@ -68,6 +58,9 @@ Route::delete('/comments/{comentario}', [CommentController::class, 'destroy'])->
 Route::get('/api/reservas/fechas-bloqueadas', [ReservaController::class, 'fechasBloqueadas'])->name('api.reservas.fechas-bloqueadas');
 Route::post('/api/reservas/calcular-precio', [ReservaController::class, 'calcularPrecioApi'])->name('api.reservas.calcular-precio');
 
+// ============================================================================
+// USUARIOS LOGEADOS
+// ============================================================================
 Route::middleware('auth')->group(function () {
     Route::resource('reservas', ReservaController::class);
     Route::patch('/reservas/{reserva}/estado', [ReservaController::class, 'cambiarEstado'])->name('reservas.cambiarEstado');
@@ -90,6 +83,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/pedidos/{pedido}', [PedidoController::class, 'show'])->name('pedidos.show');
     Route::delete('/pedidos/{pedido}', [PedidoController::class, 'destroy'])->name('pedidos.destroy');
 
+    // ============================================================================
+    // RESERVAS DE CASA RURAL
+    // ============================================================================
     Route::prefix('admin')->name('admin.')->group(function () {
         // Admin panel - same controller, filtra por rol
         Route::get('/reservas', [ReservaController::class, 'index'])->name('reservas.index');
@@ -105,6 +101,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/pedidos/{pedido}', [AdminPedidoController::class, 'show'])->name('pedidos.show');
         Route::patch('/pedidos/{pedido}/estado', [AdminPedidoController::class, 'cambiarEstado'])->name('pedidos.cambiarEstado');
         Route::delete('/pedidos/{pedido}', [AdminPedidoController::class, 'destroy'])->name('pedidos.destroy');
+
+        // Gestión de productos
+        Route::resource('productos', ProductoController::class);
+        Route::post('/categorias', [ProductoController::class, 'storeCategoria'])->name('categorias.store');
+        Route::delete('/categorias/{categoria}', [ProductoController::class, 'destroyCategoria'])->name('categorias.destroy');
     });
 });
 

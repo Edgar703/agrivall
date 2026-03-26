@@ -91,7 +91,7 @@
                                 style="min-width: 200px;">
                                 <li>
                                     <a class="dropdown-item d-flex align-items-center gap-2"
-                                        href="{{ route('productos.index') }}">
+                                        href="{{ route('admin.productos.index') }}">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                             fill="currentColor" class="bi bi-box-seam" viewBox="0 0 16 16">
                                             <path

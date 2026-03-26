@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
-@section('titol', 'Crear producto')
+@section('titol', 'Editar producto')
 
 @section('contingut')
     <div class="animate-fadeInUp">
         <div class="mb-3 mb-md-4">
-            <h1 class="heading-2 text-green mb-1 fs-3 fs-md-2">Crear Nuevo Producto</h1>
-            <p class="text-muted small mb-0">Añade un producto al catálogo</p>
+            <h1 class="heading-2 text-earth mb-1 fs-3 fs-md-2">Editar Producto</h1>
+            <p class="text-muted small mb-0">Actualiza la información del producto</p>
         </div>
 
         @if ($errors->any())
@@ -23,15 +23,16 @@
 
         <div class="card-agrivall">
             <div class="card-body p-3 p-md-4">
-                <form action="{{ route('productos.store') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('admin.productos.update', $producto) }}" method="POST"
+                    enctype="multipart/form-data">
                     @csrf
-                    <input type="hidden" name="return_to" value="{{ old('return_to', $returnTo) }}">
+                    @method('PUT')
 
-                    @include('productos.partials.form', ['producto' => null])
+                    @include('admin.productos.partials.form', ['producto' => $producto])
 
                     <div class="d-flex flex-column flex-md-row gap-2 mt-3 mt-md-4">
-                        <button type="submit" class="btn btn-agrivall-primary">Guardar Producto</button>
-                        <a href="{{ $returnTo }}" class="btn btn-agrivall-outline">Cancelar</a>
+                        <button type="submit" class="btn btn-agrivall-primary">Actualizar Producto</button>
+                        <a href="{{ route('admin.productos.index') }}" class="btn btn-agrivall-outline">Cancelar</a>
                     </div>
                 </form>
             </div>

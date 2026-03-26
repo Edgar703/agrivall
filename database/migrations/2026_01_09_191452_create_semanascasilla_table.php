@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('semanascasilla', function (Blueprint $table) {
             $table->id();
-            $table->smallInteger('anio');        // smallint
-            $table->tinyInteger('numero_sem');   // tinyint
+            $table->smallInteger('anio');
+            $table->tinyInteger('numero_sem');
             $table->string('descriptor');
             $table->decimal('precio', 10, 2);
             $table->enum('estado', ['libre', 'reservado']);

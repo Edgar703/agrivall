@@ -16,7 +16,7 @@
             <h1 class="heading-2 text-green mb-0">{{ $producto->nombre }}</h1>
             @auth
                 @if (auth()->user()->role === 'admin')
-                    <a href="{{ route('productos.edit', $producto) }}" class="btn btn-agrivall-secondary">
+                    <a href="{{ route('admin.productos.edit', $producto) }}" class="btn btn-agrivall-secondary">
                         ✏️ Editar Producto
                     </a>
                 @endif

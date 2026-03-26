@@ -22,6 +22,8 @@ class ProductoController extends Controller
      */
     public function index()
     {
+        $this->ensureAdmin();
+
         $productos = Producto::with('categoria')
             ->orderBy('fecha_creacion', 'desc')
             ->orderBy('id', 'desc')
@@ -29,7 +31,7 @@ class ProductoController extends Controller
 
         $categorias = Categoria::orderBy('nombre')->get();
 
-        return view('productos.index', compact('productos', 'categorias'));
+        return view('admin.productos.index', compact('productos', 'categorias'));
     }
 
     public function catalogo(Request $request)
@@ -72,10 +74,12 @@ class ProductoController extends Controller
      */
     public function create(Request $request)
     {
+        $this->ensureAdmin();
+
         $categorias = Categoria::orderBy('nombre')->get();
         $returnTo = $this->resolveReturnTo($request->query('return_to'));
 
-        return view('productos.create', compact('categorias', 'returnTo'));
+        return view('admin.productos.create', compact('categorias', 'returnTo'));
     }
 
     public function storeCategoria(Request $request)
@@ -90,7 +94,7 @@ class ProductoController extends Controller
         Categoria::create($validated);
 
         return redirect()
-            ->route('productos.index')
+            ->route('admin.productos.index')
             ->with('success', 'Categoría creada correctamente.✅');
     }
 
@@ -109,7 +113,7 @@ class ProductoController extends Controller
         }
 
         return redirect()
-            ->route('productos.index')
+            ->route('admin.productos.index')
             ->with('success', $message);
     }
 
@@ -118,6 +122,7 @@ class ProductoController extends Controller
      */
     public function store(Request $request)
     {
+        $this->ensureAdmin();
         $validate = $request->validate([
             'nombre' => 'string|max:255',
             'imagen_file' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
@@ -148,15 +153,14 @@ class ProductoController extends Controller
 
     private function resolveReturnTo(?string $returnTo): string
     {
-        $fallback = route('productos.catalogo');
+        $fallback = route('admin.productos.index');
 
         if (!$returnTo) {
             return $fallback;
         }
 
         $allowedBases = [
-            route('productos.catalogo'),
-            route('productos.index'),
+            route('admin.productos.index'),
         ];
 
         $baseUrl = strtok($returnTo, '?');
@@ -179,9 +183,11 @@ class ProductoController extends Controller
      */
     public function edit(Producto $producto)
     {
+        $this->ensureAdmin();
+
         $categorias = Categoria::orderBy('nombre')->get();
 
-        return view('productos.edit', compact('producto', 'categorias'));
+        return view('admin.productos.edit', compact('producto', 'categorias'));
     }
 
     /**
@@ -189,6 +195,7 @@ class ProductoController extends Controller
      */
     public function update(Request $request, Producto $producto)
     {
+        $this->ensureAdmin();
         $validated = $request->validate([
             'nombre' => 'nullable|string|max:255',
             'imagen_file' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
@@ -216,7 +223,7 @@ class ProductoController extends Controller
         $producto->update($validated);
 
         return redirect()
-            ->route('productos.catalogo')
+            ->route('admin.productos.index')
             ->with('success', 'Producto actualizado ✅');
     }
 
@@ -225,6 +232,7 @@ class ProductoController extends Controller
      */
     public function destroy(Producto $producto)
     {
+        $this->ensureAdmin();
         if ($producto->imagen) {
             Storage::disk('public')->delete($producto->imagen);
         }
@@ -232,7 +240,7 @@ class ProductoController extends Controller
         $producto->delete();
 
         return redirect()
-            ->route('productos.catalogo')
+            ->route('admin.productos.index')
             ->with('success', 'Producto eliminado exitosamente.✅');
     }
 }

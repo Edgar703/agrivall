@@ -12,14 +12,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // First, let's check what values currently exist in the estado column
-        // and convert them to the new enum values if needed
+
         $existingStates = DB::table('pedidos')
             ->distinct()
             ->pluck('estado')
             ->toArray();
 
-        // Map old states to new states if necessary
         $stateMapping = [
             'Pendiente' => 'Iniciado',
             'Pagado' => 'En proceso',
@@ -31,7 +29,6 @@ return new class extends Migration
             'Finalizado' => 'Finalizado',
         ];
 
-        // Update any old state values to new ones
         foreach ($existingStates as $state) {
             if (isset($stateMapping[$state]) && $stateMapping[$state] !== $state) {
                 DB::table('pedidos')
@@ -40,10 +37,7 @@ return new class extends Migration
             }
         }
 
-        // Now modify the ENUM column - using a safer approach
         DB::statement("ALTER TABLE pedidos MODIFY COLUMN estado VARCHAR(50)");
-
-        // Update to the enum values
         DB::statement("ALTER TABLE pedidos MODIFY COLUMN estado ENUM('Iniciado', 'En proceso', 'Reparto', 'Finalizado') DEFAULT 'Iniciado'");
     }
 
@@ -52,7 +46,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Revert to old enum values
         DB::table('pedidos')
             ->where('estado', 'Iniciado')
             ->update(['estado' => 'Pendiente']);
