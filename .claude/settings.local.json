@@ -1,9 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git config:*)",
-      "Bash(tree -L 2 -I 'node_modules|vendor' //wsl.localhost/Ubuntu-24.04/home/edgar/agrivall)",
-      "Read(///wsl.localhost/Ubuntu-24.04/home/edgar/**)"
+      "Bash(*)",
+      "Read(///wsl.localhost/Ubuntu-24.04/home/edgar/**)",
+      "Write(///wsl.localhost/Ubuntu-24.04/home/edgar/**)"
     ]
   }
 }

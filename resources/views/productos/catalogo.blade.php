@@ -17,7 +17,7 @@
                 </button>
                 @auth
                     @if (auth()->user()->role === 'admin')
-                        <a href="{{ route('productos.create', ['return_to' => url()->full()]) }}"
+                        <a href="{{ route('admin.productos.create', ['return_to' => url()->full()]) }}"
                             class="btn btn-agrivall-primary">
                             + Nuevo Producto
                         </a>
@@ -102,7 +102,7 @@
                                             : asset('assets/img/Agrivall_Logo.png');
                                 @endphp
                                 <div class="position-relative overflow-hidden" style="height: 200px;">
-                                    <a href="{{ route('productos.show', $producto) }}" class="d-block h-100">
+                                    <a href="{{ route('admin.productos.show', $producto) }}" class="d-block h-100">
                                         <img src="{{ $productoImagen }}" class="product-card-img w-100 h-100"
                                             alt="{{ $producto->nombre }}" style="object-fit: cover;">
                                     </a>
@@ -138,7 +138,7 @@
                                         </div>
                                     </div>
 
-                                    <a href="{{ route('productos.show', $producto) }}"
+                                    <a href="{{ route('admin.productos.show', $producto) }}"
                                         class="btn btn-agrivall-primary btn-sm px-3 mt-auto" style="font-size: 0.85rem;">
                                         Ver más
                                     </a>
