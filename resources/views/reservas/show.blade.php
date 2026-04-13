@@ -50,15 +50,14 @@
                                     style="letter-spacing: 0.5px; font-weight: 600; font-size: 0.75rem;">Estado de Reserva
                                 </p>
                                 <div>
-                                    @if ($reserva->estado === 'confirmada')
-                                        <span class="badge px-2 py-1 small"
-                                            style="background-color: #10b981; font-weight: 600;">Confirmada</span>
-                                    @elseif($reserva->estado === 'pendiente')
-                                        <span class="badge px-2 py-1 small"
-                                            style="background-color: #f59e0b; font-weight: 600;">Pendiente</span>
+                                    @if ($reserva->estado === 'RESERVADO')
+                                        <span class="badge bg-success px-2 py-1 small">RESERVADO</span>
+                                    @elseif($reserva->estado === 'PRE-RESERVA')
+                                        <span class="badge bg-warning text-dark px-2 py-1 small">PRE-RESERVA</span>
+                                    @elseif($reserva->estado === 'NO_DISPONIBLE')
+                                        <span class="badge bg-secondary px-2 py-1 small">NO DISPONIBLE</span>
                                     @elseif($reserva->estado === 'cancelada')
-                                        <span class="badge bg-danger px-2 py-1 small"
-                                            style="font-weight: 600;">Cancelada</span>
+                                        <span class="badge bg-danger px-2 py-1 small">CANCELADA</span>
                                     @endif
                                 </div>
                             </div>
@@ -215,29 +214,36 @@
                 </div>
 
                 <!-- Estado de la Reserva -->
-                @if ($reserva->estado === 'confirmada')
+                @if ($reserva->estado === 'RESERVADO')
                     <div class="alert alert-success border-0 shadow-sm mb-3 mb-md-4" role="alert"
                         style="border-radius: 12px; background-color: #d1fae5; border-left: 4px solid #10b981 !important;">
                         <div class="d-flex align-items-start">
-                            <div class="me-2" style="font-size: 1.25rem;">✓</div>
+                            <div class="me-2" style="font-size: 1.25rem;">✅</div>
                             <div>
-                                <strong class="d-block mb-1 small" style="color: #065f46;">Confirmada</strong>
-                                <p class="mb-0" style="color: #047857; line-height: 1.5; font-size: 0.85rem;">Tu reserva
-                                    está confirmada. Te
-                                    hemos enviado un email con los detalles.</p>
+                                <strong class="d-block mb-1 small" style="color: #065f46;">RESERVADO</strong>
+                                <p class="mb-0" style="color: #047857; line-height: 1.5; font-size: 0.85rem;">Tu reserva está confirmada. Te hemos enviado un email con los detalles.</p>
                             </div>
                         </div>
                     </div>
-                @elseif($reserva->estado === 'pendiente')
+                @elseif($reserva->estado === 'PRE-RESERVA')
                     <div class="alert alert-warning border-0 shadow-sm mb-3 mb-md-4" role="alert"
                         style="border-radius: 12px; background-color: #fef3c7; border-left: 4px solid #f59e0b !important;">
                         <div class="d-flex align-items-start">
-                            <div class="me-2" style="font-size: 1.25rem;">⏱</div>
+                            <div class="me-2" style="font-size: 1.25rem;">🕐</div>
                             <div>
-                                <strong class="d-block mb-1 small" style="color: #92400e;">Pendiente</strong>
-                                <p class="mb-0" style="color: #b45309; line-height: 1.5; font-size: 0.85rem;">Tu reserva
-                                    está en espera de
-                                    aprobación. Te notificaremos cuando sea confirmada.</p>
+                                <strong class="d-block mb-1 small" style="color: #92400e;">PRE-RESERVA</strong>
+                                <p class="mb-0" style="color: #b45309; line-height: 1.5; font-size: 0.85rem;">Tu solicitud está pendiente de confirmación. Te notificaremos por email.</p>
+                            </div>
+                        </div>
+                    </div>
+                @elseif($reserva->estado === 'NO_DISPONIBLE')
+                    <div class="alert alert-secondary border-0 shadow-sm mb-3 mb-md-4" role="alert"
+                        style="border-radius: 12px; border-left: 4px solid #6b7280 !important;">
+                        <div class="d-flex align-items-start">
+                            <div class="me-2" style="font-size: 1.25rem;">🚫</div>
+                            <div>
+                                <strong class="d-block mb-1 small">NO DISPONIBLE</strong>
+                                <p class="mb-0" style="line-height: 1.5; font-size: 0.85rem;">Este período no está disponible para reservas.</p>
                             </div>
                         </div>
                     </div>
@@ -247,10 +253,8 @@
                         <div class="d-flex align-items-start">
                             <div class="me-2" style="font-size: 1.25rem;">✗</div>
                             <div>
-                                <strong class="d-block mb-1 small" style="color: #991b1b;">Cancelada</strong>
-                                <p class="mb-0" style="color: #dc2626; line-height: 1.5; font-size: 0.85rem;">Esta
-                                    reserva ha sido cancelada.
-                                </p>
+                                <strong class="d-block mb-1 small" style="color: #991b1b;">CANCELADA</strong>
+                                <p class="mb-0" style="color: #dc2626; line-height: 1.5; font-size: 0.85rem;">Esta reserva ha sido cancelada.</p>
                             </div>
                         </div>
                     </div>

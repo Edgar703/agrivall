@@ -114,16 +114,17 @@
                     </div>
 
                     <div class="alert alert-info py-2 px-3" role="alert">
-                        <strong class="small">Información importante:</strong>
+                        <strong class="small">¿Cómo funciona el proceso?</strong>
                         <ul class="mb-0 mt-1 small">
-                            <li>La reserva se confirmará automáticamente al completar el proceso.</li>
-                            <li>Recibirás un correo de confirmación con los detalles.</li>
-                            <li>Puedes cancelar la reserva desde tu panel en cualquier momento.</li>
+                            <li>Al enviar, tu solicitud queda en estado <strong>PRE-RESERVA</strong>.</li>
+                            <li>Recibirás un correo confirmando que hemos recibido tu solicitud.</li>
+                            <li>Un administrador revisará tu solicitud y la confirmará como <strong>RESERVADO</strong>.</li>
+                            <li>Puedes consultar el estado de tu reserva en tu panel de usuario.</li>
                         </ul>
                     </div>
 
                     <div class="d-flex flex-column flex-md-row gap-2 mt-3 mt-md-4">
-                        <button type="submit" class="btn btn-agrivall-primary">Confirmar Reserva</button>
+                        <button type="submit" class="btn btn-agrivall-primary">Enviar Solicitud</button>
                         <a href="{{ route('casa-rural') }}" class="btn btn-agrivall-outline">Cancelar</a>
                     </div>
                 </form>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Reserva;
 use App\Http\Requests\ReservaRequest;
 use App\Mail\ReservaMail;
+use App\Mail\ReservaAdminMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -99,22 +100,27 @@ class ReservaController extends Controller
         $multiplicador = 1 + (($numPersonas - 1) * 0.10);
         $precioTotal = $preciosPorNoche * $numNoches * $multiplicador;
 
-        // Crear la reserva con estado confirmada
+        // Crear la reserva con estado PRE-RESERVA (pendiente de confirmación por el admin)
         $reserva = Auth::user()->reservas()->create([
             'fecha_inicio' => $fechaInicio->toDateString(),
             'fecha_fin' => $fechaFin->toDateString(),
             'num_personas' => $numPersonas,
             'comentario' => $request->comentario,
-            'estado' => 'confirmada',
+            'estado' => 'PRE-RESERVA',
             'precio_por_noche' => $preciosPorNoche,
             'precio_total' => $precioTotal,
         ]);
 
-        // Enviar correo de confirmación
+        $reserva->load('usuario');
+
+        // Notificar al cliente que su solicitud fue recibida
         Mail::to($reserva->usuario->email)->send(new ReservaMail($reserva));
 
+        // Notificar al admin para que confirme o rechace
+        Mail::to(config('mail.admin_address', config('mail.from.address')))->send(new ReservaAdminMail($reserva));
+
         return redirect()->route('reservas.show', $reserva->id)
-            ->with('success', '¡Reserva creada exitosamente!');
+            ->with('success', '¡Solicitud de reserva enviada! Te confirmaremos en breve por email. ✅');
     }
 
     /**
@@ -205,11 +211,11 @@ class ReservaController extends Controller
         // Si es admin, redirige al panel de admin, si no a sus reservas
         if (Auth::user()->role === 'admin') {
             return redirect()->route('admin.reservas.index')
-                ->with('success', 'Reserva cancelada exitosamente.');
+                ->with('success', 'Reserva #' . $reserva->id . ' cancelada. Las fechas quedan disponibles.');
         }
 
         return redirect()->route('reservas.index')
-            ->with('success', 'Reserva cancelada exitosamente.');
+            ->with('success', 'Tu reserva ha sido cancelada.');
     }
 
     /**
@@ -220,14 +226,20 @@ class ReservaController extends Controller
         $this->authorize('update', $reserva);
 
         $request->validate([
-            'estado' => 'required|in:pendiente,confirmada,cancelada',
+            'estado' => 'required|in:PRE-RESERVA,RESERVADO,NO_DISPONIBLE,cancelada',
         ]);
 
-        $estadoAnterior = $reserva->estado;
         $reserva->update(['estado' => $request->estado]);
 
+        $mensajes = [
+            'PRE-RESERVA'   => 'Reserva marcada como PRE-RESERVA.',
+            'RESERVADO'     => 'Reserva confirmada como RESERVADO. ✅',
+            'NO_DISPONIBLE' => 'Período marcado como NO DISPONIBLE.',
+            'cancelada'     => 'Reserva cancelada. Las fechas quedan libres.',
+        ];
+
         return redirect()->back()
-            ->with('success', 'Estado de reserva actualizado.');
+            ->with('success', $mensajes[$request->estado] ?? 'Estado actualizado.');
     }
 
     private function getDisabledRanges(?Reserva $ignorarReserva = null): array

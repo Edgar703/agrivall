@@ -92,14 +92,14 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>¡Reserva Confirmada!</h1>
+            <h1>🏡 Solicitud de reserva recibida</h1>
             <p>Número de reserva: #{{ $reserva->id }}</p>
         </div>
 
         <div class="content">
-            <p>Hola {{ $usuario->nombre }},</p>
+            <p>Hola {{ $usuario->name }},</p>
 
-            <p>Tu reserva ha sido confirmada exitosamente. Aquí están los detalles:</p>
+            <p>Hemos recibido tu solicitud de reserva. Está pendiente de confirmación por parte del equipo de Agrivall. Te notificaremos por email cuando sea confirmada.</p>
 
             <div class="field">
                 <div class="label">Período de la reserva</div>
@@ -142,13 +142,18 @@
             </div>
 
             <div class="field">
-                <div class="label">Estado</div>
+                <div class="label">Estado actual</div>
                 <div>
-                    <span class="status-badge">{{ ucfirst($reserva->estado) }}</span>
+                    <span class="status-badge" style="background-color:#fef3c7; color:#92400e;">
+                        🕐 {{ $reserva->estado }}
+                    </span>
                 </div>
             </div>
 
-            <p style="margin-top: 20px;">Si tienes cualquier duda o necesitas realizar cambios en tu reserva, puedes contactarnos directamente.</p>
+            <p style="margin-top: 20px;">
+                Una vez revisada tu solicitud, recibirás otro correo con la confirmación definitiva.
+                Si tienes dudas, puedes contactarnos directamente.
+            </p>
 
             <div class="footer">
                 <p>Este es un correo automático. Por favor no respondas a este mensaje.</p>

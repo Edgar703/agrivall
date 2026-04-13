@@ -9,6 +9,7 @@ use App\Http\Controllers\AdminUsuarioController;
 use App\Http\Controllers\CarritoController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\AdminPedidoController;
+use App\Models\Reserva;
 use Illuminate\Support\Facades\Route;
 
 // ============================================================================
@@ -114,7 +115,13 @@ Route::middleware('auth')->group(function () {
 // ============================================================================
 
 Route::get('/casa-rural', function () {
-    return view('casa-rural.index');
+    // Reservas activas (PRE-RESERVA, RESERVADO, NO_DISPONIBLE) para mostrar disponibilidad
+    $reservasActivas = Reserva::whereIn('estado', ['PRE-RESERVA', 'RESERVADO', 'NO_DISPONIBLE'])
+        ->where('fecha_fin', '>=', now())
+        ->orderBy('fecha_inicio')
+        ->get(['id', 'fecha_inicio', 'fecha_fin', 'estado']);
+
+    return view('casa-rural.index', compact('reservasActivas'));
 })->name('casa-rural');
 
 Route::get('/contactar', [\App\Http\Controllers\ContactoController::class, 'mostrar'])->name('contactar');

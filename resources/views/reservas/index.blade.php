@@ -59,12 +59,14 @@
                         <div class="card-body p-3">
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <h5 class="fw-bold text-green mb-0">Reserva #{{ $reserva->id }}</h5>
-                                @if ($reserva->estado === 'confirmada')
-                                    <span class="badge bg-success">Confirmada</span>
-                                @elseif($reserva->estado === 'pendiente')
-                                    <span class="badge bg-warning text-dark">Pendiente</span>
+                                @if ($reserva->estado === 'RESERVADO')
+                                    <span class="badge bg-success">RESERVADO</span>
+                                @elseif($reserva->estado === 'PRE-RESERVA')
+                                    <span class="badge bg-warning text-dark">PRE-RESERVA</span>
+                                @elseif($reserva->estado === 'NO_DISPONIBLE')
+                                    <span class="badge bg-secondary">NO DISPONIBLE</span>
                                 @elseif($reserva->estado === 'cancelada')
-                                    <span class="badge bg-danger">Cancelada</span>
+                                    <span class="badge bg-danger">CANCELADA</span>
                                 @endif
                             </div>
 

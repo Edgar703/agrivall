@@ -4,40 +4,43 @@
 
 @section('contingut')
     <div class="animate-fadeInUp">
-        <div
-            class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 mb-md-4 gap-2">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 mb-md-4 gap-2">
             <div>
-                <h1 class="heading-2 text-green mb-0 fs-3 fs-md-2">Panel de Administración - Reservas</h1>
+                <h1 class="heading-2 text-green mb-0 fs-3 fs-md-2">Panel de Administración — Reservas</h1>
+                <p class="text-muted small mb-0 mt-1">Gestiona las solicitudes de reserva de la Casa Rural</p>
             </div>
-            {{-- <a href="{{ route('reservas.index') }}" class="btn btn-agrivall-secondary btn-sm">
-                ← Volver
-            </a> --}}
         </div>
 
+        {{-- Estadísticas --}}
         <div class="row g-2 g-md-3 mb-3 mb-md-4">
+            @php
+                $total        = $reservas->count();
+                $preReserva   = $reservas->where('estado', 'PRE-RESERVA')->count();
+                $reservado    = $reservas->where('estado', 'RESERVADO')->count();
+                $noDisponible = $reservas->where('estado', 'NO_DISPONIBLE')->count();
+                $canceladas   = $reservas->where('estado', 'cancelada')->count();
+            @endphp
             <div class="col-6 col-md-3">
                 <div class="card-agrivall bg-light">
                     <div class="card-body p-2 p-md-3">
-                        <p class="text-muted mb-1 small">Total de Reservas</p>
-                        <h3 class="text-green mb-0 fs-5 fs-md-4">{{ $reservas->count() }}</h3>
+                        <p class="text-muted mb-1 small">Total</p>
+                        <h3 class="text-green mb-0 fs-5 fs-md-4">{{ $total }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card-agrivall" style="background:#fffbeb;">
+                    <div class="card-body p-2 p-md-3">
+                        <p class="text-muted mb-1 small">PRE-RESERVA</p>
+                        <h3 class="mb-0 fs-5 fs-md-4" style="color:#b45309;">{{ $preReserva }}</h3>
                     </div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
                 <div class="card-agrivall bg-light">
                     <div class="card-body p-2 p-md-3">
-                        <p class="text-muted mb-1 small">Confirmadas</p>
-                        <h3 class="text-success mb-0 fs-5 fs-md-4">{{ $reservas->where('estado', 'confirmada')->count() }}
-                        </h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="card-agrivall bg-light">
-                    <div class="card-body p-2 p-md-3">
-                        <p class="text-muted mb-1 small">Pendientes</p>
-                        <h3 class="text-warning mb-0 fs-5 fs-md-4">{{ $reservas->where('estado', 'pendiente')->count() }}
-                        </h3>
+                        <p class="text-muted mb-1 small">Reservados</p>
+                        <h3 class="text-success mb-0 fs-5 fs-md-4">{{ $reservado }}</h3>
                     </div>
                 </div>
             </div>
@@ -45,8 +48,7 @@
                 <div class="card-agrivall bg-light">
                     <div class="card-body p-2 p-md-3">
                         <p class="text-muted mb-1 small">Canceladas</p>
-                        <h3 class="text-danger mb-0 fs-5 fs-md-4">{{ $reservas->where('estado', 'cancelada')->count() }}
-                        </h3>
+                        <h3 class="text-danger mb-0 fs-5 fs-md-4">{{ $canceladas }}</h3>
                     </div>
                 </div>
             </div>
@@ -68,9 +70,10 @@
 
         @if ($reservas->isEmpty())
             <div class="alert alert-info" role="alert">
-                <strong>Sin reservas</strong> - No hay reservas registradas aún.
+                <strong>Sin reservas</strong> — No hay reservas registradas aún.
             </div>
         @else
+
             {{-- Vista móvil: Cards --}}
             <div class="d-md-none">
                 @foreach ($reservas as $reserva)
@@ -81,65 +84,13 @@
                                     <h5 class="fw-bold text-green mb-1">Reserva #{{ $reserva->id }}</h5>
                                     <p class="text-muted small mb-0">{{ $reserva->created_at->format('d/m/Y H:i') }}</p>
                                 </div>
-                                <div class="dropdown">
-                                    @if ($reserva->estado === 'confirmada')
-                                        <span class="badge bg-success dropdown-toggle" role="button"
-                                            data-bs-toggle="dropdown">
-                                            Confirmada
-                                        </span>
-                                    @elseif($reserva->estado === 'pendiente')
-                                        <span class="badge bg-warning text-dark dropdown-toggle" role="button"
-                                            data-bs-toggle="dropdown">
-                                            Pendiente
-                                        </span>
-                                    @elseif($reserva->estado === 'cancelada')
-                                        <span class="badge bg-danger dropdown-toggle" role="button"
-                                            data-bs-toggle="dropdown">
-                                            Cancelada
-                                        </span>
-                                    @endif
-
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li>
-                                            <form action="{{ route('reservas.cambiarEstado', $reserva->id) }}"
-                                                method="POST">
-                                                @csrf
-                                                @method('PATCH')
-                                                <input type="hidden" name="estado" value="confirmada">
-                                                <button type="submit" class="dropdown-item">Confirmar</button>
-                                            </form>
-                                        </li>
-                                        <li>
-                                            <form action="{{ route('reservas.cambiarEstado', $reserva->id) }}"
-                                                method="POST">
-                                                @csrf
-                                                @method('PATCH')
-                                                <input type="hidden" name="estado" value="pendiente">
-                                                <button type="submit" class="dropdown-item">Marcar Pendiente</button>
-                                            </form>
-                                        </li>
-                                        <li>
-                                            <hr class="dropdown-divider">
-                                        </li>
-                                        <li>
-                                            <form action="{{ route('reservas.cambiarEstado', $reserva->id) }}"
-                                                method="POST">
-                                                @csrf
-                                                @method('PATCH')
-                                                <input type="hidden" name="estado" value="cancelada">
-                                                <button type="submit" class="dropdown-item text-danger"
-                                                    onclick="return confirm('¿Cancelar esta reserva?')">
-                                                    Cancelar
-                                                </button>
-                                            </form>
-                                        </li>
-                                    </ul>
-                                </div>
+                                {{-- Badge estado --}}
+                                @include('admin.reservas._estado_badge', ['estado' => $reserva->estado])
                             </div>
 
                             <div class="border-bottom pb-2 mb-2">
                                 <p class="mb-1">
-                                    <span class="text-muted small">Usuario:</span><br>
+                                    <span class="text-muted small">Cliente:</span><br>
                                     <strong>{{ $reserva->usuario->name }}</strong><br>
                                     <small class="text-muted">{{ $reserva->usuario->email }}</small>
                                 </p>
@@ -161,24 +112,18 @@
 
                             <div class="mb-3">
                                 <p class="text-muted small mb-0">Precio Total:</p>
-                                <p class="text-green fw-bold mb-0 fs-5">${{ number_format($reserva->precio_total, 2) }}</p>
+                                <p class="text-green fw-bold mb-0 fs-5">{{ number_format($reserva->precio_total, 2) }} €</p>
                             </div>
 
-                            <div class="d-flex gap-2">
-                                <a href="{{ route('reservas.show', $reserva->id) }}"
-                                    class="btn btn-info btn-sm flex-fill">Ver</a>
-                                <a href="{{ route('reservas.edit', $reserva->id) }}"
-                                    class="btn btn-warning btn-sm flex-fill">Editar</a>
-                                <form action="{{ route('reservas.destroy', $reserva->id) }}" method="POST"
-                                    class="flex-fill">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm w-100"
-                                        onclick="return confirm('¿Estás seguro?')">
-                                        Eliminar
-                                    </button>
-                                </form>
-                            </div>
+                            @if ($reserva->comentario)
+                                <div class="mb-3">
+                                    <p class="text-muted small mb-0">Observaciones:</p>
+                                    <p class="small mb-0 fst-italic">{{ $reserva->comentario }}</p>
+                                </div>
+                            @endif
+
+                            {{-- Acciones de cambio de estado --}}
+                            @include('admin.reservas._acciones_estado', ['reserva' => $reserva])
                         </div>
                     </div>
                 @endforeach
@@ -190,12 +135,13 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Usuario</th>
+                            <th>Cliente</th>
                             <th>Fechas</th>
+                            <th>Noches</th>
                             <th>Personas</th>
                             <th>Precio</th>
                             <th>Estado</th>
-                            <th>Fecha Reserva</th>
+                            <th>Solicitada</th>
                             <th class="text-end">Acciones</th>
                         </tr>
                     </thead>
@@ -209,97 +155,33 @@
                                 </td>
                                 <td>
                                     <span class="fw-medium">
-                                        {{ optional($reserva->fecha_inicio)->format('d/m/Y') }} -
+                                        {{ optional($reserva->fecha_inicio)->format('d/m/Y') }} —
                                         {{ optional($reserva->fecha_fin)->format('d/m/Y') }}
                                     </span>
                                 </td>
-                                <td class="text-center">{{ $reserva->num_personas }}</td>
-                                <td class="text-green fw-semibold">${{ number_format($reserva->precio_total, 2) }}</td>
-                                <td>
-                                <td>
-                                    <div class="dropdown">
-                                        @if ($reserva->estado === 'confirmada')
-                                            <span class="badge bg-success dropdown-toggle" role="button"
-                                                data-bs-toggle="dropdown">
-                                                Confirmada
-                                            </span>
-                                        @elseif($reserva->estado === 'pendiente')
-                                            <span class="badge bg-warning text-dark dropdown-toggle" role="button"
-                                                data-bs-toggle="dropdown">
-                                                Pendiente
-                                            </span>
-                                        @elseif($reserva->estado === 'cancelada')
-                                            <span class="badge bg-danger dropdown-toggle" role="button"
-                                                data-bs-toggle="dropdown">
-                                                Cancelada
-                                            </span>
-                                        @endif
-
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li>
-                                                <form action="{{ route('reservas.cambiarEstado', $reserva->id) }}"
-                                                    method="POST">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <input type="hidden" name="estado" value="confirmada">
-                                                    <button type="submit" class="dropdown-item">Confirmar</button>
-                                                </form>
-                                            </li>
-                                            <li>
-                                                <form action="{{ route('reservas.cambiarEstado', $reserva->id) }}"
-                                                    method="POST">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <input type="hidden" name="estado" value="pendiente">
-                                                    <button type="submit" class="dropdown-item">Marcar Pendiente</button>
-                                                </form>
-                                            </li>
-                                            <li>
-                                                <hr class="dropdown-divider">
-                                            </li>
-                                            <li>
-                                                <form action="{{ route('reservas.cambiarEstado', $reserva->id) }}"
-                                                    method="POST">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <input type="hidden" name="estado" value="cancelada">
-                                                    <button type="submit" class="dropdown-item text-danger"
-                                                        onclick="return confirm('¿Cancelar esta reserva?')">
-                                                        Cancelar
-                                                    </button>
-                                                </form>
-                                            </li>
-                                        </ul>
-                                    </div>
+                                <td class="text-center">
+                                    {{ optional($reserva->fecha_inicio) && optional($reserva->fecha_fin)
+                                        ? $reserva->fecha_fin->diffInDays($reserva->fecha_inicio)
+                                        : '—' }}
                                 </td>
-                                <td class="text-muted small">{{ $reserva->created_at->format('d/m/Y H:i') }}</td>
+                                <td class="text-center">{{ $reserva->num_personas }}</td>
+                                <td class="text-green fw-semibold">{{ number_format($reserva->precio_total, 2) }} €</td>
+                                <td>
+                                    @include('admin.reservas._estado_badge', ['estado' => $reserva->estado])
+                                </td>
+                                <td class="text-muted small">{{ $reserva->created_at->format('d/m/Y') }}</td>
                                 <td class="text-end">
-                                    <div class="btn-group btn-group-sm gap-2">
-                                        <a href="{{ route('reservas.show', $reserva->id) }}"
-                                            class="btn btn-info rounded">Ver</a>
-                                        <a href="{{ route('reservas.edit', $reserva->id) }}"
-                                            class="btn btn-warning rounded">Editar</a>
-                                        <form action="{{ route('reservas.destroy', $reserva->id) }}" method="POST"
-                                            style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger"
-                                                onclick="return confirm('¿Estás seguro?')">
-                                                Eliminar
-                                            </button>
-                                        </form>
-                                    </div>
+                                    @include('admin.reservas._acciones_estado', ['reserva' => $reserva])
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center text-muted py-4">
+                                <td colspan="9" class="text-center text-muted py-4">
                                     No hay reservas registradas.
                                 </td>
                             </tr>
                         @endforelse
                     </tbody>
-
                 </table>
             </div>
         @endif
