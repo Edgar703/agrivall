@@ -47,7 +47,7 @@ class Reserva extends Model
      */
     public function getNumNochesAttribute()
     {
-        return $this->fecha_fin->diffInDays($this->fecha_inicio) ?: 1;
+        return $this->fecha_inicio->diffInDays($this->fecha_fin) ?: 1;
     }
 
     /**

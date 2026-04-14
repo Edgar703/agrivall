@@ -102,7 +102,7 @@
                                             : asset('assets/img/Agrivall_Logo.png');
                                 @endphp
                                 <div class="position-relative overflow-hidden" style="height: 200px;">
-                                    <a href="{{ route('admin.productos.show', $producto) }}" class="d-block h-100">
+                                    <a href="{{ route('productos.show', $producto) }}" class="d-block h-100">
                                         <img src="{{ $productoImagen }}" class="product-card-img w-100 h-100"
                                             alt="{{ $producto->nombre }}" style="object-fit: cover;">
                                     </a>
@@ -138,7 +138,7 @@
                                         </div>
                                     </div>
 
-                                    <a href="{{ route('admin.productos.show', $producto) }}"
+                                    <a href="{{ route('productos.show', $producto) }}"
                                         class="btn btn-agrivall-primary btn-sm px-3 mt-auto" style="font-size: 0.85rem;">
                                         Ver más
                                     </a>
@@ -160,11 +160,11 @@
                                 <div class="card-footer bg-light border-0 p-3"
                                     style="border-top: 1px solid var(--agrivall-gray-200) !important;">
                                     <div class="d-flex gap-2 justify-content-between align-items-center">
-                                        <a href="{{ route('productos.edit', $producto) }}"
+                                        <a href="{{ route('admin.productos.edit', $producto) }}"
                                             class="btn btn-agrivall-primary btn-sm flex-grow-1">
                                             Editar
                                         </a>
-                                        <form action="{{ route('productos.destroy', $producto) }}" method="POST" class="flex-grow-1">
+                                        <form action="{{ route('admin.productos.destroy', $producto) }}" method="POST" class="flex-grow-1">
                                             @csrf
                                             @method('DELETE')
                                             <button class="btn btn-agrivall-danger btn-sm w-100"
@@ -185,7 +185,7 @@
                                 @auth
                                     @if (auth()->user()->role === 'admin')
                                         <p class="text-muted mb-3">Comienza creando tu primer producto</p>
-                                        <a href="{{ route('productos.create', ['return_to' => url()->full()]) }}"
+                                        <a href="{{ route('admin.productos.create', ['return_to' => url()->full()]) }}"
                                             class="btn btn-agrivall-primary">
                                             + Crear Producto
                                         </a>

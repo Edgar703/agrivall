@@ -77,8 +77,7 @@
                                 </div>
                             </div>
 
-                            <button type="button" id="widget-btn-continuar"
-                                class="btn btn-agrivall-secondary w-100 btn-lg">
+                            <button type="button" id="widget-btn-continuar" class="btn btn-agrivall-secondary w-100 btn-lg">
                                 Continuar Reserva
                             </button>
                         </form>
@@ -178,8 +177,7 @@
             <div class="row align-items-center g-4 flex-column-reverse flex-lg-row">
                 <div class="col-lg-6 col-12">
                     <img src="{{ asset('assets/img/casa/fachada.jpg') }}" class="rounded img-fluid"
-                        style="width: 100%; height: auto; box-shadow: 0 8px 24px rgba(0,0,0,0.15);"
-                        alt="Vista panorámica">
+                        style="width: 100%; height: auto; box-shadow: 0 8px 24px rgba(0,0,0,0.15);" alt="Vista panorámica">
                 </div>
                 <div class="col-lg-6 col-12">
                     <h3 class="h3 fw-bold mb-4" style="color: var(--agrivall-gray-800);">
@@ -225,33 +223,35 @@
 
             @if ($reservasActivas->isEmpty())
                 <div class="alert alert-success" role="alert">
-                    <strong>¡Buenas noticias!</strong> No hay reservas registradas próximamente. Todas las fechas están disponibles.
+                    <strong>¡Buenas noticias!</strong> No hay reservas registradas próximamente. Todas las fechas están
+                    disponibles.
                 </div>
             @else
                 {{-- Vista móvil: cards --}}
                 <div class="d-md-none">
                     @foreach ($reservasActivas as $r)
                         @php
-                            $badge = match($r->estado) {
-                                'PRE-RESERVA'   => 'warning text-dark',
-                                'RESERVADO'     => 'success text-white',
+                            $badge = match ($r->estado) {
+                                'PRE-RESERVA' => 'warning text-dark',
+                                'RESERVADO' => 'success text-white',
                                 'NO_DISPONIBLE' => 'secondary text-white',
-                                default         => 'light text-dark',
+                                default => 'light text-dark',
                             };
-                            $label = match($r->estado) {
-                                'PRE-RESERVA'   => 'PRE-RESERVA',
-                                'RESERVADO'     => 'RESERVADO',
+                            $label = match ($r->estado) {
+                                'PRE-RESERVA' => 'PRE-RESERVA',
+                                'RESERVADO' => 'RESERVADO',
                                 'NO_DISPONIBLE' => 'NO DISPONIBLE',
-                                default         => $r->estado,
+                                default => $r->estado,
                             };
-                            $noches = $r->fecha_fin->diffInDays($r->fecha_inicio);
+                            $noches = $r->fecha_inicio->diffInDays($r->fecha_fin);
                         @endphp
                         <div class="card-agrivall mb-2 p-3 d-flex flex-row justify-content-between align-items-center">
                             <div>
                                 <p class="fw-semibold mb-0 small">
                                     {{ $r->fecha_inicio->format('d M Y') }} — {{ $r->fecha_fin->format('d M Y') }}
                                 </p>
-                                <p class="text-muted mb-0" style="font-size:0.8em;">{{ $noches }} {{ $noches === 1 ? 'noche' : 'noches' }}</p>
+                                <p class="text-muted mb-0" style="font-size:0.8em;">{{ $noches }}
+                                    {{ $noches === 1 ? 'noche' : 'noches' }}</p>
                             </div>
                             <span class="badge bg-{{ $badge }}">{{ $label }}</span>
                         </div>
@@ -272,19 +272,19 @@
                         <tbody>
                             @foreach ($reservasActivas as $r)
                                 @php
-                                    $badge = match($r->estado) {
-                                        'PRE-RESERVA'   => 'warning text-dark',
-                                        'RESERVADO'     => 'success text-white',
+                                    $badge = match ($r->estado) {
+                                        'PRE-RESERVA' => 'warning text-dark',
+                                        'RESERVADO' => 'success text-white',
                                         'NO_DISPONIBLE' => 'secondary text-white',
-                                        default         => 'light text-dark',
+                                        default => 'light text-dark',
                                     };
-                                    $label = match($r->estado) {
-                                        'PRE-RESERVA'   => 'PRE-RESERVA',
-                                        'RESERVADO'     => 'RESERVADO',
+                                    $label = match ($r->estado) {
+                                        'PRE-RESERVA' => 'PRE-RESERVA',
+                                        'RESERVADO' => 'RESERVADO',
                                         'NO_DISPONIBLE' => 'NO DISPONIBLE',
-                                        default         => $r->estado,
+                                        default => $r->estado,
                                     };
-                                    $noches = $r->fecha_fin->diffInDays($r->fecha_inicio);
+                                    $noches = $r->fecha_inicio->diffInDays($r->fecha_fin);
                                 @endphp
                                 <tr>
                                     <td class="fw-medium">{{ $r->fecha_inicio->format('d/m/Y') }}</td>
@@ -325,14 +325,11 @@
 
                 @foreach ($imagenes as $index => $imagen)
                     <div class="col-6 col-md-4">
-                        <div class="overflow-hidden rounded"
-                            style="height: 200px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                            <img src="{{ $imagen }}" alt="Galería {{ $index + 1 }}"
-                                class="w-100 h-100 gallery-image" data-gallery-image
-                                data-image-index="{{ $index }}"
+                        <div class="overflow-hidden rounded" style="height: 200px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                            <img src="{{ $imagen }}" alt="Galería {{ $index + 1 }}" class="w-100 h-100 gallery-image"
+                                data-gallery-image data-image-index="{{ $index }}"
                                 style="object-fit: cover; transition: transform 0.3s ease; cursor: pointer;"
-                                onmouseover="this.style.transform='scale(1.05)'"
-                                onmouseout="this.style.transform='scale(1)'">
+                                onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
                         </div>
                     </div>
                 @endforeach
@@ -346,13 +343,11 @@
             <div class="modal-content">
                 <button type="button" class="btn-close btn-close-white lightbox-close" data-bs-dismiss="modal"
                     aria-label="Cerrar"></button>
-                <button type="button" class="lightbox-nav lightbox-prev" id="lightbox-prev"
-                    aria-label="Imagen anterior">
+                <button type="button" class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Imagen anterior">
                     &#10094;
                 </button>
                 <img id="lightbox-image" class="lightbox-image" src="" alt="Imagen ampliada de la galería">
-                <button type="button" class="lightbox-nav lightbox-next" id="lightbox-next"
-                    aria-label="Imagen siguiente">
+                <button type="button" class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Imagen siguiente">
                     &#10095;
                 </button>
             </div>
@@ -651,7 +646,7 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const widgetFechas = document.getElementById('widget-fechas');
             const widgetPersonas = document.getElementById('widget-personas');
             const widgetPrecioContainer = document.getElementById('widget-precio-container');
@@ -687,7 +682,7 @@
                     dateFormat: 'Y-m-d',
                     locale: 'es',
                     disable: fechasBloqueadas,
-                    onChange: function(selectedDates, dateStr, instance) {
+                    onChange: function (selectedDates, dateStr, instance) {
                         widgetErrorFechas.style.display = 'none';
 
                         if (selectedDates.length === 2) {
@@ -714,7 +709,7 @@
             }
 
             // Event listener para cambio de personas
-            widgetPersonas.addEventListener('change', function() {
+            widgetPersonas.addEventListener('change', function () {
                 if (fechaInicio && fechaFin) {
                     calcularPrecio();
                 }
@@ -737,18 +732,18 @@
 
                 // Llamar al API
                 fetch('/api/reservas/calcular-precio', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                                'content')
-                        },
-                        body: JSON.stringify({
-                            fecha_inicio: fechaInicioStr,
-                            fecha_fin: fechaFinStr,
-                            num_personas: numPersonas
-                        })
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            'content')
+                    },
+                    body: JSON.stringify({
+                        fecha_inicio: fechaInicioStr,
+                        fecha_fin: fechaFinStr,
+                        num_personas: numPersonas
                     })
+                })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
@@ -769,7 +764,7 @@
             }
 
             // Botón continuar reserva
-            widgetBtnContinuar.addEventListener('click', function() {
+            widgetBtnContinuar.addEventListener('click', function () {
                 @if (auth()->check())
                     if (!fechaInicio || !fechaFin) {
                         widgetErrorFechas.textContent = 'Por favor selecciona las fechas de tu estancia';
@@ -788,7 +783,7 @@
                 @else
                     window.location.href = '{{ route('login') }}';
                 @endif
-            });
+                });
 
             // Lightbox de galería
             const galleryLightboxEl = document.getElementById('gallery-lightbox');

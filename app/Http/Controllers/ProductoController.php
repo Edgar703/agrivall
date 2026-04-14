@@ -171,9 +171,13 @@ class ProductoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, Producto $producto)
     {
-        $producto = Producto::with('categoria')->findOrFail($id);
+        if ($request->routeIs('admin.productos.show')) {
+            $this->ensureAdmin();
+        }
+
+        $producto->load('categoria');
 
         return view('productos.show', compact('producto'));
     }

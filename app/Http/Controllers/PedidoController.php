@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\PedidoMail;
+use App\Mail\PedidoCanceladoMail;
 
 class PedidoController extends Controller
 {
@@ -108,7 +109,9 @@ class PedidoController extends Controller
         session()->forget('carrito');
 
         $pedido->load('lineas.producto');
-        Mail::to('edgmormel@gmail.com')->send(new PedidoMail($pedido));
+
+        Mail::to(config('mail.admin_address', config('mail.from.address')))->send(new PedidoMail($pedido, true));
+        Mail::to($pedido->email_cliente)->send(new PedidoMail($pedido));
 
         return redirect()->route('pedidos.show', $pedido)
             ->with('success', '¡Pedido realizado con éxito! ✅');
@@ -140,6 +143,11 @@ class PedidoController extends Controller
         if ($pedido->user_id !== Auth::id()) {
             abort(403);
         }
+
+        $pedido->load('lineas.producto');
+
+        Mail::to(config('mail.admin_address', config('mail.from.address')))->send(new PedidoCanceladoMail($pedido, true));
+        Mail::to($pedido->email_cliente)->send(new PedidoCanceladoMail($pedido));
 
         $pedido->delete();
 

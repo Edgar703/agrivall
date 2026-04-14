@@ -99,12 +99,13 @@
         <div class="content">
             <p>Hola {{ $usuario->name }},</p>
 
-            <p>Hemos recibido tu solicitud de reserva. Está pendiente de confirmación por parte del equipo de Agrivall. Te notificaremos por email cuando sea confirmada.</p>
+            <p>Hemos recibido tu solicitud de reserva. Está pendiente de confirmación por parte del equipo de Agrivall.
+                Te notificaremos por email cuando sea confirmada.</p>
 
             <div class="field">
                 <div class="label">Período de la reserva</div>
                 <div class="value">
-                    {{ \Carbon\Carbon::parse($reserva->fecha_inicio)->format('d/m/Y') }} - 
+                    {{ \Carbon\Carbon::parse($reserva->fecha_inicio)->format('d/m/Y') }} -
                     {{ \Carbon\Carbon::parse($reserva->fecha_fin)->format('d/m/Y') }}
                 </div>
             </div>
@@ -112,7 +113,7 @@
             <div class="field">
                 <div class="label">Número de noches</div>
                 <div class="value">
-                    {{ \Carbon\Carbon::parse($reserva->fecha_fin)->diffInDays(\Carbon\Carbon::parse($reserva->fecha_inicio)) }}
+                    {{ \Carbon\Carbon::parse($reserva->fecha_inicio)->diffInDays(\Carbon\Carbon::parse($reserva->fecha_fin)) }}
                 </div>
             </div>
 
@@ -132,7 +133,10 @@
                 <div class="label">Desglose de precio</div>
                 <div class="field" style="margin-bottom: 5px; padding-bottom: 5px;">
                     <div class="value">
-                        {{ $reserva->precio_por_noche }}€ por noche × {{ \Carbon\Carbon::parse($reserva->fecha_fin)->diffInDays(\Carbon\Carbon::parse($reserva->fecha_inicio)) }} noches × {{ number_format(1 + (($reserva->num_personas - 1) * 0.10), 2) }} (multiplicador por personas)
+                        {{ $reserva->precio_por_noche }}€ por noche ×
+                        {{ \Carbon\Carbon::parse($reserva->fecha_inicio)->diffInDays(\Carbon\Carbon::parse($reserva->fecha_fin)) }}
+                        noches × {{ number_format(1 + (($reserva->num_personas - 1) * 0.10), 2) }} (multiplicador por
+                        personas)
                     </div>
                 </div>
                 <div style="text-align: right; margin-top: 10px;">

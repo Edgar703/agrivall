@@ -95,10 +95,12 @@
                                 </label>
                                 <select name="estado" id="estado"
                                     class="form-control-agrivall @error('estado') is-invalid @enderror" required>
-                                    <option value="pendiente" @selected(old('estado', $reserva->estado) === 'pendiente')>
-                                        Pendiente</option>
-                                    <option value="confirmada" @selected(old('estado', $reserva->estado) === 'confirmada')>
-                                        Confirmada</option>
+                                    <option value="PRE-RESERVA" @selected(old('estado', $reserva->estado) === 'PRE-RESERVA')>
+                                        PRE-RESERVA</option>
+                                    <option value="RESERVADO" @selected(old('estado', $reserva->estado) === 'RESERVADO')>
+                                        RESERVADO</option>
+                                    <option value="NO_DISPONIBLE" @selected(old('estado', $reserva->estado) === 'NO_DISPONIBLE')>
+                                        NO DISPONIBLE</option>
                                     <option value="cancelada" @selected(old('estado', $reserva->estado) === 'cancelada')>
                                         Cancelada</option>
                                 </select>
@@ -137,7 +139,8 @@
                                 <div class="col-6">
                                     <p class="text-muted small mb-1">Multiplicador:</p>
                                     <p class="fw-semibold text-green mb-0 small" id="multiplicador_display">
-                                        {{ number_format(1 + ($reserva->num_personas - 1) * 0.1, 2) }}x</p>
+                                        {{ number_format(1 + ($reserva->num_personas - 1) * 0.1, 2) }}x
+                                    </p>
                                 </div>
                             </div>
                             <hr style="border-color: #e5e7eb; margin: 0.75rem 0;">
@@ -153,7 +156,8 @@
                         <label for="comentario" class="form-label fw-semibold small">
                             Comentarios Adicionales
                         </label>
-                        <textarea name="comentario" id="comentario" class="form-control-agrivall @error('comentario') is-invalid @enderror"
+                        <textarea name="comentario" id="comentario"
+                            class="form-control-agrivall @error('comentario') is-invalid @enderror"
                             rows="4">{{ old('comentario', $reserva->comentario) }}</textarea>
                         @error('comentario')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -171,8 +175,7 @@
 
                     <div class="d-flex flex-column flex-md-row gap-2 mt-3 mt-md-4">
                         <button type="submit" class="btn btn-agrivall-primary">Guardar Cambios</button>
-                        <a href="{{ route('reservas.show', $reserva->id) }}"
-                            class="btn btn-agrivall-outline">Cancelar</a>
+                        <a href="{{ route('reservas.show', $reserva->id) }}" class="btn btn-agrivall-outline">Cancelar</a>
                     </div>
                 </form>
             </div>
@@ -222,7 +225,7 @@
             document.getElementById('precio_total').textContent = '$' + precioTotal.toFixed(2);
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             flatpickr.localize(flatpickr.l10ns.es);
 
             const input = document.getElementById('rango_fechas');
@@ -238,7 +241,7 @@
                 minDate: 'today',
                 disable: disabledRanges,
                 defaultDate: startInput.value && endInput.value ? [startInput.value, endInput.value] : null,
-                onChange: function(selectedDates, dateStr, instance) {
+                onChange: function (selectedDates, dateStr, instance) {
                     errorBox.textContent = '';
 
                     if (selectedDates.length === 2) {

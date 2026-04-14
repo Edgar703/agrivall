@@ -180,12 +180,14 @@
                                             <td class="text-green fw-semibold">
                                                 ${{ number_format($reserva->precio_total, 2) }}</td>
                                             <td>
-                                                @if ($reserva->estado === 'confirmada')
-                                                    <span class="badge bg-success">Confirmada</span>
-                                                @elseif($reserva->estado === 'pendiente')
-                                                    <span class="badge bg-warning text-dark">Pendiente</span>
+                                                @if ($reserva->estado === 'RESERVADO')
+                                                    <span class="badge bg-success">RESERVADO</span>
+                                                @elseif($reserva->estado === 'PRE-RESERVA')
+                                                    <span class="badge bg-warning text-dark">PRE-RESERVA</span>
+                                                @elseif($reserva->estado === 'NO_DISPONIBLE')
+                                                    <span class="badge bg-secondary">NO DISPONIBLE</span>
                                                 @elseif($reserva->estado === 'cancelada')
-                                                    <span class="badge bg-danger">Cancelada</span>
+                                                    <span class="badge bg-danger">CANCELADA</span>
                                                 @endif
                                             </td>
                                             <td class="text-end">
@@ -239,14 +241,14 @@
                                 <div class="col-md-4">
                                     <div class="text-center p-3 bg-light rounded">
                                         <div class="h4 mb-1 text-green fw-bold">
-                                            {{ $reservas->where('estado', 'confirmada')->count() }}</div>
+                                            {{ $reservas->where('estado', 'RESERVADO')->count() }}</div>
                                         <div class="small text-muted">Reservas Confirmadas</div>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="text-center p-3 bg-light rounded">
                                         <div class="h4 mb-1 text-warning fw-bold">
-                                            {{ $reservas->where('estado', 'pendiente')->count() }}</div>
+                                            {{ $reservas->where('estado', 'PRE-RESERVA')->count() }}</div>
                                         <div class="small text-muted">Reservas Pendientes</div>
                                     </div>
                                 </div>

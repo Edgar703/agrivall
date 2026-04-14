@@ -79,18 +79,19 @@
                                         </td>
                                         <td>{{ $reserva->num_personas }}</td>
                                         <td>
-                                            @if ($reserva->estado === 'confirmada')
-                                                <span class="badge bg-success">Confirmada</span>
-                                            @elseif($reserva->estado === 'pendiente')
-                                                <span class="badge bg-warning text-dark">Pendiente</span>
+                                            @if ($reserva->estado === 'RESERVADO')
+                                                <span class="badge bg-success">RESERVADO</span>
+                                            @elseif($reserva->estado === 'PRE-RESERVA')
+                                                <span class="badge bg-warning text-dark">PRE-RESERVA</span>
+                                            @elseif($reserva->estado === 'NO_DISPONIBLE')
+                                                <span class="badge bg-secondary">NO DISPONIBLE</span>
                                             @else
-                                                <span class="badge bg-danger">Cancelada</span>
+                                                <span class="badge bg-danger">CANCELADA</span>
                                             @endif
                                         </td>
                                         <td>${{ number_format($reserva->precio_total, 2) }}</td>
                                         <td>
-                                            <a href="{{ route('reservas.show', $reserva->id) }}"
-                                                class="btn btn-info btn-sm">Ver</a>
+                                            <a href="{{ route('reservas.show', $reserva->id) }}" class="btn btn-info btn-sm">Ver</a>
                                         </td>
                                     </tr>
                                 @endforeach

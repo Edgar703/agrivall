@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Models\Pedido;
+use App\Models\Reserva;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Address;
@@ -10,12 +10,12 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class PedidoMail extends Mailable
+class ReservaCanceladaMail extends Mailable
 {
     use Queueable, SerializesModels;
 
     public function __construct(
-        protected Pedido $pedido,
+        protected Reserva $reserva,
         protected bool $admin = false
     ) {
     }
@@ -23,8 +23,8 @@ class PedidoMail extends Mailable
     public function envelope(): Envelope
     {
         $subject = $this->admin
-            ? 'Nuevo pedido #' . $this->pedido->id . ' - ' . $this->pedido->nombre_cliente
-            : 'Confirmacion de tu pedido #' . $this->pedido->id;
+            ? 'Reserva cancelada #' . $this->reserva->id . ' - ' . $this->reserva->usuario->name
+            : 'Confirmacion de cancelacion de reserva #' . $this->reserva->id;
 
         return new Envelope(
             subject: $subject,
@@ -35,10 +35,10 @@ class PedidoMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.pedido',
+            view: 'emails.reserva-cancelada',
             with: [
-                'pedido' => $this->pedido,
-                'lineas' => $this->pedido->lineas,
+                'reserva' => $this->reserva,
+                'usuario' => $this->reserva->usuario,
                 'admin' => $this->admin,
             ],
         );

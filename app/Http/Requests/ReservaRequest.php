@@ -46,7 +46,7 @@ class ReservaRequest extends FormRequest
             ],
             'estado' => [
                 'nullable',
-                'in:pendiente,confirmada,cancelada',
+                'in:PRE-RESERVA,RESERVADO,NO_DISPONIBLE,cancelada',
             ],
         ];
     }

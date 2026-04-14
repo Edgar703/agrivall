@@ -103,13 +103,11 @@
                                 </a>
                                 @auth
                                     @if (auth()->user()->role === 'admin')
-                                        <a href="{{ route('reservas.edit', $reserva->id) }}"
-                                            class="btn btn-warning btn-sm flex-fill">
+                                        <a href="{{ route('reservas.edit', $reserva->id) }}" class="btn btn-warning btn-sm flex-fill">
                                             Editar
                                         </a>
                                     @elseif(auth()->user()->id === $reserva->user_id && $reserva->estado !== 'cancelada')
-                                        <form action="{{ route('reservas.destroy', $reserva->id) }}" method="POST"
-                                            class="flex-fill">
+                                        <form action="{{ route('reservas.destroy', $reserva->id) }}" method="POST" class="flex-fill">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger btn-sm w-100"
@@ -144,7 +142,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($reservas as $reserva)
+                        @foreach ($reservas as $reserva)
                             <tr class="transition-colors">
                                 <td class="fw-semibold">#{{ $reserva->id }}</td>
                                 @auth
@@ -161,12 +159,14 @@
                                 <td class="text-center">{{ $reserva->num_personas }}</td>
                                 <td class="text-green fw-semibold">${{ number_format($reserva->precio_total, 2) }}</td>
                                 <td>
-                                    @if ($reserva->estado === 'confirmada')
-                                        <span class="badge bg-success">Confirmada</span>
-                                    @elseif($reserva->estado === 'pendiente')
-                                        <span class="badge bg-warning text-dark">Pendiente</span>
+                                    @if ($reserva->estado === 'RESERVADO')
+                                        <span class="badge bg-success">RESERVADO</span>
+                                    @elseif($reserva->estado === 'PRE-RESERVA')
+                                        <span class="badge bg-warning text-dark">PRE-RESERVA</span>
+                                    @elseif($reserva->estado === 'NO_DISPONIBLE')
+                                        <span class="badge bg-secondary">NO DISPONIBLE</span>
                                     @elseif($reserva->estado === 'cancelada')
-                                        <span class="badge bg-danger">Cancelada</span>
+                                        <span class="badge bg-danger">CANCELADA</span>
                                     @endif
                                 </td>
                                 <td class="text-end">
@@ -175,8 +175,7 @@
                                     </a>
                                     @auth
                                         @if (auth()->user()->role === 'admin')
-                                            <a href="{{ route('reservas.edit', $reserva->id) }}"
-                                                class="btn btn-sm btn-warning">
+                                            <a href="{{ route('reservas.edit', $reserva->id) }}" class="btn btn-sm btn-warning">
                                                 Editar
                                             </a>
                                         @elseif(auth()->user()->id === $reserva->user_id && $reserva->estado !== 'cancelada')
@@ -193,7 +192,7 @@
                                     @endauth
                                 </td>
                             </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
             </div>

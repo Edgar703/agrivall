@@ -6,6 +6,7 @@ use App\Models\Reserva;
 use App\Http\Requests\ReservaRequest;
 use App\Mail\ReservaMail;
 use App\Mail\ReservaAdminMail;
+use App\Mail\ReservaCanceladaMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -93,7 +94,7 @@ class ReservaController extends Controller
 
         // Calcular precio automáticamente
         $preciosPorNoche = config('reservas.precio_por_noche', 50);
-        $numNoches = $fechaFin->diffInDays($fechaInicio) ?: 1;
+        $numNoches = $fechaInicio->diffInDays($fechaFin) ?: 1;
         $numPersonas = $request->num_personas;
 
         // Multiplicador: +10% por cada persona adicional
@@ -108,6 +109,7 @@ class ReservaController extends Controller
             'comentario' => $request->comentario,
             'estado' => 'PRE-RESERVA',
             'precio_por_noche' => $preciosPorNoche,
+            'multiplicador_personas' => $multiplicador,
             'precio_total' => $precioTotal,
         ]);
 
@@ -173,7 +175,7 @@ class ReservaController extends Controller
         }
 
         // Recalcular precio si cambian fechas o número de personas
-        $numNoches = $fechaFin->diffInDays($fechaInicio) ?: 1;
+        $numNoches = $fechaInicio->diffInDays($fechaFin) ?: 1;
         $numPersonas = $request->num_personas;
         $preciosPorNoche = $reserva->precio_por_noche ?? config('reservas.precio_por_noche', 50);
 
@@ -187,6 +189,7 @@ class ReservaController extends Controller
             'num_personas' => $numPersonas,
             'comentario' => $request->comentario,
             'estado' => $request->estado ?? $reserva->estado,
+            'multiplicador_personas' => $multiplicador,
             'precio_total' => $precioTotal,
         ]);
 
@@ -207,6 +210,10 @@ class ReservaController extends Controller
 
         // Cambiar estado de reserva a cancelada
         $reserva->update(['estado' => 'cancelada']);
+        $reserva->load('usuario');
+
+        Mail::to(config('mail.admin_address', config('mail.from.address')))->send(new ReservaCanceladaMail($reserva, true));
+        Mail::to($reserva->usuario->email)->send(new ReservaCanceladaMail($reserva));
 
         // Si es admin, redirige al panel de admin, si no a sus reservas
         if (Auth::user()->role === 'admin') {
@@ -214,7 +221,7 @@ class ReservaController extends Controller
                 ->with('success', 'Reserva #' . $reserva->id . ' cancelada. Las fechas quedan disponibles.');
         }
 
-        return redirect()->route('reservas.index')
+        return redirect()->route('profile.edit')
             ->with('success', 'Tu reserva ha sido cancelada.');
     }
 
@@ -287,7 +294,7 @@ class ReservaController extends Controller
         $numPersonas = $request->num_personas;
 
         // Calcular noches
-        $numNoches = $fechaFin->diffInDays($fechaInicio);
+        $numNoches = $fechaInicio->diffInDays($fechaFin);
 
         // Validar mínimo 7 días
         if ($numNoches < 7) {

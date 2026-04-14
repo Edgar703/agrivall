@@ -19,7 +19,7 @@
         }
 
         .header {
-            background-color: #2d5016;
+            background-color: #7f1d1d;
             color: white;
             padding: 20px;
             border-radius: 8px 8px 0 0;
@@ -38,13 +38,9 @@
             border-bottom: 1px solid #eee;
         }
 
-        .field:last-child {
-            border-bottom: none;
-        }
-
         .label {
             font-weight: bold;
-            color: #2d5016;
+            color: #7f1d1d;
             font-size: 0.9em;
             text-transform: uppercase;
             margin-bottom: 5px;
@@ -64,23 +60,6 @@
             border-top: 1px solid #eee;
         }
 
-        .status-badge {
-            display: inline-block;
-            padding: 8px 12px;
-            background-color: #fff3cd;
-            color: #856404;
-            border-radius: 4px;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-
-        .price-section {
-            background-color: #f0f8f5;
-            padding: 15px;
-            border-radius: 4px;
-            margin-top: 15px;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
@@ -95,17 +74,16 @@
         }
 
         th {
-            background-color: #f0f8f5;
-            color: #2d5016;
+            background-color: #f8eeee;
+            color: #7f1d1d;
             font-size: 0.85em;
             text-transform: uppercase;
         }
 
         .total-row td {
             font-weight: bold;
-            font-size: 1.1em;
-            color: #2d5016;
-            border-top: 2px solid #2d5016;
+            color: #7f1d1d;
+            border-top: 2px solid #7f1d1d;
         }
     </style>
 </head>
@@ -113,50 +91,21 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1 style="margin: 0;">{{ $admin ? '🛒 Nuevo Pedido' : '🛒 Pedido confirmado' }}</h1>
+            <h1 style="margin: 0;">Pedido cancelado</h1>
             <p style="margin: 5px 0 0;">Pedido #{{ $pedido->id }}</p>
         </div>
 
         <div class="content">
-            @unless ($admin)
-                <p>Hola {{ $pedido->nombre_cliente }},</p>
-
-                <p>Tu pedido se ha realizado con exito. Hemos recibido la compra y te contactaremos si necesitamos algun
-                    dato adicional.</p>
-            @endunless
-
             @if ($admin)
-                <p>Se ha registrado un nuevo pedido desde la web.</p>
+                <p>El usuario {{ $pedido->nombre_cliente }} ha cancelado su pedido.</p>
+            @else
+                <p>Hola {{ $pedido->nombre_cliente }},</p>
+                <p>Tu pedido se ha cancelado correctamente.</p>
             @endif
-
-            <div class="field">
-                <div class="label">Cliente</div>
-                <div class="value">{{ $pedido->nombre_cliente }}</div>
-            </div>
 
             <div class="field">
                 <div class="label">Email</div>
                 <div class="value">{{ $pedido->email_cliente }}</div>
-            </div>
-
-            <div class="field">
-                <div class="label">Teléfono</div>
-                <div class="value">{{ $pedido->tlf_cliente }}</div>
-            </div>
-
-            <div class="field">
-                <div class="label">Dirección de envío</div>
-                <div class="value">{{ $pedido->direccion_envio }}</div>
-            </div>
-
-            <div class="field">
-                <div class="label">Método de pago</div>
-                <div class="value">{{ $pedido->metodo_pago }}</div>
-            </div>
-
-            <div class="field">
-                <div class="label">Estado</div>
-                <div class="status-badge">{{ $pedido->estado }}</div>
             </div>
 
             <div class="field">
@@ -187,13 +136,8 @@
                 </table>
             </div>
 
-            <div class="field">
-                <div class="label">Fecha del pedido</div>
-                <div class="value">{{ $pedido->fecha_pedido->format('d/m/Y H:i') }}</div>
-            </div>
-
             <div class="footer">
-                <p>Este correo se ha generado automáticamente desde la web de Agrivall.</p>
+                <p>Este correo se ha generado automaticamente desde la web de Agrivall.</p>
             </div>
         </div>
     </div>

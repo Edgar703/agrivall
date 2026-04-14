@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class PedidoMail extends Mailable
+class PedidoCanceladoMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -23,8 +23,8 @@ class PedidoMail extends Mailable
     public function envelope(): Envelope
     {
         $subject = $this->admin
-            ? 'Nuevo pedido #' . $this->pedido->id . ' - ' . $this->pedido->nombre_cliente
-            : 'Confirmacion de tu pedido #' . $this->pedido->id;
+            ? 'Pedido cancelado #' . $this->pedido->id . ' - ' . $this->pedido->nombre_cliente
+            : 'Confirmacion de cancelacion de pedido #' . $this->pedido->id;
 
         return new Envelope(
             subject: $subject,
@@ -35,7 +35,7 @@ class PedidoMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.pedido',
+            view: 'emails.pedido-cancelado',
             with: [
                 'pedido' => $this->pedido,
                 'lineas' => $this->pedido->lineas,

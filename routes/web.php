@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
 
 // Catálogo público de productos
 Route::get('/catalogo', [ProductoController::class, 'catalogo'])->name('productos.catalogo');
+Route::get('/productos/{producto}', [ProductoController::class, 'show'])->name('productos.show');
 
 // ============================================================================
 // BLOG POSTS

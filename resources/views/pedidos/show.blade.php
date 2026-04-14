@@ -6,7 +6,8 @@
     <div class="animate-fadeInUp">
         <nav aria-label="breadcrumb" class="mb-3">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('pedidos.misPedidos') }}" class="text-green">Mis Pedidos</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('pedidos.misPedidos') }}" class="text-green">Mis Pedidos</a>
+                </li>
                 <li class="breadcrumb-item active" aria-current="page">Pedido #{{ $pedido->id }}</li>
             </ol>
         </nav>
@@ -72,8 +73,7 @@
                         @foreach ($pedido->lineas as $linea)
                             <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
                                 <div>
-                                    <span
-                                        class="fw-semibold">{{ $linea->producto?->nombre ?? 'Producto eliminado' }}</span>
+                                    <span class="fw-semibold">{{ $linea->producto?->nombre ?? 'Producto eliminado' }}</span>
                                     <small class="d-block text-muted">
                                         {{ $linea->cantidad }} × {{ number_format($linea->precio_unitario, 2) }} €
                                     </small>
@@ -94,7 +94,7 @@
 
         <div class="mt-4">
             <div class="d-flex gap-2">
-                <a href="{{ route('pedidos.misPedidos') }}" class="btn btn-agrivall-outline">← Volver a Mis Pedidos</a>
+                <a href="{{ route('profile.edit') }}" class="btn btn-agrivall-outline">← Volver a Mi Cuenta</a>
                 <form action="{{ route('pedidos.destroy', $pedido) }}" method="POST"
                     onsubmit="return confirm('\u00bfEliminar pedido #{{ $pedido->id }}? Esta acción no se puede deshacer.')">
                     @csrf
