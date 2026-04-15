@@ -176,7 +176,9 @@
                             <tr>
                                 <td class="fw-semibold">#{{ $pedido->id }}</td>
                                 <td>
-                                    <div class="fw-medium">{{ $pedido->nombre_cliente }}</div>
+                                    <div class="fw-medium"><a
+                                            href="{{ route('admin.usuarios.show', $pedido->user_id) }}">{{ $pedido->nombre_cliente }}</a>
+                                    </div>
                                     <small class="text-muted">{{ $pedido->email_cliente }}</small>
                                 </td>
                                 <td class="text-muted small">{{ $pedido->fecha_pedido->format('d/m/Y H:i') }}</td>

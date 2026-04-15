@@ -1,7 +1,7 @@
 # Contexto de trabajo Agrivall
 
-Fecha: 2026-04-14
-Proyecto: `/home/edgar/agrivall`
+Fecha: 2026-04-15
+Proyecto: `/home/edgar/edgmor.dev/agrivall`
 Produccion: `https://agrivall.edgmor.dev/`
 Despliegue: SFTP a Hostinger
 
@@ -12,6 +12,8 @@ Despliegue: SFTP a Hostinger
 - Si se cambian vistas/rutas/config en produccion, limpiar/cachear Laravel.
 - Comunicacion preferida del usuario: breve.
 - Mantener este archivo actualizado cada vez que haya cambios relevantes, decisiones nuevas, verificaciones, pendientes o pasos de produccion.
+- Instruccion activa: revisar este archivo al empezar trabajo y actualizarlo antes de cerrar si cambia algo relevante.
+- Se trabaja desde 2 PCs distintos: pueden aparecer cambios no hechos por esta sesion. No revertir ni sobrescribir cambios ajenos; revisar y convivir con ellos.
 
 ## Acciones de produccion habituales
 
@@ -269,12 +271,12 @@ No es solo Bootstrap puro.
 Hay:
 
 - Bootstrap CDN en:
-  - `resources/views/layouts/app.blade.php`
-  - `resources/views/layouts/index.blade.php`
+    - `resources/views/layouts/app.blade.php`
+    - `resources/views/layouts/index.blade.php`
 - CSS normal propio:
-  - `resources/css/app.css`
-  - `resources/css/agrivall-styles.css`
-  - `resources/css/textures.css`
+    - `resources/css/app.css`
+    - `resources/css/agrivall-styles.css`
+    - `resources/css/textures.css`
 - Vite activo con `@vite(['resources/css/app.css'])`.
 - Tailwind esta instalado en `package.json`, pero no se vieron directivas `@tailwind` en `resources/css/app.css`.
 

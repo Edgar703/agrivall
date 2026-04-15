@@ -74,7 +74,6 @@
                 <strong>Sin reservas</strong> — No hay reservas registradas aún.
             </div>
         @else
-
             {{-- Vista móvil: Cards --}}
             <div class="d-md-none">
                 @foreach ($reservas as $reserva)
@@ -113,7 +112,8 @@
 
                             <div class="mb-3">
                                 <p class="text-muted small mb-0">Precio Total:</p>
-                                <p class="text-green fw-bold mb-0 fs-5">{{ number_format($reserva->precio_total, 2) }} €</p>
+                                <p class="text-green fw-bold mb-0 fs-5">{{ number_format($reserva->precio_total, 2) }} €
+                                </p>
                             </div>
 
                             @if ($reserva->comentario)
@@ -148,35 +148,37 @@
                     </thead>
                     <tbody>
                         @forelse($reservas as $reserva)
-                                <tr class="transition-colors">
-                                    <td class="fw-semibold">#{{ $reserva->id }}</td>
-                                    <td>
-                                        <div class="fw-medium"><a
-                                                href="{{ route('admin.usuarios.show', $reserva->usuario->id) }}">{{ $reserva->usuario->name }}</a>
-                                        </div>
-                                        <small class="text-muted">{{ $reserva->usuario->email }}</small>
-                                    </td>
-                                    <td>
-                                        <span class="fw-medium">
-                                            {{ optional($reserva->fecha_inicio)->format('d/m/Y') }} —
-                                            {{ optional($reserva->fecha_fin)->format('d/m/Y') }}
-                                        </span>
-                                    </td>
-                                    <td class="text-center">
-                                        {{ optional($reserva->fecha_inicio) && optional($reserva->fecha_fin)
-                            ? $reserva->fecha_inicio->diffInDays($reserva->fecha_fin)
-                            : '—' }}
-                                    </td>
-                                    <td class="text-center">{{ $reserva->num_personas }}</td>
-                                    <td class="text-green fw-semibold">{{ number_format($reserva->precio_total, 2) }} €</td>
-                                    <td>
-                                        @include('admin.reservas._estado_badge', ['estado' => $reserva->estado])
-                                    </td>
-                                    <td class="text-muted small">{{ $reserva->created_at->format('d/m/Y') }}</td>
-                                    <td class="text-end">
-                                        @include('admin.reservas._acciones_estado', ['reserva' => $reserva])
-                                    </td>
-                                </tr>
+                            <tr class="transition-colors">
+                                <td class="fw-semibold">#{{ $reserva->id }}</td>
+                                <td>
+                                    <div class="fw-medium"><a
+                                            href="{{ route('admin.usuarios.show', $reserva->usuario->id) }}">{{ $reserva->usuario->name }}</a>
+                                    </div>
+                                    <small class="text-muted">{{ $reserva->usuario->email }}</small>
+                                </td>
+                                <td>
+                                    <span class="fw-medium">
+                                        {{ optional($reserva->fecha_inicio)->format('d/m/Y') }} —
+                                        {{ optional($reserva->fecha_fin)->format('d/m/Y') }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    {{ optional($reserva->fecha_inicio) && optional($reserva->fecha_fin)
+                                        ? $reserva->fecha_inicio->diffInDays($reserva->fecha_fin)
+                                        : '—' }}
+                                </td>
+                                <td class="text-center">{{ $reserva->num_personas }}</td>
+                                <td class="text-green fw-semibold">{{ number_format($reserva->precio_total, 2) }} €</td>
+                                <td>
+                                    @include('admin.reservas._estado_badge', [
+                                        'estado' => $reserva->estado,
+                                    ])
+                                </td>
+                                <td class="text-muted small">{{ $reserva->created_at->format('d/m/Y') }}</td>
+                                <td class="text-end">
+                                    @include('admin.reservas._acciones_estado', ['reserva' => $reserva])
+                                </td>
+                            </tr>
                         @empty
                             <tr>
                                 <td colspan="9" class="text-center text-muted py-4">

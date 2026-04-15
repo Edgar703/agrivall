@@ -128,7 +128,9 @@
                         @foreach ($usuarios as $usuario)
                             <tr>
                                 <td class="fw-semibold">#{{ $usuario->id }}</td>
-                                <td>{{ $usuario->name }}</td>
+                                <td><a href="{{ route('admin.usuarios.show', $usuario->id) }}">{{ $usuario->name }}</a>
+                                </td>
+
                                 <td>{{ $usuario->email }}</td>
                                 <td>
                                     @if ($usuario->role === 'admin')
