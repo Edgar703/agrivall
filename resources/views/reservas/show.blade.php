@@ -10,7 +10,7 @@
                 </h1>
                 <p class="text-muted mb-0 small">Detalles de tu reserva</p>
             </div>
-            <div class="d-flex flex-column flex-md-row gap-2 w-100 w-md-auto">
+            {{-- <div class="d-flex flex-column flex-md-row gap-2 w-100 w-md-auto">
                 @auth
                     @if (auth()->user()->id === $reserva->user_id && $reserva->estado !== 'cancelada')
                         <form action="{{ route('reservas.destroy', $reserva->id) }}" method="POST" class="w-100 w-md-auto">
@@ -26,7 +26,7 @@
                         Volver a Reservas
                     </a>
                 @endauth
-            </div>
+            </div> --}}
         </div>
 
         @if (session('success'))
@@ -221,7 +221,8 @@
                             <div class="me-2" style="font-size: 1.25rem;">✅</div>
                             <div>
                                 <strong class="d-block mb-1 small" style="color: #065f46;">RESERVADO</strong>
-                                <p class="mb-0" style="color: #047857; line-height: 1.5; font-size: 0.85rem;">Tu reserva está confirmada. Te hemos enviado un email con los detalles.</p>
+                                <p class="mb-0" style="color: #047857; line-height: 1.5; font-size: 0.85rem;">Tu reserva
+                                    está confirmada. Te hemos enviado un email con los detalles.</p>
                             </div>
                         </div>
                     </div>
@@ -232,7 +233,8 @@
                             <div class="me-2" style="font-size: 1.25rem;">🕐</div>
                             <div>
                                 <strong class="d-block mb-1 small" style="color: #92400e;">PRE-RESERVA</strong>
-                                <p class="mb-0" style="color: #b45309; line-height: 1.5; font-size: 0.85rem;">Tu solicitud está pendiente de confirmación. Te notificaremos por email.</p>
+                                <p class="mb-0" style="color: #b45309; line-height: 1.5; font-size: 0.85rem;">Tu
+                                    solicitud está pendiente de confirmación. Te notificaremos por email.</p>
                             </div>
                         </div>
                     </div>
@@ -243,7 +245,8 @@
                             <div class="me-2" style="font-size: 1.25rem;">🚫</div>
                             <div>
                                 <strong class="d-block mb-1 small">NO DISPONIBLE</strong>
-                                <p class="mb-0" style="line-height: 1.5; font-size: 0.85rem;">Este período no está disponible para reservas.</p>
+                                <p class="mb-0" style="line-height: 1.5; font-size: 0.85rem;">Este período no está
+                                    disponible para reservas.</p>
                             </div>
                         </div>
                     </div>
@@ -254,7 +257,8 @@
                             <div class="me-2" style="font-size: 1.25rem;">✗</div>
                             <div>
                                 <strong class="d-block mb-1 small" style="color: #991b1b;">CANCELADA</strong>
-                                <p class="mb-0" style="color: #dc2626; line-height: 1.5; font-size: 0.85rem;">Esta reserva ha sido cancelada.</p>
+                                <p class="mb-0" style="color: #dc2626; line-height: 1.5; font-size: 0.85rem;">Esta
+                                    reserva ha sido cancelada.</p>
                             </div>
                         </div>
                     </div>

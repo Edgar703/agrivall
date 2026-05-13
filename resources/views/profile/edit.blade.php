@@ -4,8 +4,8 @@
 
 @section('contingut')
     <div class="animate-fadeInUp">
-        <div class="mb-4">
-            <h1 class="heading-2 text-green mb-1">Mi Perfil</h1>
+        <div class="mb-3 mb-md-4">
+            <h1 class="heading-2 text-green mb-1 fs-3 fs-md-2">Mi Perfil</h1>
             <p class="text-muted">Gestiona tu información personal y tus reservas</p>
         </div>
 
@@ -30,11 +30,11 @@
             </div>
         @endif
 
-        <div class="row g-4">
+        <div class="row g-3 g-lg-4">
             {{-- Información Personal --}}
-            <div class="col-lg-6">
+            <div class="col-12 col-xl-6">
                 <div class="card-agrivall h-100">
-                    <div class="card-body p-4">
+                    <div class="card-body p-3 p-md-4">
                         <h2 class="h5 fw-bold mb-3 text-green">Información Personal</h2>
                         <p class="text-muted small mb-4">Actualiza tu nombre y correo electrónico</p>
 
@@ -69,9 +69,9 @@
             </div>
 
             {{-- Cambiar Contraseña --}}
-            <div class="col-lg-6">
+            <div class="col-12 col-xl-6">
                 <div class="card-agrivall h-100">
-                    <div class="card-body p-4">
+                    <div class="card-body p-3 p-md-4">
                         <h2 class="h5 fw-bold mb-3 text-green">Cambiar Contraseña</h2>
                         <p class="text-muted small mb-4">Asegúrate de usar una contraseña segura</p>
 
@@ -120,15 +120,17 @@
         </div>
 
         {{-- Mis Reservas --}}
-        <div class="mt-4">
+        <div class="mt-3 mt-md-4">
             <div class="card-agrivall">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="card-body p-3 p-md-4">
+                    <div
+                        class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 mb-3 mb-md-4">
                         <div>
                             <h2 class="h5 fw-bold mb-1 text-green">Mis Reservas</h2>
                             <p class="text-muted small mb-0">Gestiona tus reservas de la casa rural</p>
                         </div>
-                        <a href="{{ route('reservas.create') }}" class="btn btn-agrivall-primary">
+                        <a href="{{ route('reservas.create') }}"
+                            class="btn btn-agrivall-primary align-self-stretch align-self-sm-auto">
                             + Nueva Reserva
                         </a>
                     </div>
@@ -149,7 +151,82 @@
                             </a>
                         </div>
                     @else
-                        <div class="table-responsive">
+                        {{-- Vista móvil: Cards --}}
+                        <div class="d-md-none">
+                            @foreach ($reservas as $reserva)
+                                <div class="card-agrivall mb-3">
+                                    <div class="card-body p-3">
+                                        <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
+                                            <h3 class="h6 fw-bold text-green mb-0">Reserva #{{ $reserva->id }}</h3>
+
+                                            @if ($reserva->estado === 'RESERVADO')
+                                                <span class="badge bg-success">RESERVADO</span>
+                                            @elseif($reserva->estado === 'PRE-RESERVA')
+                                                <span class="badge bg-warning text-dark">PRE-RESERVA</span>
+                                            @elseif($reserva->estado === 'NO_DISPONIBLE')
+                                                <span class="badge bg-secondary">NO DISPONIBLE</span>
+                                            @elseif($reserva->estado === 'cancelada')
+                                                <span class="badge bg-danger">CANCELADA</span>
+                                            @endif
+                                        </div>
+
+                                        <div class="row g-3 mb-3">
+                                            <div class="col-12">
+                                                <p class="text-muted small mb-0">Fechas</p>
+                                                <p class="fw-semibold mb-0">
+                                                    {{ $reserva->fecha_inicio->format('d/m/Y') }}
+                                                    <span class="text-muted fw-normal">hasta</span>
+                                                    {{ $reserva->fecha_fin->format('d/m/Y') }}
+                                                </p>
+                                            </div>
+                                            <div class="col-6">
+                                                <p class="text-muted small mb-0">Personas</p>
+                                                <p class="fw-semibold mb-0">
+                                                    {{ $reserva->num_personas }}
+                                                    {{ $reserva->num_personas > 1 ? 'personas' : 'persona' }}
+                                                </p>
+                                            </div>
+                                            <div class="col-6">
+                                                <p class="text-muted small mb-0">Precio total</p>
+                                                <p class="text-green fw-bold mb-0">
+                                                    ${{ number_format($reserva->precio_total, 2) }}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-grid gap-2">
+                                            <a href="{{ route('reservas.show', $reserva->id) }}"
+                                                class="btn btn-outline-secondary btn-sm">
+                                                Ver detalles
+                                            </a>
+
+                                            @if ($reserva->estado !== 'cancelada')
+                                                <div class="d-flex gap-2">
+                                                    <a href="{{ route('reservas.edit', $reserva->id) }}"
+                                                        class="btn btn-outline-primary btn-sm flex-fill">
+                                                        Editar
+                                                    </a>
+
+                                                    <form action="{{ route('reservas.destroy', $reserva->id) }}"
+                                                        method="POST" class="flex-fill"
+                                                        onsubmit="return confirm('¿Estás seguro de que deseas cancelar esta reserva?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit"
+                                                            class="btn btn-outline-danger btn-sm w-100">
+                                                            Cancelar
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        {{-- Vista tablet/desktop: Tabla --}}
+                        <div class="table-responsive d-none d-md-block">
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
@@ -238,21 +315,21 @@
 
                         <div class="mt-3 pt-3 border-top">
                             <div class="row g-3">
-                                <div class="col-md-4">
+                                <div class="col-12 col-sm-6 col-lg-4">
                                     <div class="text-center p-3 bg-light rounded">
                                         <div class="h4 mb-1 text-green fw-bold">
                                             {{ $reservas->where('estado', 'RESERVADO')->count() }}</div>
                                         <div class="small text-muted">Reservas Confirmadas</div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-12 col-sm-6 col-lg-4">
                                     <div class="text-center p-3 bg-light rounded">
                                         <div class="h4 mb-1 text-warning fw-bold">
                                             {{ $reservas->where('estado', 'PRE-RESERVA')->count() }}</div>
                                         <div class="small text-muted">Reservas Pendientes</div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-12 col-lg-4">
                                     <div class="text-center p-3 bg-light rounded">
                                         <div class="h4 mb-1 text-green fw-bold">
                                             ${{ number_format($reservas->where('estado', '!=', 'cancelada')->sum('precio_total'), 2) }}
@@ -268,15 +345,17 @@
         </div>
 
         {{-- Mis Pedidos --}}
-        <div class="mt-4">
+        <div class="mt-3 mt-md-4">
             <div class="card-agrivall">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="card-body p-3 p-md-4">
+                    <div
+                        class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 mb-3 mb-md-4">
                         <div>
                             <h2 class="h5 fw-bold mb-1 text-green">Mis Pedidos</h2>
                             <p class="text-muted small mb-0">Historial de tus compras</p>
                         </div>
-                        <a href="{{ route('productos.catalogo') }}" class="btn btn-agrivall-primary">
+                        <a href="{{ route('productos.catalogo') }}"
+                            class="btn btn-agrivall-primary align-self-stretch align-self-sm-auto">
                             Ir al Catálogo
                         </a>
                     </div>
@@ -302,7 +381,7 @@
                             @foreach ($pedidos as $pedido)
                                 <div class="card-agrivall mb-3">
                                     <div class="card-body p-3">
-                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
                                             <div>
                                                 <h6 class="fw-bold text-green mb-1">Pedido #{{ $pedido->id }}</h6>
                                                 <small
@@ -319,7 +398,8 @@
                                             @endphp
                                             <span class="badge {{ $badgeClass }}">{{ $pedido->estado }}</span>
                                         </div>
-                                        <div class="d-flex justify-content-between align-items-center">
+                                        <div
+                                            class="d-flex flex-column flex-sm-row justify-content-between align-items-stretch align-items-sm-center gap-2">
                                             <span
                                                 class="fw-bold text-green fs-5">{{ number_format($pedido->precio_pedido, 2) }}
                                                 €</span>
@@ -384,20 +464,20 @@
 
                         <div class="mt-3 pt-3 border-top">
                             <div class="row g-3">
-                                <div class="col-md-4">
+                                <div class="col-12 col-sm-6 col-lg-4">
                                     <div class="text-center p-3 bg-light rounded">
                                         <div class="h4 mb-1 text-green fw-bold">{{ $pedidos->count() }}</div>
                                         <div class="small text-muted">Total Pedidos</div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-12 col-sm-6 col-lg-4">
                                     <div class="text-center p-3 bg-light rounded">
                                         <div class="h4 mb-1 text-warning fw-bold">
                                             {{ $pedidos->where('estado', 'Iniciado')->count() }}</div>
                                         <div class="small text-muted">Pedidos Iniciados</div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-12 col-lg-4">
                                     <div class="text-center p-3 bg-light rounded">
                                         <div class="h4 mb-1 text-green fw-bold">
                                             {{ number_format($pedidos->sum('precio_pedido'), 2) }}
@@ -413,17 +493,19 @@
         </div>
 
         {{-- Zona de Peligro (Opcional) --}}
-        <div class="mt-4">
+        <div class="mt-3 mt-md-4">
             <div class="card border-danger">
-                <div class="card-body p-4">
+                <div class="card-body p-3 p-md-4">
                     <h2 class="h6 fw-bold mb-2 text-danger">Zona de Peligro</h2>
                     <p class="text-muted small mb-3">Una vez eliminada tu cuenta, todos los datos se perderán
                         permanentemente.</p>
 
-                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal"
-                        data-bs-target="#deleteAccountModal">
-                        Eliminar Cuenta
-                    </button>
+                    <div class="d-grid d-sm-inline-flex">
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal"
+                            data-bs-target="#deleteAccountModal">
+                            Eliminar Cuenta
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
