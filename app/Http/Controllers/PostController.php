@@ -115,9 +115,7 @@ class PostController extends Controller
     public function destroy(string $id)
     {
         $post = Post::findOrFail($id);
-        if (Auth::id() !== $post->user_id && Auth::user()->role !== 'admin') {
-            abort(403);
-        }
+        abort_unless(Auth::user()?->role === 'admin', 403);
 
         $post->delete();
         return redirect()->route('posts.index')->with('success', 'Post eliminado');

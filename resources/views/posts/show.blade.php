@@ -12,11 +12,26 @@
                 <h1 class="h2 fw-bold mb-0" style="color: #715122;">{{ $post->titulo }}</h1>
             </div>
             @auth
-                @if (auth()->user()->id === $post->user_id)
-                    <a href="{{ route('posts.edit', $post) }}" class="btn btn-sm" style="background-color: #715122; color: white;">
-                        Editar
-                    </a>
-                @endif
+                <div class="d-flex gap-2">
+                    @if (auth()->user()->id === $post->user_id || auth()->user()->role === 'admin')
+                        <a href="{{ route('posts.edit', $post) }}" class="btn btn-post-edit">
+                            <i class="bi bi-pencil-square" aria-hidden="true"></i>
+                            Editar
+                        </a>
+                    @endif
+
+                    @if (auth()->user()->role === 'admin')
+                        <form action="{{ route('posts.destroy', $post) }}" method="POST"
+                            onsubmit="return confirm('¿Estás seguro de que deseas eliminar este post?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-post-delete">
+                                <i class="bi bi-trash3" aria-hidden="true"></i>
+                                Eliminar
+                            </button>
+                        </form>
+                    @endif
+                </div>
             @endauth
         </div>
 
@@ -28,7 +43,7 @@
                     <span class="badge bg-light text-dark">Autor: {{ $post->usuario->name ?? 'Autor desconocido' }}</span>
                 </div>
 
-                @if($post->imagen)
+                @if ($post->imagen)
                     <img src="{{ asset('storage/' . $post->imagen) }}" alt="{{ $post->titulo }}"
                         class="img-fluid rounded-4 mb-4" style="width: 100%; max-height: 420px; object-fit: cover;">
                 @endif
@@ -44,9 +59,9 @@
             <h3 class="fw-bold mb-4" style="color: #715122;">Comentarios</h3>
 
             <!-- Mostrar comentarios existentes -->
-            @if($post->comentarios->count() > 0)
+            @if ($post->comentarios->count() > 0)
                 <div class="mb-4">
-                    @foreach($post->comentarios as $comentario)
+                    @foreach ($post->comentarios as $comentario)
                         <div class="card border-0 shadow-sm mb-3" style="border-radius: 12px;">
                             <div class="card-body p-3">
                                 <div class="d-flex justify-content-between align-items-start mb-2">
@@ -56,12 +71,12 @@
                                         </p>
                                     </div>
                                     @auth
-                                        @if(auth()->user()->id === $comentario->user_id || auth()->user()->role === 'admin')
+                                        @if (auth()->user()->id === $comentario->user_id || auth()->user()->role === 'admin')
                                             <form action="{{ route('comments.destroy', $comentario) }}" method="POST"
                                                 style="display: inline;">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                <button type="submit" class="btn btn-sm btn btn-post-delete"
                                                     onclick="return confirm('¿Estás seguro de que deseas eliminar este comentario?')">
                                                     Eliminar
                                                 </button>
@@ -89,8 +104,7 @@
                         <form action="{{ route('comments.store', $post) }}" method="POST">
                             @csrf
                             <div class="mb-3">
-                                <textarea class="form-control" name="contenido" rows="4"
-                                    placeholder="Escribe tu comentario aquí..."
+                                <textarea class="form-control" name="contenido" rows="4" placeholder="Escribe tu comentario aquí..."
                                     style="border-radius: 8px; border: 1px solid #d4af8f;" required></textarea>
                                 @error('contenido')
                                     <div class="text-danger small mt-1">{{ $message }}</div>

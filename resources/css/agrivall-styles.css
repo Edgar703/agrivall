@@ -124,6 +124,55 @@
     color: white;
 }
 
+.btn-post-delete,
+.btn-post-edit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    font-family: var(--font-heading);
+    font-weight: var(--font-semibold);
+    font-size: var(--font-sm);
+    line-height: 1.5;
+    color: #8f1f1f;
+    background: #fff7f2;
+    border: 2px solid rgba(143, 31, 31, 0.35);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-xs);
+    transition: all var(--transition-fast);
+}
+
+.btn-post-edit {
+    color: var(--agrivall-green-primary);
+    background: #f7fbf3;
+    border-color: rgba(45, 106, 79, 0.35);
+}
+
+.btn-post-edit:hover,
+.btn-post-edit:focus {
+    color: white;
+    background: var(--gradient-primary);
+    border-color: var(--agrivall-green-primary);
+    box-shadow: var(--shadow-soft);
+    transform: translateY(-2px);
+}
+
+.btn-post-delete:hover,
+.btn-post-delete:focus {
+    color: white;
+    background: linear-gradient(135deg, #8f1f1f 0%, var(--agrivall-danger) 100%);
+    border-color: #8f1f1f;
+    box-shadow: var(--shadow-soft);
+    transform: translateY(-2px);
+}
+
+.btn-post-delete:active,
+.btn-post-edit:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+}
+
 /* Tamaños de botones */
 .btn-sm {
     padding: 0.5rem 1rem;
@@ -718,4 +767,15 @@
         padding: 0.625rem 1.25rem;
         font-size: var(--font-sm);
     }
+}
+
+.categoria-form-card {
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast);
+}
+
+.categoria-form-card--active {
+    border-color: var(--agrivall-green-primary) !important;
+    box-shadow: 0 0 0 0.2rem rgba(45, 90, 39, 0.14), var(--shadow-soft);
+    transform: translateY(-2px);
+    background-color: var(--agrivall-cream-light, #fffdf7) !important;
 }

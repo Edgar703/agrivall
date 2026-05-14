@@ -7,9 +7,11 @@ Despliegue: SFTP a Hostinger
 
 ## Preferencias de trabajo
 
-- Recordar siempre al finalizar si hay acciones necesarias en produccion.
+- IMPORTANTE: se trabaja pensando en PRODUCCION. El proyecto se sube a Hostinger por FTP/SFTP, no con `git pull` en el servidor.
+- Recordar siempre al finalizar si hay acciones necesarias en produccion y decir explicitamente si hace falta ejecutar comandos por SSH.
 - Produccion se actualiza por SFTP, no por git pull.
 - Si se cambian vistas/rutas/config en produccion, limpiar/cachear Laravel.
+- Si se cambia CSS/JS de `resources/`, ejecutar/build localmente y subir tambien `public/build/manifest.json` y los assets generados en `public/build/assets/`.
 - Comunicacion preferida del usuario: breve.
 - Mantener este archivo actualizado cada vez que haya cambios relevantes, decisiones nuevas, verificaciones, pendientes o pasos de produccion.
 - Instruccion activa: revisar este archivo al empezar trabajo y actualizarlo antes de cerrar si cambia algo relevante.

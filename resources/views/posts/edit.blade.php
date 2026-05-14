@@ -6,15 +6,18 @@
 
     <div class="d-flex justify-content-start mt-2 gap-3" style="bottom: 20px;">
         <h1 class="h3 mb-3" style="color: #715122;">Editar post</h1>
-        <form action="{{ route('posts.destroy', $post) }}" method="POST"
-            onsubmit="return confirm('¿Estás seguro de que deseas eliminar este post?');">
-            @csrf
-            @method('DELETE')
+        @if (auth()->user()->role === 'admin')
+            <form action="{{ route('posts.destroy', $post) }}" method="POST"
+                onsubmit="return confirm('¿Estás seguro de que deseas eliminar este post?');">
+                @csrf
+                @method('DELETE')
 
-            <button type="submit" class="btn" style="background-color: #715122; color: white;">
-                Eliminar
-            </button>
-        </form>
+                <button type="submit" class="btn btn-post-delete">
+                    <i class="bi bi-trash3" aria-hidden="true"></i>
+                    Eliminar
+                </button>
+            </form>
+        @endif
     </div>
 
     <form action="{{ route('posts.update', $post) }}" method="POST">

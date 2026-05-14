@@ -42,8 +42,11 @@ Route::get('/productos/{producto}', [ProductoController::class, 'show'])->name('
 // BLOG POSTS
 // ============================================================================
 
-Route::resource('posts', PostController::class);
 Route::get('/posts/index2', [PostController::class, 'index2'])->name('posts.index2');
+Route::resource('posts', PostController::class)->only(['index', 'show']);
+Route::middleware('auth')->group(function () {
+    Route::resource('posts', PostController::class)->except(['index', 'show']);
+});
 
 // ============================================================================
 // COMENTARIOS
@@ -107,6 +110,7 @@ Route::middleware('auth')->group(function () {
         // Gestión de productos
         Route::resource('productos', ProductoController::class);
         Route::post('/categorias', [ProductoController::class, 'storeCategoria'])->name('categorias.store');
+        Route::patch('/categorias/{categoria}', [ProductoController::class, 'updateCategoria'])->name('categorias.update');
         Route::delete('/categorias/{categoria}', [ProductoController::class, 'destroyCategoria'])->name('categorias.destroy');
     });
 });

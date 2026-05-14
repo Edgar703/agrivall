@@ -20,7 +20,7 @@ class ProductoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $this->ensureAdmin();
 
@@ -30,8 +30,13 @@ class ProductoController extends Controller
             ->get();
 
         $categorias = Categoria::orderBy('nombre')->get();
+        $categoriaEditando = null;
 
-        return view('admin.productos.index', compact('productos', 'categorias'));
+        if ($request->filled('edit_categoria')) {
+            $categoriaEditando = Categoria::find($request->input('edit_categoria'));
+        }
+
+        return view('admin.productos.index', compact('productos', 'categorias', 'categoriaEditando'));
     }
 
     public function catalogo(Request $request)
@@ -96,6 +101,23 @@ class ProductoController extends Controller
         return redirect()
             ->route('admin.productos.index')
             ->with('success', 'Categoría creada correctamente.✅');
+    }
+
+
+    public function updateCategoria(Request $request, Categoria $categoria)
+    {
+        $this->ensureAdmin();
+
+        $validated = $request->validate([
+            'nombre' => ['required', 'string', 'max:255', Rule::unique('categorias', 'nombre')->ignore($categoria->id)],
+            'descripcion' => 'nullable|string',
+        ]);
+
+        $categoria->update($validated);
+
+        return redirect()
+            ->route('admin.productos.index')
+            ->with('success', 'Categoría actualizada correctamente.✅');
     }
 
     public function destroyCategoria(Categoria $categoria)
