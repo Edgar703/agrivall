@@ -3,9 +3,6 @@
  * Sistema de diseño moderno con inspiración natural
  */
 
-/* Sistema grid mobile-first sin Bootstrap */
-@import "./grid-system.css";
-
 /* Importar sistema de diseño completo */
 @import "./agrivall-styles.css";
 

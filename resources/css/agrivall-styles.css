@@ -211,6 +211,137 @@
     transform: scale(1.08);
 }
 
+/* Modal de cantidad del carrito */
+.cart-quantity-modal__content {
+    border: none;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(27, 67, 50, 0.24);
+}
+
+.cart-quantity-modal__header {
+    color: white;
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(255, 255, 255, 0.22),
+            transparent 36%
+        ),
+        var(--gradient-primary);
+    border-bottom: none;
+    padding: 1.25rem 1.5rem;
+}
+
+.cart-quantity-modal__eyebrow {
+    display: block;
+    margin-bottom: 0.2rem;
+    font-size: var(--font-xs);
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.85;
+}
+
+.cart-quantity-modal__product {
+    padding: 1rem;
+    text-align: center;
+    background: linear-gradient(
+        135deg,
+        rgba(149, 213, 178, 0.22),
+        rgba(255, 255, 255, 0.95)
+    );
+    border: 1px solid rgba(45, 106, 79, 0.18);
+    border-radius: var(--radius-md);
+}
+
+.cart-quantity-modal__product-label {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--agrivall-earth-primary);
+    font-size: var(--font-xs);
+    font-weight: var(--font-bold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.cart-quantity-modal__name {
+    color: var(--agrivall-gray-900);
+    font-family: var(--font-heading);
+    font-weight: var(--font-bold);
+}
+
+.cart-quantity-modal__stepper {
+    display: grid !important;
+    grid-template-columns: 48px minmax(0, 1fr) 48px;
+    gap: 0.75rem;
+    align-items: center;
+    width: 100%;
+}
+
+.cart-quantity-modal__stepper-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    color: var(--agrivall-green-primary);
+    background: rgba(149, 213, 178, 0.22);
+    border: 2px solid var(--agrivall-green-pale);
+    border-radius: var(--radius-md);
+    font-size: 1.35rem;
+    font-weight: var(--font-bold);
+    line-height: 1;
+    transition: all var(--transition-fast);
+}
+
+.cart-quantity-modal__stepper-btn:hover {
+    color: white;
+    background: var(--agrivall-green-primary);
+    border-color: var(--agrivall-green-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.cart-quantity-modal__input {
+    height: 48px;
+    min-width: 0;
+    text-align: center;
+    font-size: var(--font-lg);
+    font-weight: var(--font-bold);
+}
+
+.cart-quantity-modal__input::-webkit-outer-spin-button,
+.cart-quantity-modal__input::-webkit-inner-spin-button {
+    margin: 0;
+    -webkit-appearance: none;
+}
+
+.cart-quantity-modal__input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.cart-quantity-modal__footer {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap;
+    justify-content: stretch;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem 1.5rem;
+    background: white;
+    border-top: none;
+}
+
+.cart-quantity-modal__footer .btn {
+    flex: 1 1 0;
+    margin: 0;
+    width: 100%;
+}
+
+.min-w-0 {
+    min-width: 0;
+}
+
 /* ========== FORMULARIOS ========== */
 
 .form-control-agrivall {

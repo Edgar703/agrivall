@@ -28,7 +28,7 @@
                     </div>
                 </div>
 
-                {{-- Widget de Reserva --}}
+                {{-- Reserva --}}
                 <div class="col-lg-6 col-12 d-flex justify-content-center align-items-center" style="padding: 2rem;">
                     <div class="card-agrivall" style="width: 100%; max-width: 380px; padding: 2rem; background: white;">
                         <h3 class="h5 fw-bold mb-4" style="color: var(--agrivall-gray-800);">Reservar Casa Rural</h3>
@@ -77,7 +77,8 @@
                                 </div>
                             </div>
 
-                            <button type="button" id="widget-btn-continuar" class="btn btn-agrivall-secondary w-100 btn-lg">
+                            <button type="button" id="widget-btn-continuar"
+                                class="btn btn-agrivall-secondary w-100 btn-lg">
                                 Continuar Reserva
                             </button>
                         </form>
@@ -97,7 +98,7 @@
             </p>
 
             <div class="row g-4">
-                {{-- Galería de imágenes (oculta en móvil con CSS) --}}
+                {{-- Galería de imágenes --}}
                 <div class="col-lg-5 d-none d-lg-block">
                     <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; grid-template-rows: auto auto;">
                         <img src="{{ asset('assets/img/casa/cama.jpg') }}" class="rounded"
@@ -177,7 +178,8 @@
             <div class="row align-items-center g-4 flex-column-reverse flex-lg-row">
                 <div class="col-lg-6 col-12">
                     <img src="{{ asset('assets/img/casa/fachada.jpg') }}" class="rounded img-fluid"
-                        style="width: 100%; height: auto; box-shadow: 0 8px 24px rgba(0,0,0,0.15);" alt="Vista panorámica">
+                        style="width: 100%; height: auto; box-shadow: 0 8px 24px rgba(0,0,0,0.15);"
+                        alt="Vista panorámica">
                 </div>
                 <div class="col-lg-6 col-12">
                     <h3 class="h3 fw-bold mb-4" style="color: var(--agrivall-gray-800);">
@@ -205,108 +207,6 @@
         </div>
     </section>
 
-    {{-- SECCIÓN DE DISPONIBILIDAD --}}
-    <section id="disponibilidad" class="py-5">
-        <div class="container">
-            <h2 class="h3 fw-bold mb-2" style="color: var(--agrivall-gray-800);">Disponibilidad</h2>
-            <p class="text-muted mb-4" style="max-width: 580px;">
-                Consulta los períodos ocupados o pendientes antes de realizar tu solicitud de reserva.
-                Las fechas sin reserva están disponibles.
-            </p>
-
-            {{-- Leyenda --}}
-            <div class="d-flex flex-wrap gap-3 mb-4">
-                <span class="badge bg-warning text-dark px-3 py-2">🕐 PRE-RESERVA</span>
-                <span class="badge bg-success text-white px-3 py-2">✅ RESERVADO</span>
-                <span class="badge bg-secondary text-white px-3 py-2">🚫 NO DISPONIBLE</span>
-            </div>
-
-            @if ($reservasActivas->isEmpty())
-                <div class="alert alert-success" role="alert">
-                    <strong>¡Buenas noticias!</strong> No hay reservas registradas próximamente. Todas las fechas están
-                    disponibles.
-                </div>
-            @else
-                {{-- Vista móvil: cards --}}
-                <div class="d-md-none">
-                    @foreach ($reservasActivas as $r)
-                        @php
-                            $badge = match ($r->estado) {
-                                'PRE-RESERVA' => 'warning text-dark',
-                                'RESERVADO' => 'success text-white',
-                                'NO_DISPONIBLE' => 'secondary text-white',
-                                default => 'light text-dark',
-                            };
-                            $label = match ($r->estado) {
-                                'PRE-RESERVA' => 'PRE-RESERVA',
-                                'RESERVADO' => 'RESERVADO',
-                                'NO_DISPONIBLE' => 'NO DISPONIBLE',
-                                default => $r->estado,
-                            };
-                            $noches = $r->fecha_inicio->diffInDays($r->fecha_fin);
-                        @endphp
-                        <div class="card-agrivall mb-2 p-3 d-flex flex-row justify-content-between align-items-center">
-                            <div>
-                                <p class="fw-semibold mb-0 small">
-                                    {{ $r->fecha_inicio->format('d M Y') }} — {{ $r->fecha_fin->format('d M Y') }}
-                                </p>
-                                <p class="text-muted mb-0" style="font-size:0.8em;">{{ $noches }}
-                                    {{ $noches === 1 ? 'noche' : 'noches' }}</p>
-                            </div>
-                            <span class="badge bg-{{ $badge }}">{{ $label }}</span>
-                        </div>
-                    @endforeach
-                </div>
-
-                {{-- Vista desktop: tabla --}}
-                <div class="d-none d-md-block table-agrivall">
-                    <table class="table table-striped align-middle mb-0">
-                        <thead>
-                            <tr>
-                                <th>Desde</th>
-                                <th>Hasta</th>
-                                <th>Noches</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($reservasActivas as $r)
-                                @php
-                                    $badge = match ($r->estado) {
-                                        'PRE-RESERVA' => 'warning text-dark',
-                                        'RESERVADO' => 'success text-white',
-                                        'NO_DISPONIBLE' => 'secondary text-white',
-                                        default => 'light text-dark',
-                                    };
-                                    $label = match ($r->estado) {
-                                        'PRE-RESERVA' => 'PRE-RESERVA',
-                                        'RESERVADO' => 'RESERVADO',
-                                        'NO_DISPONIBLE' => 'NO DISPONIBLE',
-                                        default => $r->estado,
-                                    };
-                                    $noches = $r->fecha_inicio->diffInDays($r->fecha_fin);
-                                @endphp
-                                <tr>
-                                    <td class="fw-medium">{{ $r->fecha_inicio->format('d/m/Y') }}</td>
-                                    <td class="fw-medium">{{ $r->fecha_fin->format('d/m/Y') }}</td>
-                                    <td class="text-center">{{ $noches }}</td>
-                                    <td><span class="badge bg-{{ $badge }}">{{ $label }}</span></td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            @endif
-
-            <div class="mt-4">
-                <a href="{{ auth()->check() ? route('reservas.create') : route('login') }}"
-                    class="btn btn-agrivall-secondary">
-                    Solicitar Reserva
-                </a>
-            </div>
-        </div>
-    </section>
-
     {{-- TARJETA DE GALERÍA COMPLETA (opcional) --}}
     <section id="booking-widget" class="py-5" style="background: var(--agrivall-cream-light);">
         <div class="container">
@@ -325,11 +225,14 @@
 
                 @foreach ($imagenes as $index => $imagen)
                     <div class="col-6 col-md-4">
-                        <div class="overflow-hidden rounded" style="height: 200px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                            <img src="{{ $imagen }}" alt="Galería {{ $index + 1 }}" class="w-100 h-100 gallery-image"
-                                data-gallery-image data-image-index="{{ $index }}"
+                        <div class="overflow-hidden rounded"
+                            style="height: 200px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                            <img src="{{ $imagen }}" alt="Galería {{ $index + 1 }}"
+                                class="w-100 h-100 gallery-image" data-gallery-image
+                                data-image-index="{{ $index }}"
                                 style="object-fit: cover; transition: transform 0.3s ease; cursor: pointer;"
-                                onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                                onmouseover="this.style.transform='scale(1.05)'"
+                                onmouseout="this.style.transform='scale(1)'">
                         </div>
                     </div>
                 @endforeach
@@ -337,17 +240,19 @@
         </div>
     </section>
 
-    {{-- LIGHTBOX GALERÍA --}}
+    {{-- GALERÍA --}}
     <div class="modal fade lightbox-modal" id="gallery-lightbox" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
                 <button type="button" class="btn-close btn-close-white lightbox-close" data-bs-dismiss="modal"
                     aria-label="Cerrar"></button>
-                <button type="button" class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Imagen anterior">
+                <button type="button" class="lightbox-nav lightbox-prev" id="lightbox-prev"
+                    aria-label="Imagen anterior">
                     &#10094;
                 </button>
                 <img id="lightbox-image" class="lightbox-image" src="" alt="Imagen ampliada de la galería">
-                <button type="button" class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Imagen siguiente">
+                <button type="button" class="lightbox-nav lightbox-next" id="lightbox-next"
+                    aria-label="Imagen siguiente">
                     &#10095;
                 </button>
             </div>
@@ -646,7 +551,7 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const widgetFechas = document.getElementById('widget-fechas');
             const widgetPersonas = document.getElementById('widget-personas');
             const widgetPrecioContainer = document.getElementById('widget-precio-container');
@@ -682,7 +587,7 @@
                     dateFormat: 'Y-m-d',
                     locale: 'es',
                     disable: fechasBloqueadas,
-                    onChange: function (selectedDates, dateStr, instance) {
+                    onChange: function(selectedDates, dateStr, instance) {
                         widgetErrorFechas.style.display = 'none';
 
                         if (selectedDates.length === 2) {
@@ -709,7 +614,7 @@
             }
 
             // Event listener para cambio de personas
-            widgetPersonas.addEventListener('change', function () {
+            widgetPersonas.addEventListener('change', function() {
                 if (fechaInicio && fechaFin) {
                     calcularPrecio();
                 }
@@ -732,18 +637,18 @@
 
                 // Llamar al API
                 fetch('/api/reservas/calcular-precio', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                            'content')
-                    },
-                    body: JSON.stringify({
-                        fecha_inicio: fechaInicioStr,
-                        fecha_fin: fechaFinStr,
-                        num_personas: numPersonas
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                'content')
+                        },
+                        body: JSON.stringify({
+                            fecha_inicio: fechaInicioStr,
+                            fecha_fin: fechaFinStr,
+                            num_personas: numPersonas
+                        })
                     })
-                })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
@@ -764,7 +669,7 @@
             }
 
             // Botón continuar reserva
-            widgetBtnContinuar.addEventListener('click', function () {
+            widgetBtnContinuar.addEventListener('click', function() {
                 @if (auth()->check())
                     if (!fechaInicio || !fechaFin) {
                         widgetErrorFechas.textContent = 'Por favor selecciona las fechas de tu estancia';
@@ -783,7 +688,7 @@
                 @else
                     window.location.href = '{{ route('login') }}';
                 @endif
-                });
+            });
 
             // Lightbox de galería
             const galleryLightboxEl = document.getElementById('gallery-lightbox');

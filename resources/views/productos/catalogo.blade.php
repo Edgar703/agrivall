@@ -143,15 +143,15 @@
                                         Ver más
                                     </a>
                                     @auth
-                                        <form action="{{ route('carrito.add') }}" method="POST" class="mt-2">
-                                            @csrf
-                                            <input type="hidden" name="producto_id" value="{{ $producto->id }}">
-                                            <input type="hidden" name="cantidad" value="1">
-                                            <button type="submit" class="btn btn-agrivall-outline btn-sm w-100"
-                                                style="font-size: 0.85rem;">
-                                                🛒 Añadir al carrito
-                                            </button>
-                                        </form>
+                                        <button type="button"
+                                            class="btn btn-agrivall-outline btn-sm w-100 mt-2 js-open-cart-modal"
+                                            style="font-size: 0.85rem;" data-product-id="{{ $producto->id }}"
+                                            data-product-name="{{ $producto->nombre }}"
+                                            data-product-category="{{ $producto->categoria?->nombre ?? 'Sin categoria' }}"
+                                            data-product-price="{{ $producto->precio }}"
+                                            data-product-image="{{ $productoImagen }}">
+                                            🛒 Añadir al carrito
+                                        </button>
                                     @endauth
                                 </div>
                                 {{--
@@ -198,6 +198,10 @@
             </div>
         </div>
     </div>
+
+    @auth
+        @include('productos.partials.add-to-cart-modal')
+    @endauth
 
     {{-- Modal Filtros (movil) --}}
     <div class="modal fade" id="catalogoFiltrosModal" tabindex="-1" aria-hidden="true">

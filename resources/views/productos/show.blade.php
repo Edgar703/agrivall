@@ -97,14 +97,13 @@
                             </a>
                             @auth
                                 @if ($producto->activo)
-                                    <form action="{{ route('carrito.add') }}" method="POST" class="flex-grow-1">
-                                        @csrf
-                                        <input type="hidden" name="producto_id" value="{{ $producto->id }}">
-                                        <input type="hidden" name="cantidad" value="1">
-                                        <button type="submit" class="btn btn-agrivall-primary w-100">
-                                            🛒 Añadir al carrito
-                                        </button>
-                                    </form>
+                                    <button type="button" class="btn btn-agrivall-primary flex-grow-1 js-open-cart-modal"
+                                        data-product-id="{{ $producto->id }}" data-product-name="{{ $producto->nombre }}"
+                                        data-product-category="{{ $producto->categoria?->nombre ?? 'Sin categoria' }}"
+                                        data-product-price="{{ $producto->precio }}"
+                                        data-product-image="{{ $productoImagen }}">
+                                        🛒 Añadir al carrito
+                                    </button>
                                 @endif
                             @endauth
                         </div>
@@ -113,4 +112,8 @@
             </div>
         </div>
     </div>
+
+    @auth
+        @include('productos.partials.add-to-cart-modal')
+    @endauth
 @endsection
