@@ -100,6 +100,14 @@
                                         $producto->imagen && Storage::disk('public')->exists($producto->imagen)
                                             ? asset('storage/' . ltrim($producto->imagen, '/'))
                                             : asset('assets/img/Agrivall_Logo.png');
+                                $variedadesActivasJson = $producto->variedades
+                                    ->where('activo', true)
+                                    ->values()
+                                    ->map(fn($variedad) => [
+                                        'id' => $variedad->id,
+                                        'nombre' => $variedad->nombre,
+                                        'precio' => $variedad->precio,
+                                    ]);
                                 @endphp
                                 <div class="position-relative overflow-hidden" style="height: 200px;">
                                     <a href="{{ route('productos.show', $producto) }}" class="d-block h-100">
@@ -129,12 +137,15 @@
                                             <div class="fw-bold"
                                                 style="color: var(--agrivall-green-primary); font-size: 1.5rem; line-height: 1;">
                                                 {{ number_format($producto->precio, 2) }}<span style="font-size: 0.9rem;">
-                                                    €</span>
+                                                    €/{{ $producto->unidad_medida }}</span>
                                             </div>
                                             <div class="text-muted"
                                                 style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px;">
                                                 {{ $producto->categoria?->nombre ?? 'Sin categoria' }}
                                             </div>
+                                            @if ($producto->variedades->where('activo', true)->isNotEmpty())
+                                                <div class="text-muted mt-1" style="font-size: 0.75rem;">Varias variedades disponibles</div>
+                                            @endif
                                         </div>
                                     </div>
 
@@ -149,7 +160,11 @@
                                             data-product-name="{{ $producto->nombre }}"
                                             data-product-category="{{ $producto->categoria?->nombre ?? 'Sin categoria' }}"
                                             data-product-price="{{ $producto->precio }}"
-                                            data-product-image="{{ $productoImagen }}">
+                                            data-product-image="{{ $productoImagen }}"
+                                            data-product-sale-type="{{ $producto->tipo_venta }}"
+                                            data-product-unit="{{ $producto->unidad_medida }}"
+                                            data-product-step="{{ $producto->step_cantidad }}"
+                                            data-product-variedades='@json($variedadesActivasJson)'>
                                             🛒 Añadir al carrito
                                         </button>
                                     @endauth

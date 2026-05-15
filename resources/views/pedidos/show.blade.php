@@ -3,6 +3,13 @@
 @section('titol', 'Pedido #' . $pedido->id)
 
 @section('contingut')
+    @php
+        $formatCantidad = function ($cantidad, $tipoVenta) {
+            return $tipoVenta === 'peso'
+                ? number_format((float) $cantidad, 2, ',', '')
+                : number_format((float) $cantidad, 0, ',', '');
+        };
+    @endphp
     <div class="animate-fadeInUp">
         <nav aria-label="breadcrumb" class="mb-3">
             <ol class="breadcrumb">
@@ -34,7 +41,6 @@
         </div>
 
         <div class="row g-4">
-            {{-- Datos del pedido --}}
             <div class="col-lg-6">
                 <div class="card-agrivall h-100">
                     <div class="card-body p-4">
@@ -64,7 +70,6 @@
                 </div>
             </div>
 
-            {{-- Líneas del pedido --}}
             <div class="col-lg-6">
                 <div class="card-agrivall h-100">
                     <div class="card-body p-4">
@@ -73,9 +78,15 @@
                         @foreach ($pedido->lineas as $linea)
                             <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
                                 <div>
-                                    <span class="fw-semibold">{{ $linea->producto?->nombre ?? 'Producto eliminado' }}</span>
+                                    <span
+                                        class="fw-semibold">{{ $linea->nombre_producto ?: ($linea->producto?->nombre ?? 'Producto eliminado') }}</span>
+                                    @if ($linea->nombre_variedad)
+                                        <small class="d-block text-muted">Variedad: {{ $linea->nombre_variedad }}</small>
+                                    @endif
                                     <small class="d-block text-muted">
-                                        {{ $linea->cantidad }} × {{ number_format($linea->precio_unitario, 2) }} €
+                                        {{ $formatCantidad($linea->cantidad, $linea->tipo_venta) }} {{ $linea->unidad_medida }}
+                                        ×
+                                        {{ number_format($linea->precio_unitario, 2) }} €/{{ $linea->unidad_medida }}
                                     </small>
                                 </div>
                                 <span class="fw-bold">{{ number_format($linea->subtotal, 2) }} €</span>
@@ -96,7 +107,7 @@
             <div class="d-flex gap-2">
                 <a href="{{ route('profile.edit') }}" class="btn btn-agrivall-outline">← Volver a Mi Cuenta</a>
                 <form action="{{ route('pedidos.destroy', $pedido) }}" method="POST"
-                    onsubmit="return confirm('\u00bfEliminar pedido #{{ $pedido->id }}? Esta acción no se puede deshacer.')">
+                    onsubmit="return confirm('¿Eliminar pedido #{{ $pedido->id }}? Esta acción no se puede deshacer.')">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-outline-danger">Eliminar pedido</button>

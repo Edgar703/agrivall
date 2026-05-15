@@ -3,7 +3,8 @@
     "allow": [
       "Bash(*)",
       "Read(///wsl.localhost/Ubuntu-24.04/home/edgar/**)",
-      "Write(///wsl.localhost/Ubuntu-24.04/home/edgar/**)"
+      "Write(///wsl.localhost/Ubuntu-24.04/home/edgar/**)",
+      "mcp__plugin_engram_engram__mem_search"
     ]
   }
 }

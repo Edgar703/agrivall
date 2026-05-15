@@ -26,7 +26,6 @@
                 <a href="{{ route('productos.catalogo') }}" class="btn btn-agrivall-primary">Ver Catálogo</a>
             </div>
         @else
-            {{-- Vista móvil: Cards --}}
             <div class="d-md-none">
                 @foreach ($pedidos as $pedido)
                     <div class="card-agrivall mb-3">
@@ -48,13 +47,10 @@
                                 <span class="badge {{ $badgeClass }}">{{ $pedido->estado }}</span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="fw-bold text-green fs-5">{{ number_format($pedido->precio_pedido, 2) }}
-                                    €</span>
+                                <span class="fw-bold text-green fs-5">{{ number_format($pedido->precio_pedido, 2) }} €</span>
                                 <div class="d-flex gap-2">
-                                    <a href="{{ route('pedidos.show', $pedido) }}"
-                                        class="btn btn-agrivall-primary btn-sm">Ver detalle</a>
-                                    <form action="{{ route('pedidos.destroy', $pedido) }}" method="POST"
-                                        onsubmit="return confirm('\u00bfEliminar pedido #{{ $pedido->id }}?')">
+                                    <a href="{{ route('pedidos.show', $pedido) }}" class="btn btn-agrivall-primary btn-sm">Ver detalle</a>
+                                    <form action="{{ route('pedidos.destroy', $pedido) }}" method="POST" onsubmit="return confirm('¿Eliminar pedido #{{ $pedido->id }}?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-outline-danger btn-sm">Eliminar</button>
@@ -62,10 +58,10 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
                 @endforeach
             </div>
 
-            {{-- Vista desktop: Tabla --}}
             <div class="table-agrivall d-none d-md-block">
                 <table class="table align-middle mb-0">
                     <thead>
@@ -84,8 +80,7 @@
                                 <td class="fw-semibold">#{{ $pedido->id }}</td>
                                 <td>{{ $pedido->fecha_pedido->format('d/m/Y H:i') }}</td>
                                 <td>{{ $pedido->metodo_pago }}</td>
-                                <td class="text-center fw-bold text-green">{{ number_format($pedido->precio_pedido, 2) }} €
-                                </td>
+                                <td class="text-center fw-bold text-green">{{ number_format($pedido->precio_pedido, 2) }} €</td>
                                 <td class="text-center">
                                     @php
                                         $badgeClass = match ($pedido->estado) {
@@ -100,10 +95,8 @@
                                 </td>
                                 <td class="text-end">
                                     <div class="d-flex gap-1 justify-content-end">
-                                        <a href="{{ route('pedidos.show', $pedido) }}" class="btn btn-info btn-sm">Ver
-                                            detalle</a>
-                                        <form action="{{ route('pedidos.destroy', $pedido) }}" method="POST"
-                                            onsubmit="return confirm('\u00bfEliminar pedido #{{ $pedido->id }}?')">
+                                        <a href="{{ route('pedidos.show', $pedido) }}" class="btn btn-info btn-sm">Ver detalle</a>
+                                        <form action="{{ route('pedidos.destroy', $pedido) }}" method="POST" onsubmit="return confirm('¿Eliminar pedido #{{ $pedido->id }}?')">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-outline-danger btn-sm">Eliminar</button>

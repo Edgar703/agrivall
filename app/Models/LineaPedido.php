@@ -12,9 +12,20 @@ class LineaPedido extends Model
     protected $fillable = [
         'pedido_id',
         'producto_id',
-        'formato',
+        'producto_variedad_id',
+        'nombre_producto',
+        'nombre_variedad',
+        'tipo_venta',
+        'unidad_medida',
         'cantidad',
         'precio_unitario',
+        'subtotal',
+    ];
+
+    protected $casts = [
+        'cantidad' => 'decimal:2',
+        'precio_unitario' => 'decimal:2',
+        'subtotal' => 'decimal:2',
     ];
 
     public function pedido(): BelongsTo
@@ -27,8 +38,15 @@ class LineaPedido extends Model
         return $this->belongsTo(Producto::class, 'producto_id');
     }
 
-    public function getSubtotalAttribute(): float
+    public function variedad(): BelongsTo
     {
-        return $this->precio_unitario * $this->cantidad;
+        return $this->belongsTo(ProductoVariedad::class, 'producto_variedad_id');
+    }
+
+    public function getDescripcionCompletaAttribute(): string
+    {
+        return $this->nombre_variedad
+            ? $this->nombre_producto . ' — ' . $this->nombre_variedad
+            : $this->nombre_producto;
     }
 }

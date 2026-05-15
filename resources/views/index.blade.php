@@ -9,7 +9,7 @@
         <!-- Hero Section -->
         <section class="hero-section py-5 mb-5"
             style="background-image: url({{ asset('assets/img/hero.png') }}); background-repeat: no-repeat; background-size: cover; background-position: center;">
-            <div class="hero-overlay"></div>
+            {{-- <div class="hero-overlay"></div> --}}
             <div class="container hero-content">
                 <div class="row align-items-center justify-content-center p-3 rounded-3 mt-5 hero-panel">
                     <div class="col-lg-8 mb-4 mb-lg-0 text-center">
@@ -265,6 +265,8 @@
         <style>
             .page-hero {
                 --hero-nav-height: 7vh;
+                --hero-fade-bg: var(--agrivall-cream-light, #fefae0);
+                background: var(--hero-fade-bg);
             }
 
             .page-hero .navbar-agrivall {
@@ -281,6 +283,31 @@
             .page-hero .hero-section {
                 margin-top: calc(-1 * var(--hero-nav-height));
                 padding-top: calc(3rem + var(--hero-nav-height));
+                overflow: hidden;
+                isolation: isolate;
+            }
+
+            .page-hero .hero-section .hero-overlay {
+                z-index: 0;
+            }
+
+            .page-hero .hero-section::after {
+                content: "";
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: -1px;
+                height: clamp(110px, 16vw, 220px);
+                pointer-events: none;
+                z-index: 1;
+                background: linear-gradient(180deg,
+                        rgba(254, 250, 224, 0) 0%,
+                        rgba(254, 250, 224, 0.45) 52%,
+                        var(--hero-fade-bg) 100%);
+            }
+
+            .page-hero .hero-section .hero-content {
+                z-index: 2;
             }
 
             @media (max-width: 768px) {
@@ -290,4 +317,4 @@
             }
         </style>
 
-    @endsection
+@endsection

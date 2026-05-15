@@ -2,43 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\LineaPedido;
+use App\Mail\PedidoCanceladoMail;
+use App\Mail\PedidoMail;
 use App\Models\Pedido;
-use App\Models\Producto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\PedidoMail;
-use App\Mail\PedidoCanceladoMail;
 
 class PedidoController extends Controller
 {
     public function checkout()
     {
-        $carrito = session('carrito', []);
+        $carritoController = app(CarritoController::class);
+        $items = $carritoController->buildCartItems(session('carrito', []));
 
-        if (empty($carrito)) {
+        if ($items->isEmpty()) {
+            session()->forget('carrito');
             return redirect()->route('carrito.index')->with('error', 'Tu carrito está vacío.');
         }
 
-        $productosDb = Producto::whereIn('id', array_keys($carrito))->get()->keyBy('id');
-        $items = [];
-        $total = 0;
-
-        foreach ($carrito as $productoId => $item) {
-            if ($productosDb->has($productoId)) {
-                $producto = $productosDb[$productoId];
-                $subtotal = $producto->precio * $item['cantidad'];
-                $items[] = [
-                    'producto' => $producto,
-                    'cantidad' => $item['cantidad'],
-                    'subtotal' => $subtotal,
-                ];
-                $total += $subtotal;
-            }
-        }
-
+        $total = round($items->sum('subtotal'), 2);
         $user = Auth::user();
 
         return view('pedidos.checkout', compact('items', 'total', 'user'));
@@ -46,9 +30,11 @@ class PedidoController extends Controller
 
     public function store(Request $request)
     {
-        $carrito = session('carrito', []);
+        $carritoController = app(CarritoController::class);
+        $items = $carritoController->buildCartItems(session('carrito', []));
 
-        if (empty($carrito)) {
+        if ($items->isEmpty()) {
+            session()->forget('carrito');
             return redirect()->route('carrito.index')->with('error', 'Tu carrito está vacío.');
         }
 
@@ -60,32 +46,8 @@ class PedidoController extends Controller
             'metodo_pago' => 'required|in:Bizzum,Transferencia',
         ]);
 
-        $productosDb = Producto::whereIn('id', array_keys($carrito))
-            ->where('activo', true)
-            ->get()
-            ->keyBy('id');
-
-        if ($productosDb->isEmpty()) {
-            session()->forget('carrito');
-            return redirect()->route('productos.catalogo')->with('error', 'Los productos del carrito ya no están disponibles.');
-        }
-
-        $pedido = DB::transaction(function () use ($validated, $carrito, $productosDb) {
-            $total = 0;
-            $lineas = [];
-
-            foreach ($carrito as $productoId => $item) {
-                if ($productosDb->has($productoId)) {
-                    $producto = $productosDb[$productoId];
-                    $subtotal = $producto->precio * $item['cantidad'];
-                    $total += $subtotal;
-                    $lineas[] = [
-                        'producto_id' => $productoId,
-                        'cantidad' => $item['cantidad'],
-                        'precio_unitario' => $producto->precio,
-                    ];
-                }
-            }
+        $pedido = DB::transaction(function () use ($validated, $items) {
+            $total = round($items->sum('subtotal'), 2);
 
             $pedido = Pedido::create([
                 'user_id' => Auth::id(),
@@ -99,8 +61,18 @@ class PedidoController extends Controller
                 'estado' => 'Iniciado',
             ]);
 
-            foreach ($lineas as $linea) {
-                $pedido->lineas()->create($linea);
+            foreach ($items as $item) {
+                $pedido->lineas()->create([
+                    'producto_id' => $item['producto']->id,
+                    'producto_variedad_id' => $item['variedad']?->id,
+                    'nombre_producto' => $item['producto']->nombre,
+                    'nombre_variedad' => $item['variedad']?->nombre,
+                    'tipo_venta' => $item['tipo_venta'],
+                    'unidad_medida' => $item['unidad_medida'],
+                    'cantidad' => $item['cantidad'],
+                    'precio_unitario' => $item['precio_unitario'],
+                    'subtotal' => $item['subtotal'],
+                ]);
             }
 
             return $pedido;

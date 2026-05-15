@@ -184,7 +184,7 @@
                                 </div>
                                 <div class="col-6">
                                     <p class="text-muted small mb-0">Precio</p>
-                                    <p class="text-green fw-bold mb-0">{{ number_format($producto->precio, 2) }} €</p>
+                                    <p class="text-green fw-bold mb-0">{{ number_format($producto->precio, 2) }} €/{{ $producto->unidad_medida }}</p><p class="text-muted small mb-0">{{ ucfirst($producto->tipo_venta) }} @if($producto->variedades->isNotEmpty()) · {{ $producto->variedades->count() }} variedades @endif</p>
                                 </div>
                             </div>
 
@@ -227,7 +227,7 @@
                                 <td class="fw-semibold">{{ $producto->id }}</td>
                                 <td class="fw-medium">{{ $producto->nombre }}</td>
                                 <td>{{ $producto->categoria?->nombre ?? 'Sin categoria' }}</td>
-                                <td class="text-green fw-semibold">{{ number_format($producto->precio, 2) }} €</td>
+                                <td class="text-green fw-semibold">{{ number_format($producto->precio, 2) }} €/{{ $producto->unidad_medida }}<br><small class="text-muted">{{ ucfirst($producto->tipo_venta) }} @if($producto->variedades->isNotEmpty()) · {{ $producto->variedades->count() }} variedades @endif</small></td>
                                 <td>
                                     @if ($producto->activo)
                                         <span class="badge badge-available">Activo</span>

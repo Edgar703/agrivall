@@ -42,8 +42,16 @@
                         $productoImagen =
                             $producto->imagen &&
                             \Illuminate\Support\Facades\Storage::disk('public')->exists($producto->imagen)
-                                ? asset('storage/' . $producto->imagen)
-                                : asset('assets/img/Agrivall_Logo.png');
+                            ? asset('storage/' . $producto->imagen)
+                            : asset('assets/img/Agrivall_Logo.png');
+                        $variedadesActivasJson = $producto->variedades
+                            ->where('activo', true)
+                            ->values()
+                            ->map(fn($variedad) => [
+                                'id' => $variedad->id,
+                                'nombre' => $variedad->nombre,
+                                'precio' => $variedad->precio,
+                            ]);
                     @endphp
                     <div class="img-zoom">
                         <img src="{{ $productoImagen }}" alt="{{ $producto->nombre }}" class="w-100"
@@ -58,7 +66,8 @@
                         {{-- Precio destacado --}}
                         <div class="mb-4 pb-4 border-bottom">
                             <span class="text-muted small d-block mb-2">Precio</span>
-                            <h2 class="heading-1 text-green mb-0">{{ number_format($producto->precio, 2) }} €</h2>
+                            <h2 class="heading-1 text-green mb-0">{{ number_format($producto->precio, 2) }}
+                                €/{{ $producto->unidad_medida }}</h2>
                         </div>
 
                         <div class="mb-4">
@@ -75,6 +84,16 @@
                                     <p class="mb-0 fw-semibold">{{ $producto->categoria?->nombre ?? 'Sin categoria' }}</p>
                                 </div>
                             </div>
+
+                            @if ($producto->variedades->where('activo', true)->isNotEmpty())
+                                <div class="d-flex align-items-center mb-3 p-3 bg-natural rounded">
+                                    <div class="flex-grow-1">
+                                        <span class="text-muted small">Variedades</span>
+                                        <p class="mb-0 fw-semibold">
+                                            {{ $producto->variedades->where('activo', true)->pluck('nombre')->join(', ') }}</p>
+                                    </div>
+                                </div>
+                            @endif
 
                             <div class="d-flex align-items-center p-3 bg-natural rounded">
                                 <div class="flex-grow-1">
@@ -100,8 +119,11 @@
                                     <button type="button" class="btn btn-agrivall-primary flex-grow-1 js-open-cart-modal"
                                         data-product-id="{{ $producto->id }}" data-product-name="{{ $producto->nombre }}"
                                         data-product-category="{{ $producto->categoria?->nombre ?? 'Sin categoria' }}"
-                                        data-product-price="{{ $producto->precio }}"
-                                        data-product-image="{{ $productoImagen }}">
+                                        data-product-price="{{ $producto->precio }}" data-product-image="{{ $productoImagen }}"
+                                        data-product-sale-type="{{ $producto->tipo_venta }}"
+                                        data-product-unit="{{ $producto->unidad_medida }}"
+                                        data-product-step="{{ $producto->step_cantidad }}"
+                                        data-product-variedades='@json($variedadesActivasJson)'>
                                         🛒 Añadir al carrito
                                     </button>
                                 @endif

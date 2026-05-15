@@ -176,8 +176,12 @@
                             <tr>
                                 <td class="fw-semibold">#{{ $pedido->id }}</td>
                                 <td>
-                                    <div class="fw-medium"><a
-                                            href="{{ route('admin.usuarios.show', $pedido->user_id) }}">{{ $pedido->nombre_cliente }}</a>
+                                    <div class="fw-medium">
+                                        @if ($pedido->usuario)
+                                            <a href="{{ route('admin.usuarios.show', $pedido->user_id) }}">{{ $pedido->nombre_cliente }}</a>
+                                        @else
+                                            {{ $pedido->nombre_cliente }}
+                                        @endif
                                     </div>
                                     <small class="text-muted">{{ $pedido->email_cliente }}</small>
                                 </td>

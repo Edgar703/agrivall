@@ -9,10 +9,11 @@
 
     {{-- Bootstrap 5 CDN --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link rel="shortcut icon" href="{{ asset('assets/img/Agrivall_Logo.png') }}" type="image/x-icon">
 
     {{-- Sistema de diseño Agrivall --}}
-    @vite(['resources/css/app.css'])
+    @vite(['resources/css/site.css'])
     @stack('styles')
 </head>
 

@@ -3,6 +3,13 @@
 @section('titol', 'Checkout')
 
 @section('contingut')
+    @php
+        $formatCantidad = function ($cantidad, $tipoVenta) {
+            return $tipoVenta === 'peso'
+                ? number_format((float) $cantidad, 2, ',', '')
+                : number_format((float) $cantidad, 0, ',', '');
+        };
+    @endphp
     <div class="animate-fadeInUp">
         <nav aria-label="breadcrumb" class="mb-3">
             <ol class="breadcrumb">
@@ -27,7 +34,6 @@
         <form action="{{ route('pedidos.store') }}" method="POST">
             @csrf
             <div class="row g-4">
-                {{-- Formulario de datos --}}
                 <div class="col-lg-7">
                     <div class="card-agrivall">
                         <div class="card-body p-4">
@@ -55,8 +61,7 @@
                                     <select name="metodo_pago" class="form-control-agrivall" required>
                                         <option value="">Seleccionar...</option>
                                         @foreach (['Bizzum', 'Transferencia'] as $metodo)
-                                            <option value="{{ $metodo }}"
-                                                {{ old('metodo_pago') === $metodo ? 'selected' : '' }}>
+                                            <option value="{{ $metodo }}" {{ old('metodo_pago') === $metodo ? 'selected' : '' }}>
                                                 {{ $metodo }}
                                             </option>
                                         @endforeach
@@ -72,7 +77,6 @@
                     </div>
                 </div>
 
-                {{-- Resumen del pedido --}}
                 <div class="col-lg-5">
                     <div class="card-agrivall">
                         <div class="card-body p-4">
@@ -82,8 +86,14 @@
                                 <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
                                     <div>
                                         <span class="fw-semibold">{{ $item['producto']->nombre }}</span>
-                                        <small class="d-block text-muted">{{ $item['cantidad'] }} ×
-                                            {{ number_format($item['producto']->precio, 2) }} €</small>
+                                        @if ($item['variedad'])
+                                            <small class="d-block text-muted">Variedad: {{ $item['variedad']->nombre }}</small>
+                                        @endif
+                                        <small class="d-block text-muted">
+                                            {{ $formatCantidad($item['cantidad'], $item['tipo_venta']) }}
+                                            {{ $item['unidad_medida'] }} ×
+                                            {{ number_format($item['precio_unitario'], 2) }} €/{{ $item['unidad_medida'] }}
+                                        </small>
                                     </div>
                                     <span class="fw-bold">{{ number_format($item['subtotal'], 2) }} €</span>
                                 </div>
