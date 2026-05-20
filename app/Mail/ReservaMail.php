@@ -21,6 +21,7 @@ class ReservaMail extends Mailable
     public function __construct(
         protected Reserva $reserva
     ) {
+        // Guardar reserva para el email del cliente
     }
 
     /**
@@ -28,6 +29,7 @@ class ReservaMail extends Mailable
      */
     public function envelope(): Envelope
     {
+        // Preparar asunto y remitente del email
         return new Envelope(
             subject: 'Confirmación de tu reserva #' . $this->reserva->id,
             from: new Address(config('mail.from.address'), config('mail.from.name')),
@@ -39,6 +41,7 @@ class ReservaMail extends Mailable
      */
     public function content(): Content
     {
+        // Enviar reserva y usuario a la vista del email
         return new Content(
             view: 'emails.reserva',
             with: [

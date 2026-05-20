@@ -286,20 +286,17 @@ Si se quiere purgar Tailwind/Vite en futuro, revisar con cuidado antes porque pr
 
 ## Tablas/migraciones revisadas
 
-Tabla sospechosa:
+Tabla antigua eliminada del flujo actual:
 
 - `semanascasilla`
 
-Motivo:
+Resolución:
 
-- Hay migracion y seeder.
-- `Reserva::semanaCasilla()` apunta a `SemanaCasilla::class`.
-- No existe `app/Models/SemanaCasilla.php`.
-
-No se modifico. Antes de borrar tabla, decidir:
-
-- Crear modelo `SemanaCasilla`, o
-- Quitar relacion/foreign key/seeder.
+- El calendario de reservas ahora trabaja por `fecha_inicio` / `fecha_fin`, no por semanas cerradas.
+- Se quitó `Reserva::semanaCasilla()` y el eager load `with('semanaCasilla')`.
+- Se quitó `semana_casilla_id` del modelo `Reserva`.
+- Se quitó el seeder `SemanaCasillaSeeder` del `DatabaseSeeder` y se borró el archivo del seeder.
+- Se añadió migración `2026_05_20_000001_remove_semana_casilla_from_reservas.php` para borrar `reservas.semana_casilla_id` y la tabla `semanascasilla` en producción cuando se ejecute `php artisan migrate`.
 
 ## Archivos con JavaScript detectados
 

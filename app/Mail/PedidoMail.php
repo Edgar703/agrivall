@@ -18,14 +18,17 @@ class PedidoMail extends Mailable
         protected Pedido $pedido,
         protected bool $admin = false
     ) {
+        // Guardar pedido y si el email es para admin
     }
 
     public function envelope(): Envelope
     {
+        // Crear asunto diferente para admin o cliente
         $subject = $this->admin
             ? 'Nuevo pedido #' . $this->pedido->id . ' - ' . $this->pedido->nombre_cliente
             : 'Confirmacion de tu pedido #' . $this->pedido->id;
 
+        // Preparar datos principales del email
         return new Envelope(
             subject: $subject,
             from: new Address(config('mail.from.address'), config('mail.from.name')),
@@ -34,6 +37,7 @@ class PedidoMail extends Mailable
 
     public function content(): Content
     {
+        // Enviar pedido, líneas y tipo de email a la vista
         return new Content(
             view: 'emails.pedido',
             with: [

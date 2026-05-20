@@ -8,10 +8,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Producto extends Model
 {
+    // Nombre de la tabla en la base de datos
     protected $table = 'productos';
 
+    // Esta tabla no usa created_at ni updated_at
     public $timestamps = false;
 
+    // Campos que se pueden rellenar masivamente
     protected $fillable = [
         'nombre',
         'imagen',
@@ -25,6 +28,7 @@ class Producto extends Model
         'fecha_creacion',
     ];
 
+    // Convertir campos a tipos correctos
     protected $casts = [
         'precio' => 'decimal:2',
         'step_cantidad' => 'decimal:2',
@@ -34,6 +38,7 @@ class Producto extends Model
 
     public function categoria(): BelongsTo
     {
+        // Un producto pertenece a una categoría
         return $this->belongsTo(Categoria::class, 'categoria_id');
     }
 

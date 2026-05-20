@@ -20,6 +20,7 @@ class ContactoMail extends Mailable
     public function __construct(
         protected array $datos
     ) {
+        // Guardar datos del formulario de contacto
     }
 
     /**
@@ -27,6 +28,7 @@ class ContactoMail extends Mailable
      */
     public function envelope(): Envelope
     {
+        // Preparar asunto, remitente y responder a
         return new Envelope(
             subject: 'Nuevo mensaje de contacto: ' . $this->datos['asunto'],
             from: new Address($this->datos['email'], $this->datos['nombre']),
@@ -41,6 +43,7 @@ class ContactoMail extends Mailable
      */
     public function content(): Content
     {
+        // Enviar datos a la vista del email
         return new Content(
             view: 'emails.contacto',
             with: [

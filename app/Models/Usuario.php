@@ -9,8 +9,11 @@ use Illuminate\Notifications\Notifiable;
 
 class Usuario extends Authenticatable
 {
+    // Permite usar factories y notificaciones
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+
+    // Nombre de la tabla en la base de datos
     protected $table = 'usuarios';
 
     /**
@@ -50,21 +53,25 @@ class Usuario extends Authenticatable
 
     public function posts()
     {
+        // Un usuario tiene muchos posts
         return $this->hasMany(Post::class, 'user_id');
     }
 
     public function comentarios()
     {
+        // Un usuario tiene muchos comentarios
         return $this->hasMany(Comentario::class, 'user_id');
     }
 
     public function reservas()
     {
+        // Un usuario tiene muchas reservas
         return $this->hasMany(Reserva::class, 'user_id');
     }
 
     public function pedidos()
     {
+        // Un usuario tiene muchos pedidos
         return $this->hasMany(Pedido::class, 'user_id');
     }
 }

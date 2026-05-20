@@ -16,6 +16,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
+        // Mostrar formulario de login
         return view('auth.login');
     }
 
@@ -24,10 +25,13 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        // Comprobar credenciales del usuario
         $request->authenticate();
 
+        // Regenerar sesión por seguridad
         $request->session()->regenerate();
 
+        // Redirigir al inicio o a la página pendiente
         return redirect()->intended(route('index', absolute: false));
     }
 
@@ -36,12 +40,16 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        // Cerrar sesión del usuario
         Auth::guard('web')->logout();
 
+        // Invalidar sesión actual
         $request->session()->invalidate();
 
+        // Regenerar token CSRF
         $request->session()->regenerateToken();
 
+        // Volver al inicio
         return redirect('/');
     }
 }

@@ -12,6 +12,7 @@ class CarritoController extends Controller
 {
     public function index()
     {
+<<<<<<< HEAD
         $items = $this->buildCartItems(session('carrito', []));
         $total = round($items->sum('subtotal'), 2);
 
@@ -19,10 +20,39 @@ class CarritoController extends Controller
             'productos' => $items->all(),
             'total' => $total,
         ]);
+=======
+        // Obtener carrito guardado en sesión
+        $carrito = session('carrito', []);
+        $productos = [];
+        $total = 0;
+
+        // Si hay productos en el carrito, cargarlos desde la base de datos
+        if (!empty($carrito)) {
+            $productosDb = Producto::whereIn('id', array_keys($carrito))->get()->keyBy('id');
+
+            // Calcular subtotal de cada producto
+            foreach ($carrito as $productoId => $item) {
+                if ($productosDb->has($productoId)) {
+                    $producto = $productosDb[$productoId];
+                    $subtotal = $producto->precio * $item['cantidad'];
+                    $productos[] = [
+                        'producto' => $producto,
+                        'cantidad' => $item['cantidad'],
+                        'subtotal' => $subtotal,
+                    ];
+                    $total += $subtotal;
+                }
+            }
+        }
+
+        // Mostrar carrito con productos y total
+        return view('carrito.index', compact('productos', 'total'));
+>>>>>>> 8583b55 (Añadi comentarios en el codigo.)
     }
 
     public function add(Request $request)
     {
+<<<<<<< HEAD
         $producto = Producto::with(['variedades' => fn ($query) => $query->where('activo', true)])
             ->where('id', $request->input('producto_id'))
             ->where('activo', true)
@@ -50,21 +80,51 @@ class CarritoController extends Controller
             'precio_unitario' => (float) $precioUnitario,
         ];
 
+=======
+        // Validar producto y cantidad
+        $request->validate([
+            'producto_id' => 'required|exists:productos,id',
+            'cantidad' => 'integer|min:1|max:99',
+        ]);
+
+        // Buscar producto activo
+        $producto = Producto::where('id', $request->producto_id)
+            ->where('activo', true)
+            ->firstOrFail();
+
+        // Obtener carrito actual
+        $carrito = session('carrito', []);
+        $id = $producto->id;
+        $cantidad = $request->input('cantidad', 1);
+
+        // Si ya existe, sumar cantidad; si no, añadirlo
+        if (isset($carrito[$id])) {
+            $carrito[$id]['cantidad'] += $cantidad;
+        } else {
+            $carrito[$id] = ['cantidad' => $cantidad];
+        }
+
+        // Guardar carrito en sesión
+>>>>>>> 8583b55 (Añadi comentarios en el codigo.)
         session(['carrito' => $carrito]);
 
+        // Volver atrás con mensaje
         return redirect()->back()->with('success', 'Producto añadido al carrito ✅');
     }
 
     public function update(Request $request)
     {
+        // Validar nueva cantidad
         $request->validate([
             'item_key' => 'required|string',
             'cantidad' => 'required',
         ]);
 
+        // Obtener carrito actual
         $carrito = session('carrito', []);
         $itemKey = $request->input('item_key');
 
+<<<<<<< HEAD
         if (!isset($carrito[$itemKey])) {
             return redirect()->route('carrito.index')->with('error', 'La línea del carrito ya no existe.');
         }
@@ -81,22 +141,43 @@ class CarritoController extends Controller
         $carrito[$itemKey]['precio_unitario'] = (float) ($variedad?->precio ?? $producto->precio);
         session(['carrito' => $carrito]);
 
+=======
+        // Actualizar cantidad si el producto existe en el carrito
+        if (isset($carrito[$id])) {
+            $carrito[$id]['cantidad'] = $request->cantidad;
+            session(['carrito' => $carrito]);
+        }
+
+        // Volver al carrito
+>>>>>>> 8583b55 (Añadi comentarios en el codigo.)
         return redirect()->route('carrito.index')->with('success', 'Cantidad actualizada ✅');
     }
 
     public function remove(string $itemKey)
     {
+        // Obtener carrito actual
         $carrito = session('carrito', []);
+<<<<<<< HEAD
         unset($carrito[$itemKey]);
+=======
+
+        // Quitar producto del carrito
+        unset($carrito[$productoId]);
+
+        // Guardar carrito actualizado
+>>>>>>> 8583b55 (Añadi comentarios en el codigo.)
         session(['carrito' => $carrito]);
 
+        // Volver al carrito
         return redirect()->route('carrito.index')->with('success', 'Producto eliminado del carrito ✅');
     }
 
     public function clear()
     {
+        // Eliminar carrito completo de la sesión
         session()->forget('carrito');
 
+        // Volver al carrito vacío
         return redirect()->route('carrito.index')->with('success', 'Carrito vaciado ✅');
     }
 

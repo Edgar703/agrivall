@@ -6,7 +6,6 @@ use App\Models\Usuario;
 use App\Models\Post;
 use App\Models\Comentario;
 use App\Models\TipoPost;
-use App\Models\SemanaCasilla;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -19,9 +18,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Ejecutar seeders de semanas
-        $this->call(SemanaCasillaSeeder::class);
-
         // Limpiar datos existentes (opcional)
         // Comentario::truncate();
         // Post::truncate();
@@ -55,7 +51,6 @@ class DatabaseSeeder extends Seeder
         }
 
         echo "✓ Seeders completado:\n";
-        echo "  - 30+ Semanas de Casa Rural\n";
         echo "  - 3 Usuarios\n";
         echo "  - 9 Posts (3 por usuario)\n";
         echo "  - 27 Comentarios (3 por post)\n";

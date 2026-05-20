@@ -11,6 +11,7 @@ class ContactoController extends Controller
 {
     public function mostrar()
     {
+        // Mostrar formulario de contacto
         return view('contactar');
     }
 
@@ -30,9 +31,13 @@ class ContactoController extends Controller
             Mail::to('edgmormel@gmail.com')
                 ->send(new ContactoMail($validado));
 
+            // Volver al formulario con mensaje de éxito
             return redirect()->route('contactar')->with('success', '¡Tu mensaje ha sido enviado correctamente! Nos pondremos en contacto pronto.');
         } catch (\Exception $e) {
+            // Guardar el error en logs
             Log::error('Error al enviar correo de contacto: ' . $e->getMessage());
+
+            // Volver al formulario con mensaje de error
             return redirect()->route('contactar')->with('error', 'Hubo un error al enviar tu mensaje. Por favor, intenta nuevamente.');
         }
     }

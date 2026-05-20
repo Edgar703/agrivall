@@ -14,6 +14,7 @@ class EmailVerificationPromptController extends Controller
      */
     public function __invoke(Request $request): RedirectResponse|View
     {
+        // Si ya verificó email, ir al inicio; si no, mostrar aviso
         return $request->user()->hasVerifiedEmail()
                     ? redirect()->intended(route('index', absolute: false))
                     : view('auth.verify-email');

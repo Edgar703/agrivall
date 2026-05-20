@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Reserva extends Model
 {
+    // Nombre de la tabla en la base de datos
     protected $table = 'reservas';
 
+    // Campos que se pueden rellenar masivamente
     protected $fillable = [
         'user_id',
-        'semana_casilla_id',
         'fecha_inicio',
         'fecha_fin',
         'num_personas',
@@ -21,6 +22,7 @@ class Reserva extends Model
         'multiplicador_personas',
     ];
 
+    // Convertir fechas a objetos date
     protected $casts = [
         'fecha_inicio' => 'date',
         'fecha_fin' => 'date',
@@ -31,15 +33,8 @@ class Reserva extends Model
      */
     public function usuario()
     {
+        // Una reserva pertenece a un usuario
         return $this->belongsTo(Usuario::class, 'user_id');
-    }
-
-    /**
-     * Relación: Una reserva pertenece a una semana
-     */
-    public function semanaCasilla()
-    {
-        return $this->belongsTo(SemanaCasilla::class, 'semana_casilla_id');
     }
 
     /**
@@ -47,6 +42,7 @@ class Reserva extends Model
      */
     public function getNumNochesAttribute()
     {
+        // Calcular días entre inicio y fin, mínimo 1
         return $this->fecha_inicio->diffInDays($this->fecha_fin) ?: 1;
     }
 
@@ -57,6 +53,7 @@ class Reserva extends Model
      */
     public function calcularPrecioTotal()
     {
+        // Obtener número de noches y precio base
         $numNoches = $this->num_noches;
         $precioBase = $this->precio_por_noche ?? 50;
         
@@ -71,6 +68,7 @@ class Reserva extends Model
      */
     public function getPrecioTotalAttribute()
     {
+        // Usar precio guardado o calcularlo si no existe
         return $this->precio_total ?? $this->calcularPrecioTotal();
     }
 }

@@ -18,14 +18,17 @@ class ReservaCanceladaMail extends Mailable
         protected Reserva $reserva,
         protected bool $admin = false
     ) {
+        // Guardar reserva y si el email es para admin
     }
 
     public function envelope(): Envelope
     {
+        // Crear asunto diferente para admin o cliente
         $subject = $this->admin
             ? 'Reserva cancelada #' . $this->reserva->id . ' - ' . $this->reserva->usuario->name
             : 'Confirmacion de cancelacion de reserva #' . $this->reserva->id;
 
+        // Preparar datos principales del email
         return new Envelope(
             subject: $subject,
             from: new Address(config('mail.from.address'), config('mail.from.name')),
@@ -34,6 +37,7 @@ class ReservaCanceladaMail extends Mailable
 
     public function content(): Content
     {
+        // Enviar reserva, usuario y tipo de email a la vista
         return new Content(
             view: 'emails.reserva-cancelada',
             with: [
