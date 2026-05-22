@@ -6,7 +6,6 @@ use App\Models\Categoria;
 use App\Models\Producto;
 use App\Models\ProductoVariedad;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -14,23 +13,9 @@ use Illuminate\Validation\Rule;
 
 class ProductoController extends Controller
 {
-    private function ensureAdmin(): void
-    {
-        // Comprobar que el usuario logueado sea admin
-        abort_unless(Auth::check() && Auth::user()->role === 'admin', 403);
-    }
-
     public function index(Request $request)
     {
-        // Solo admins pueden ver productos
-        $this->ensureAdmin();
-
-<<<<<<< HEAD
         $productos = Producto::with(['categoria', 'variedades'])
-=======
-        // Cargar productos con su categoría
-        $productos = Producto::with('categoria')
->>>>>>> 8583b55 (Añadi comentarios en el codigo.)
             ->orderBy('fecha_creacion', 'desc')
             ->orderBy('id', 'desc')
             ->get();
@@ -50,12 +35,7 @@ class ProductoController extends Controller
 
     public function catalogo(Request $request)
     {
-<<<<<<< HEAD
         $query = Producto::with(['categoria', 'variedades'])
-=======
-        // Crear consulta de productos activos
-        $query = Producto::with('categoria')
->>>>>>> 8583b55 (Añadi comentarios en el codigo.)
             ->where('activo', true);
 
         // Filtrar por texto
@@ -98,9 +78,6 @@ class ProductoController extends Controller
 
     public function create(Request $request)
     {
-        // Solo admins pueden crear productos
-        $this->ensureAdmin();
-
         // Cargar categorías y URL de vuelta
         $categorias = Categoria::orderBy('nombre')->get();
         $returnTo = $this->resolveReturnTo($request->query('return_to'));
@@ -111,9 +88,6 @@ class ProductoController extends Controller
 
     public function storeCategoria(Request $request)
     {
-        // Solo admins pueden crear categorías
-        $this->ensureAdmin();
-
         // Validar datos de la categoría
         $validated = $request->validate([
             'nombre' => ['required', 'string', 'max:255', Rule::unique('categorias', 'nombre')],
@@ -131,9 +105,6 @@ class ProductoController extends Controller
 
     public function updateCategoria(Request $request, Categoria $categoria)
     {
-        // Solo admins pueden actualizar categorías
-        $this->ensureAdmin();
-
         // Validar datos de la categoría
         $validated = $request->validate([
             'nombre' => ['required', 'string', 'max:255', Rule::unique('categorias', 'nombre')->ignore($categoria->id)],
@@ -151,9 +122,6 @@ class ProductoController extends Controller
 
     public function destroyCategoria(Categoria $categoria)
     {
-        // Solo admins pueden eliminar categorías
-        $this->ensureAdmin();
-
         // Contar productos que usan esta categoría
         $productosAfectados = $categoria->productos()->count();
 
@@ -176,32 +144,11 @@ class ProductoController extends Controller
 
     public function store(Request $request)
     {
-        // Solo admins pueden guardar productos
-        $this->ensureAdmin();
-<<<<<<< HEAD
         $validated = $this->validateProducto($request);
         $validated['activo'] = $request->boolean('activo');
         $validated['fecha_creacion'] = $validated['fecha_creacion'] ?? now()->toDateString();
         $validated = $this->normalizeSaleFields($validated);
         $variedades = $this->extractVariedades($request);
-=======
-
-        // Validar datos del producto
-        $validate = $request->validate([
-            'nombre' => 'string|max:255',
-            'imagen_file' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'descripcion' => 'nullable|string',
-            'precio' => 'numeric|min:0',
-            'categoria_id' => 'nullable|exists:categorias,id',
-            'activo' => 'nullable|boolean',
-            'fecha_creacion' => 'nullable|date',
-            'return_to' => 'nullable|string|max:2048',
-        ]);
-
-        // Preparar campos booleanos y fecha
-        $validate['activo'] = $request->boolean('activo');
-        $validate['fecha_creacion'] = $validate['fecha_creacion'] ?? now()->toDateString();
->>>>>>> 8583b55 (Añadi comentarios en el codigo.)
 
         // Si llega imagen, guardarla en storage
         if ($request->hasFile('imagen_file')) {
@@ -211,20 +158,14 @@ class ProductoController extends Controller
             $validated['imagen'] = 'productos/' . $filename;
         }
 
-<<<<<<< HEAD
-        DB::transaction(function () use ($validated, $variedades) {
-            $producto = Producto::create($validated);
+        $productoData = $this->productoPayload($validated);
+
+        DB::transaction(function () use ($productoData, $variedades) {
+            $producto = Producto::create($productoData);
             $this->syncVariedades($producto, $variedades);
         });
 
         $returnTo = $this->resolveReturnTo($validated['return_to'] ?? null);
-=======
-        // Crear producto
-        Producto::create($validate);
-
-        // Resolver URL de vuelta
-        $returnTo = $this->resolveReturnTo($validate['return_to'] ?? null);
->>>>>>> 8583b55 (Añadi comentarios en el codigo.)
 
         // Volver a la pantalla anterior permitida
         return redirect()->to($returnTo)->with('success', 'Producto creado exitosamente.✅');
@@ -254,17 +195,7 @@ class ProductoController extends Controller
 
     public function show(Request $request, Producto $producto)
     {
-        // Si viene de ruta admin, comprobar permisos
-        if ($request->routeIs('admin.productos.show')) {
-            $this->ensureAdmin();
-        }
-
-<<<<<<< HEAD
         $producto->load(['categoria', 'variedades' => fn ($query) => $query->orderBy('orden')->orderBy('id')]);
-=======
-        // Cargar categoría del producto
-        $producto->load('categoria');
->>>>>>> 8583b55 (Añadi comentarios en el codigo.)
 
         // Mostrar detalle del producto
         return view('productos.show', compact('producto'));
@@ -272,9 +203,6 @@ class ProductoController extends Controller
 
     public function edit(Producto $producto)
     {
-        // Solo admins pueden editar productos
-        $this->ensureAdmin();
-
         // Cargar categorías para el select
         $categorias = Categoria::orderBy('nombre')->get();
         $producto->load('variedades');
@@ -285,25 +213,7 @@ class ProductoController extends Controller
 
     public function update(Request $request, Producto $producto)
     {
-        // Solo admins pueden actualizar productos
-        $this->ensureAdmin();
-<<<<<<< HEAD
         $validated = $this->validateProducto($request);
-=======
-
-        // Validar datos recibidos
-        $validated = $request->validate([
-            'nombre' => 'nullable|string|max:255',
-            'imagen_file' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'descripcion' => 'nullable|string',
-            'precio' => 'nullable|numeric|min:0',
-            'categoria_id' => 'nullable|exists:categorias,id',
-            'activo' => 'nullable|boolean',
-            'fecha_creacion' => 'nullable|date',
-        ]);
-
-        // Preparar campos booleanos y fecha
->>>>>>> 8583b55 (Añadi comentarios en el codigo.)
         $validated['activo'] = $request->boolean('activo');
         $validated['fecha_creacion'] = $validated['fecha_creacion'] ?? $producto->fecha_creacion?->toDateString();
         $validated = $this->normalizeSaleFields($validated);
@@ -321,15 +231,12 @@ class ProductoController extends Controller
             $validated['imagen'] = 'productos/' . $filename;
         }
 
-<<<<<<< HEAD
-        DB::transaction(function () use ($producto, $validated, $variedades) {
-            $producto->update($validated);
+        $productoData = $this->productoPayload($validated);
+
+        DB::transaction(function () use ($producto, $productoData, $variedades) {
+            $producto->update($productoData);
             $this->syncVariedades($producto, $variedades);
         });
-=======
-        // Guardar cambios del producto
-        $producto->update($validated);
->>>>>>> 8583b55 (Añadi comentarios en el codigo.)
 
         // Volver al panel de productos
         return redirect()
@@ -339,13 +246,6 @@ class ProductoController extends Controller
 
     public function destroy(Producto $producto)
     {
-        // Solo admins pueden eliminar productos
-        $this->ensureAdmin();
-
-<<<<<<< HEAD
-=======
-        // Si tiene imagen, borrarla del storage
->>>>>>> 8583b55 (Añadi comentarios en el codigo.)
         if ($producto->imagen) {
             Storage::disk('public')->delete($producto->imagen);
         }
@@ -382,6 +282,13 @@ class ProductoController extends Controller
         ]);
     }
 
+
+    private function productoPayload(array $validated): array
+    {
+        unset($validated['imagen_file'], $validated['return_to'], $validated['variedades']);
+
+        return $validated;
+    }
 
     private function normalizeSaleFields(array $validated): array
     {

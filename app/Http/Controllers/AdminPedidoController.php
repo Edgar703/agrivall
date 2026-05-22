@@ -4,21 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Pedido;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class AdminPedidoController extends Controller
 {
-    private function ensureAdmin(): void
-    {
-        // Comprobar que el usuario logueado sea admin
-        abort_unless(Auth::check() && Auth::user()->role === 'admin', 403);
-    }
-
     public function index(Request $request)
     {
-        // Solo admins pueden ver pedidos
-        $this->ensureAdmin();
-
         // Preparar consulta con usuario y número de líneas
         $query = Pedido::with('usuario')->withCount('lineas');
 
@@ -55,9 +45,6 @@ class AdminPedidoController extends Controller
 
     public function show(Pedido $pedido)
     {
-        // Solo admins pueden ver el detalle
-        $this->ensureAdmin();
-
         // Cargar líneas, productos y usuario del pedido
         $pedido->load('lineas.producto', 'usuario');
 
@@ -67,9 +54,6 @@ class AdminPedidoController extends Controller
 
     public function cambiarEstado(Request $request, Pedido $pedido)
     {
-        // Solo admins pueden cambiar estados
-        $this->ensureAdmin();
-
         // Validar el estado recibido
         $request->validate([
             'estado' => 'required|in:Iniciado,En proceso,Reparto,Finalizado',
@@ -84,9 +68,6 @@ class AdminPedidoController extends Controller
 
     public function destroy(Pedido $pedido)
     {
-        // Solo admins pueden borrar pedidos
-        $this->ensureAdmin();
-
         // Eliminar pedido
         $pedido->delete();
 

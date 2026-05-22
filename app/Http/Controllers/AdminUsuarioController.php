@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Usuario;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
@@ -14,17 +13,8 @@ use Illuminate\View\View;
 
 class AdminUsuarioController extends Controller
 {
-    private function ensureAdmin(): void
-    {
-        // Comprobar que el usuario logueado sea admin
-        abort_unless(Auth::check() && Auth::user()->role === 'admin', 403);
-    }
-
     public function index(Request $request): View
     {
-        // Solo admins pueden ver esta pantalla
-        $this->ensureAdmin();
-
         // Capturar filtros de búsqueda
         $search = trim((string) $request->query('q', ''));
         $role = (string) $request->query('role', '');
@@ -58,9 +48,6 @@ class AdminUsuarioController extends Controller
 
     public function show(Usuario $usuario): View
     {
-        // Solo admins pueden ver el detalle
-        $this->ensureAdmin();
-
         // Cargar reservas del usuario
         $reservas = $usuario->reservas()
             ->orderBy('created_at', 'desc')
@@ -85,18 +72,12 @@ class AdminUsuarioController extends Controller
 
     public function edit(Usuario $usuario): View
     {
-        // Solo admins pueden editar usuarios
-        $this->ensureAdmin();
-
         // Mostrar formulario de edición
         return view('admin.usuarios.edit', compact('usuario'));
     }
 
     public function update(Request $request, Usuario $usuario): RedirectResponse
     {
-        // Solo admins pueden actualizar usuarios
-        $this->ensureAdmin();
-
         // Validar datos del formulario
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],

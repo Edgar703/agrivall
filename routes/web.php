@@ -63,7 +63,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/pedidos/{pedido}', [PedidoController::class, 'destroy'])->name('pedidos.destroy');
 
     // Panel de administración
-    Route::prefix('admin')->name('admin.')->group(function () {
+    Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
         // Reservas del admin
         Route::get('/reservas', [ReservaController::class, 'index'])->name('reservas.index');
 

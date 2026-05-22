@@ -14,7 +14,6 @@ class PedidoController extends Controller
 {
     public function checkout()
     {
-<<<<<<< HEAD
         $carritoController = app(CarritoController::class);
         $items = $carritoController->buildCartItems(session('carrito', []));
 
@@ -24,36 +23,6 @@ class PedidoController extends Controller
         }
 
         $total = round($items->sum('subtotal'), 2);
-=======
-        // Obtener carrito guardado en sesión
-        $carrito = session('carrito', []);
-
-        // Si el carrito está vacío, volver al carrito
-        if (empty($carrito)) {
-            return redirect()->route('carrito.index')->with('error', 'Tu carrito está vacío.');
-        }
-
-        // Cargar productos del carrito desde la base de datos
-        $productosDb = Producto::whereIn('id', array_keys($carrito))->get()->keyBy('id');
-        $items = [];
-        $total = 0;
-
-        // Preparar productos y calcular total
-        foreach ($carrito as $productoId => $item) {
-            if ($productosDb->has($productoId)) {
-                $producto = $productosDb[$productoId];
-                $subtotal = $producto->precio * $item['cantidad'];
-                $items[] = [
-                    'producto' => $producto,
-                    'cantidad' => $item['cantidad'],
-                    'subtotal' => $subtotal,
-                ];
-                $total += $subtotal;
-            }
-        }
-
-        // Obtener usuario logueado para rellenar datos
->>>>>>> 8583b55 (Añadi comentarios en el codigo.)
         $user = Auth::user();
 
         // Mostrar pantalla de checkout
@@ -62,19 +31,11 @@ class PedidoController extends Controller
 
     public function store(Request $request)
     {
-<<<<<<< HEAD
         $carritoController = app(CarritoController::class);
         $items = $carritoController->buildCartItems(session('carrito', []));
 
         if ($items->isEmpty()) {
             session()->forget('carrito');
-=======
-        // Obtener carrito guardado en sesión
-        $carrito = session('carrito', []);
-
-        // Si el carrito está vacío, volver al carrito
-        if (empty($carrito)) {
->>>>>>> 8583b55 (Añadi comentarios en el codigo.)
             return redirect()->route('carrito.index')->with('error', 'Tu carrito está vacío.');
         }
 
@@ -87,41 +48,8 @@ class PedidoController extends Controller
             'metodo_pago' => 'required|in:Bizzum,Transferencia',
         ]);
 
-<<<<<<< HEAD
         $pedido = DB::transaction(function () use ($validated, $items) {
             $total = round($items->sum('subtotal'), 2);
-=======
-        // Cargar productos activos del carrito
-        $productosDb = Producto::whereIn('id', array_keys($carrito))
-            ->where('activo', true)
-            ->get()
-            ->keyBy('id');
-
-        // Si no hay productos disponibles, vaciar carrito
-        if ($productosDb->isEmpty()) {
-            session()->forget('carrito');
-            return redirect()->route('productos.catalogo')->with('error', 'Los productos del carrito ya no están disponibles.');
-        }
-
-        // Crear pedido y líneas dentro de una transacción
-        $pedido = DB::transaction(function () use ($validated, $carrito, $productosDb) {
-            $total = 0;
-            $lineas = [];
-
-            // Calcular total y preparar líneas del pedido
-            foreach ($carrito as $productoId => $item) {
-                if ($productosDb->has($productoId)) {
-                    $producto = $productosDb[$productoId];
-                    $subtotal = $producto->precio * $item['cantidad'];
-                    $total += $subtotal;
-                    $lineas[] = [
-                        'producto_id' => $productoId,
-                        'cantidad' => $item['cantidad'],
-                        'precio_unitario' => $producto->precio,
-                    ];
-                }
-            }
->>>>>>> 8583b55 (Añadi comentarios en el codigo.)
 
             // Crear pedido principal
             $pedido = Pedido::create([
@@ -136,7 +64,6 @@ class PedidoController extends Controller
                 'estado' => 'Iniciado',
             ]);
 
-<<<<<<< HEAD
             foreach ($items as $item) {
                 $pedido->lineas()->create([
                     'producto_id' => $item['producto']->id,
@@ -149,11 +76,6 @@ class PedidoController extends Controller
                     'precio_unitario' => $item['precio_unitario'],
                     'subtotal' => $item['subtotal'],
                 ]);
-=======
-            // Crear líneas del pedido
-            foreach ($lineas as $linea) {
-                $pedido->lineas()->create($linea);
->>>>>>> 8583b55 (Añadi comentarios en el codigo.)
             }
 
             // Devolver pedido creado

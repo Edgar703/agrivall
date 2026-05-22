@@ -44,7 +44,6 @@ class LineaPedido extends Model
 
     public function variedad(): BelongsTo
     {
-<<<<<<< HEAD
         return $this->belongsTo(ProductoVariedad::class, 'producto_variedad_id');
     }
 
@@ -53,9 +52,5 @@ class LineaPedido extends Model
         return $this->nombre_variedad
             ? $this->nombre_producto . ' — ' . $this->nombre_variedad
             : $this->nombre_producto;
-=======
-        // Calcular subtotal de la línea
-        return $this->precio_unitario * $this->cantidad;
->>>>>>> 8583b55 (Añadi comentarios en el codigo.)
     }
 }
