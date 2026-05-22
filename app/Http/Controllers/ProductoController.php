@@ -195,7 +195,7 @@ class ProductoController extends Controller
 
     public function show(Request $request, Producto $producto)
     {
-        $producto->load(['categoria', 'variedades' => fn ($query) => $query->orderBy('orden')->orderBy('id')]);
+        $producto->load(['categoria', 'variedades' => fn($query) => $query->orderBy('orden')->orderBy('id')]);
 
         // Mostrar detalle del producto
         return view('productos.show', compact('producto'));

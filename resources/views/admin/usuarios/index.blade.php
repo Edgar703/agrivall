@@ -44,25 +44,22 @@
         <div class="card-agrivall mb-3">
             <div class="card-body p-3">
                 <form method="GET" action="{{ route('admin.usuarios.index') }}" class="row g-2 align-items-end">
-                    <div class="col-12 col-md-7">
-                        <label for="q" class="form-label mb-1">Buscar por nombre o email</label>
-                        <input type="text" id="q" name="q" class="form-control"
+                    <div class="col-12 col-md-5">
+                        <label for="q" class="form-label-agrivall small">Buscar</label>
+                        <input type="text" id="q" name="q" class="form-control-agrivall form-control-sm"
                             value="{{ request('q', $search ?? '') }}" placeholder="Ej: juan o juan@email.com">
                     </div>
-                    <div class="col-8 col-md-3">
-                        <label for="role" class="form-label mb-1">Rol</label>
-                        <select id="role" name="role" class="form-select">
+                    <div class="col-12 col-md-3">
+                        <label for="role" class="form-label-agrivall small">Rol</label>
+                        <select id="role" name="role" class="form-control-agrivall form-control-sm">
                             <option value="">Todos</option>
                             <option value="user" @selected(request('role', $role ?? '') === 'user')>Usuario</option>
                             <option value="admin" @selected(request('role', $role ?? '') === 'admin')>Admin</option>
                         </select>
                     </div>
-                    <div class="col-4 col-md-2 d-grid">
-                        <button type="submit" class="btn btn-agrivall-primary">Filtrar</button>
-                    </div>
-                    <div class="col-12 d-flex justify-content-end">
-                        <a href="{{ route('admin.usuarios.index') }}" class="btn btn-agrivall-secondary btn-sm">Limpiar
-                            filtros</a>
+                    <div class="col-12 col-md-4 d-flex flex-column flex-sm-row gap-2">
+                        <button type="submit" class="btn btn-agrivall-primary btn-sm">Filtrar</button>
+                        <a href="{{ route('admin.usuarios.index') }}" class="btn btn-agrivall-secondary btn-sm">Limpiar filtros</a>
                     </div>
                 </form>
             </div>
@@ -82,7 +79,8 @@
         @else
             <div class="d-md-none">
                 @foreach ($usuarios as $usuario)
-                    <div class="card-agrivall mb-3">
+                    <div class="card-agrivall mb-3 usuario-item"
+                        data-filter-text="{{ strtolower(trim($usuario->id . ' ' . $usuario->name . ' ' . $usuario->email . ' ' . $usuario->role . ' ' . $usuario->reservas_count)) }}">
                         <div class="card-body p-3">
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <div>
@@ -126,7 +124,8 @@
                     </thead>
                     <tbody>
                         @foreach ($usuarios as $usuario)
-                            <tr>
+                            <tr class="usuario-item"
+                                data-filter-text="{{ strtolower(trim($usuario->id . ' ' . $usuario->name . ' ' . $usuario->email . ' ' . $usuario->role . ' ' . $usuario->reservas_count)) }}">
                                 <td class="fw-semibold">#{{ $usuario->id }}</td>
                                 <td><a href="{{ route('admin.usuarios.show', $usuario->id) }}">{{ $usuario->name }}</a>
                                 </td>
@@ -167,4 +166,31 @@
             </div>
         @endif
     </div>
+
+    @push('scripts')
+        <script>
+            const setupUsuariosFilter = function() {
+                const searchInput = document.getElementById('q');
+                const usuarioItems = document.querySelectorAll('.usuario-item');
+
+                if (searchInput && usuarioItems.length > 0) {
+                    searchInput.addEventListener('input', function() {
+                        const searchValue = this.value.toLowerCase().trim();
+
+                        usuarioItems.forEach(item => {
+                            const filterText = item.dataset.filterText || '';
+                            const shouldShow = searchValue === '' || filterText.includes(searchValue);
+                            item.style.display = shouldShow ? '' : 'none';
+                        });
+                    });
+                }
+            };
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', setupUsuariosFilter);
+            } else {
+                setupUsuariosFilter();
+            }
+        </script>
+    @endpush
 @endsection

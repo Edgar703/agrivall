@@ -23,7 +23,7 @@ class CarritoController extends Controller
 
     public function add(Request $request)
     {
-        $producto = Producto::with(['variedades' => fn ($query) => $query->where('activo', true)])
+        $producto = Producto::with(['variedades' => fn($query) => $query->where('activo', true)])
             ->where('id', $request->input('producto_id'))
             ->where('activo', true)
             ->firstOrFail();
@@ -72,7 +72,7 @@ class CarritoController extends Controller
             return redirect()->route('carrito.index')->with('error', 'La línea del carrito ya no existe.');
         }
 
-        $producto = Producto::with(['variedades' => fn ($query) => $query->where('activo', true)])
+        $producto = Producto::with(['variedades' => fn($query) => $query->where('activo', true)])
             ->where('id', $carrito[$itemKey]['producto_id'])
             ->where('activo', true)
             ->firstOrFail();

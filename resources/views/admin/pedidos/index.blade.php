@@ -59,14 +59,14 @@
         <div class="card-agrivall mb-3">
             <div class="card-body p-3">
                 <form action="{{ route('admin.pedidos.index') }}" method="GET" class="row g-2 align-items-end">
-                    <div class="col-md-5">
-                        <label class="form-label-agrivall small">Buscar</label>
-                        <input type="text" name="q" class="form-control-agrivall form-control-sm"
+                    <div class="col-12 col-md-5">
+                        <label for="q" class="form-label-agrivall small">Buscar</label>
+                        <input type="text" id="q" name="q" class="form-control-agrivall form-control-sm"
                             value="{{ request('q') }}" placeholder="Nombre, email o ID del pedido">
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label-agrivall small">Estado</label>
-                        <select name="estado" class="form-control-agrivall form-control-sm">
+                    <div class="col-12 col-md-3">
+                        <label for="estado" class="form-label-agrivall small">Estado</label>
+                        <select id="estado" name="estado" class="form-control-agrivall form-control-sm">
                             <option value="">Todos</option>
                             @foreach (['Iniciado', 'En proceso', 'Reparto', 'Finalizado'] as $estado)
                                 <option value="{{ $estado }}" {{ request('estado') === $estado ? 'selected' : '' }}>
@@ -75,9 +75,9 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-4 d-flex gap-2">
+                    <div class="col-12 col-md-4 d-flex flex-column flex-sm-row gap-2">
                         <button type="submit" class="btn btn-agrivall-primary btn-sm">Filtrar</button>
-                        <a href="{{ route('admin.pedidos.index') }}" class="btn btn-agrivall-outline btn-sm">Limpiar</a>
+                        <a href="{{ route('admin.pedidos.index') }}" class="btn btn-agrivall-secondary btn-sm">Limpiar filtros</a>
                     </div>
                 </form>
             </div>
@@ -98,7 +98,8 @@
             {{-- Vista móvil: Cards --}}
             <div class="d-md-none">
                 @foreach ($pedidos as $pedido)
-                    <div class="card-agrivall mb-3">
+                    <div class="card-agrivall mb-3 pedido-item"
+                        data-filter-text="{{ strtolower(trim($pedido->id . ' ' . $pedido->nombre_cliente . ' ' . $pedido->email_cliente . ' ' . $pedido->estado . ' ' . $pedido->metodo_pago . ' ' . number_format($pedido->precio_pedido, 2))) }}">
                         <div class="card-body p-3">
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <div>
@@ -173,7 +174,8 @@
                     </thead>
                     <tbody>
                         @foreach ($pedidos as $pedido)
-                            <tr>
+                            <tr class="pedido-item"
+                                data-filter-text="{{ strtolower(trim($pedido->id . ' ' . $pedido->nombre_cliente . ' ' . $pedido->email_cliente . ' ' . $pedido->estado . ' ' . $pedido->metodo_pago . ' ' . number_format($pedido->precio_pedido, 2))) }}">
                                 <td class="fw-semibold">#{{ $pedido->id }}</td>
                                 <td>
                                     <div class="fw-medium">
@@ -226,4 +228,31 @@
             </div>
         @endif
     </div>
+
+    @push('scripts')
+        <script>
+            const setupPedidosFilter = function() {
+                const searchInput = document.getElementById('q');
+                const pedidoItems = document.querySelectorAll('.pedido-item');
+
+                if (searchInput && pedidoItems.length > 0) {
+                    searchInput.addEventListener('input', function() {
+                        const searchValue = this.value.toLowerCase().trim();
+
+                        pedidoItems.forEach(item => {
+                            const filterText = item.dataset.filterText || '';
+                            const shouldShow = searchValue === '' || filterText.includes(searchValue);
+                            item.style.display = shouldShow ? '' : 'none';
+                        });
+                    });
+                }
+            };
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', setupPedidosFilter);
+            } else {
+                setupPedidosFilter();
+            }
+        </script>
+    @endpush
 @endsection

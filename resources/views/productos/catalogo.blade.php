@@ -100,14 +100,16 @@
                                         $producto->imagen && Storage::disk('public')->exists($producto->imagen)
                                             ? asset('storage/' . ltrim($producto->imagen, '/'))
                                             : asset('assets/img/Agrivall_Logo.png');
-                                $variedadesActivasJson = $producto->variedades
-                                    ->where('activo', true)
-                                    ->values()
-                                    ->map(fn($variedad) => [
-                                        'id' => $variedad->id,
-                                        'nombre' => $variedad->nombre,
-                                        'precio' => $variedad->precio,
-                                    ]);
+                                    $variedadesActivasJson = $producto->variedades
+                                        ->where('activo', true)
+                                        ->values()
+                                        ->map(
+                                            fn($variedad) => [
+                                                'id' => $variedad->id,
+                                                'nombre' => $variedad->nombre,
+                                                'precio' => $variedad->precio,
+                                            ],
+                                        );
                                 @endphp
                                 <div class="position-relative overflow-hidden" style="height: 200px;">
                                     <a href="{{ route('productos.show', $producto) }}" class="d-block h-100">
@@ -144,7 +146,8 @@
                                                 {{ $producto->categoria?->nombre ?? 'Sin categoria' }}
                                             </div>
                                             @if ($producto->variedades->where('activo', true)->isNotEmpty())
-                                                <div class="text-muted mt-1" style="font-size: 0.75rem;">Varias variedades disponibles</div>
+                                                <div class="text-muted mt-1" style="font-size: 0.75rem;">Varias variedades
+                                                    disponibles</div>
                                             @endif
                                         </div>
                                     </div>
