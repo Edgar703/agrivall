@@ -561,24 +561,53 @@
             const widgetBtnContinuar = document.getElementById('widget-btn-continuar');
 
             const precioBase = parseFloat(widgetFechas.dataset.precioBase) || 50;
+            const incrementoPorPersona = {{ config('reservas.incremento_por_persona', 0.1) }};
+            const fechasBloqueadasUrl = @json(route('api.reservas.fechas-bloqueadas', [], false));
+            const calcularPrecioUrl = @json(route('api.reservas.calcular-precio', [], false));
 
             let fechaInicio = null;
             let fechaFin = null;
             let fechasBloqueadas = [];
 
             // Cargar fechas bloqueadas desde el servidor
-            fetch('/api/reservas/fechas-bloqueadas')
+            fetch(fechasBloqueadasUrl, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
                         fechasBloqueadas = data.fechas_bloqueadas || [];
-                        inicializarFlatpickr();
                     }
+                    inicializarFlatpickr();
                 })
                 .catch(error => {
                     console.error('Error cargando fechas bloqueadas:', error);
                     inicializarFlatpickr();
                 });
+
+            function formatearFecha(fecha) {
+                const year = fecha.getFullYear();
+                const month = String(fecha.getMonth() + 1).padStart(2, '0');
+                const day = String(fecha.getDate()).padStart(2, '0');
+
+                return `${year}-${month}-${day}`;
+            }
+
+            function mostrarPrecio(precioTotal, numNoches, precioNoche, multiplicador) {
+                widgetPrecioTotal.textContent = precioTotal.toFixed(0);
+                widgetPrecioDetalle.textContent =
+                    `${numNoches} noches × ${precioNoche}€ × ${multiplicador.toFixed(2)}x`;
+            }
+
+            function calcularPrecioLocal(numPersonas) {
+                const numNoches = Math.floor((fechaFin - fechaInicio) / (1000 * 60 * 60 * 24));
+                const multiplicador = 1 + ((numPersonas - 1) * incrementoPorPersona);
+                const precioTotal = precioBase * numNoches * multiplicador;
+
+                mostrarPrecio(precioTotal, numNoches, precioBase, multiplicador);
+            }
 
             function inicializarFlatpickr() {
                 flatpickr(widgetFechas, {
@@ -628,18 +657,19 @@
                     return;
                 }
 
-                const fechaInicioStr = fechaInicio.toISOString().split('T')[0];
-                const fechaFinStr = fechaFin.toISOString().split('T')[0];
+                const fechaInicioStr = formatearFecha(fechaInicio);
+                const fechaFinStr = formatearFecha(fechaFin);
 
                 // Mostrar loader
                 widgetPrecioTotal.textContent = '...';
                 widgetPrecioContainer.style.display = 'block';
 
                 // Llamar al API
-                fetch('/api/reservas/calcular-precio', {
+                fetch(calcularPrecioUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
+                            'Accept': 'application/json',
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
                                 'content')
                         },
@@ -649,12 +679,25 @@
                             num_personas: numPersonas
                         })
                     })
-                    .then(response => response.json())
+                    .then(response => response.json().then(data => ({
+                        ok: response.ok,
+                        data
+                    })))
+                    .then(({ ok, data }) => {
+                        if (!ok && data.message && !data.error) {
+                            throw new Error(data.message);
+                        }
+
+                        return data;
+                    })
                     .then(data => {
                         if (data.success) {
-                            widgetPrecioTotal.textContent = data.precio_total.toFixed(0);
-                            widgetPrecioDetalle.textContent =
-                                `${data.num_noches} noches × ${data.precio_base_noche}€ × ${data.multiplicador}x`;
+                            mostrarPrecio(
+                                Number(data.precio_total),
+                                data.num_noches,
+                                data.precio_base_noche,
+                                Number(data.multiplicador)
+                            );
                         } else {
                             widgetErrorFechas.textContent = data.error || 'Error al calcular el precio';
                             widgetErrorFechas.style.display = 'block';
@@ -663,8 +706,7 @@
                     })
                     .catch(error => {
                         console.error('Error calculando precio:', error);
-                        widgetPrecioTotal.textContent = '--';
-                        widgetPrecioDetalle.textContent = 'Error al calcular';
+                        calcularPrecioLocal(numPersonas);
                     });
             }
 
@@ -677,8 +719,8 @@
                         return;
                     }
 
-                    const fechaInicioStr = fechaInicio.toISOString().split('T')[0];
-                    const fechaFinStr = fechaFin.toISOString().split('T')[0];
+                    const fechaInicioStr = formatearFecha(fechaInicio);
+                    const fechaFinStr = formatearFecha(fechaFin);
                     const numPersonas = widgetPersonas.value;
 
                     // Construir URL con query params
