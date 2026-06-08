@@ -19,7 +19,7 @@
                 $preReserva = $reservas->where('estado', 'PRE-RESERVA')->count();
                 $reservado = $reservas->where('estado', 'RESERVADO')->count();
                 $noDisponible = $reservas->where('estado', 'NO_DISPONIBLE')->count();
-                $canceladas = $reservas->where('estado', 'cancelada')->count();
+                $canceladas = $reservas->where('estado', 'CANCELADA')->count();
             @endphp
             <div class="col-6 col-md-3">
                 <div class="card-agrivall bg-light">

@@ -45,8 +45,7 @@ class PostController extends Controller
     public function store(Request $request)
     {
         // Validar datos del formulario
-        $request->validate
-        ([
+        $request->validate([
             'titulo' => 'required|string|max:255',
             'contenido' => 'required|string|max:5000',
             'categoria' => 'required|string|max:50'
@@ -117,14 +116,15 @@ class PostController extends Controller
             'contenido' => 'required',
             'categoria' => 'required'
         ]);
-        
+
         // Preparar datos para actualizar
         $dataToUpdate = [
             'titulo' => $request->titulo,
             'contenido' => $request->contenido,
             'categoria' => $request->categoria,
+            'updated_at' => now()
         ];
-        
+
         // Guardar cambios del post
         $post->update($dataToUpdate);
 
