@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Mail\PedidoCanceladoMail;
 use App\Mail\PedidoMail;
 use App\Models\Pedido;
+use App\Models\Producto;
+use App\Models\ProductoVariedad;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\ValidationException;
 
 class PedidoController extends Controller
 {
@@ -50,6 +53,39 @@ class PedidoController extends Controller
 
         $pedido = DB::transaction(function () use ($validated, $items) {
             $total = round($items->sum('subtotal'), 2);
+            $productosBloqueados = [];
+            $stockTargetsBloqueados = [];
+            $cantidadesPorStockTarget = $items
+                ->groupBy(fn($item) => $item['variedad'] ? 'variedad-' . $item['variedad']->id : 'producto-' . $item['producto']->id)
+                ->map(fn($lineas) => round($lineas->sum('cantidad'), 2));
+
+            foreach ($cantidadesPorStockTarget as $stockKey => $cantidadTotal) {
+                [$targetType, $targetId] = explode('-', $stockKey);
+                $target = $targetType === 'variedad'
+                    ? ProductoVariedad::with('producto')->whereKey($targetId)->lockForUpdate()->firstOrFail()
+                    : Producto::whereKey($targetId)->lockForUpdate()->firstOrFail();
+
+                if (!$target->tieneStock((float) $cantidadTotal)) {
+                    $producto = $target instanceof ProductoVariedad ? $target->producto : $target;
+                    $nombre = $target instanceof ProductoVariedad
+                        ? $producto->nombre . ' — ' . $target->nombre
+                        : $producto->nombre;
+                    $stockEtiqueta = $target instanceof ProductoVariedad
+                        ? $target->etiquetaStock($producto->unidad_medida)
+                        : $target->etiquetaStock();
+
+                    throw ValidationException::withMessages([
+                        'stock' => 'No hay stock suficiente para ' . $nombre . '. Disponible: ' . $stockEtiqueta . '.',
+                    ]);
+                }
+
+                $stockTargetsBloqueados[$stockKey] = $target;
+                if ($target instanceof Producto) {
+                    $productosBloqueados[$target->id] = $target;
+                } else {
+                    $productosBloqueados[$target->producto_id] = $target->producto;
+                }
+            }
 
             // Crear pedido principal
             $pedido = Pedido::create([
@@ -65,10 +101,14 @@ class PedidoController extends Controller
             ]);
 
             foreach ($items as $item) {
+                $producto = $productosBloqueados[$item['producto']->id];
+                $stockKey = $item['variedad'] ? 'variedad-' . $item['variedad']->id : 'producto-' . $producto->id;
+                $stockTarget = $stockTargetsBloqueados[$stockKey];
+
                 $pedido->lineas()->create([
-                    'producto_id' => $item['producto']->id,
+                    'producto_id' => $producto->id,
                     'producto_variedad_id' => $item['variedad']?->id,
-                    'nombre_producto' => $item['producto']->nombre,
+                    'nombre_producto' => $producto->nombre,
                     'nombre_variedad' => $item['variedad']?->nombre,
                     'tipo_venta' => $item['tipo_venta'],
                     'unidad_medida' => $item['unidad_medida'],
@@ -76,6 +116,12 @@ class PedidoController extends Controller
                     'precio_unitario' => $item['precio_unitario'],
                     'subtotal' => $item['subtotal'],
                 ]);
+
+                $stockTarget->descontarStock(
+                    (float) $item['cantidad'],
+                    Auth::id(),
+                    'Pedido #' . $pedido->id
+                );
             }
 
             // Devolver pedido creado

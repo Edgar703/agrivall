@@ -153,11 +153,90 @@
             </script>
         @endif
 
+        @if (session('error'))
+            <div class="alert alert-warning alert-dismissible fade show animate-slideUp" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
         @if ($productos->isEmpty())
             <div class="alert alert-info" role="alert">
                 <strong>Sin productos</strong> - No hay productos registrados.
             </div>
         @else
+            <div class="card-agrivall mb-3 mb-md-4">
+                <div class="card-body p-3 p-md-4">
+                    <button class="btn btn-agrivall-outline w-100 d-flex justify-content-between align-items-center"
+                        type="button" data-bs-toggle="collapse" data-bs-target="#recargarStockCollapse"
+                        aria-expanded="false" aria-controls="recargarStockCollapse">
+                        <span class="fw-semibold">Recargar stock</span>
+                        <span class="small">Añadir cantidades a varios productos</span>
+                    </button>
+
+                    <div class="collapse mt-3" id="recargarStockCollapse">
+                        <form action="{{ route('admin.productos.stock.recargar') }}" method="POST">
+                            @csrf
+                            <div class="table-responsive">
+                                <table class="table table-sm align-middle mb-3">
+                                    <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th>Stock actual</th>
+                                            <th style="width: 180px;">Cantidad a añadir</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @php $recargaIndex = 0; @endphp
+                                        @foreach ($productos as $producto)
+                                            @if ($producto->variedades->isNotEmpty())
+                                                @foreach ($producto->variedades as $variedad)
+                                                    <tr>
+                                                        <td>
+                                                            <span class="fw-semibold">{{ $producto->nombre }}</span>
+                                                            <small class="text-muted d-block">{{ $variedad->nombre }} · {{ $producto->unidad_medida }}</small>
+                                                        </td>
+                                                        <td>{{ $variedad->controla_stock ? $variedad->etiquetaStock($producto->unidad_medida) : 'Sin control' }}</td>
+                                                        <td>
+                                                            <input type="hidden" name="recargas[{{ $recargaIndex }}][tipo]" value="variedad">
+                                                            <input type="hidden" name="recargas[{{ $recargaIndex }}][id]" value="{{ $variedad->id }}">
+                                                            <input type="number" name="recargas[{{ $recargaIndex }}][cantidad]"
+                                                                class="form-control-agrivall" min="0.01" step="0.01"
+                                                                placeholder="0.00">
+                                                        </td>
+                                                    </tr>
+                                                    @php $recargaIndex++; @endphp
+                                                @endforeach
+                                            @else
+                                                <tr>
+                                                    <td>
+                                                        <span class="fw-semibold">{{ $producto->nombre }}</span>
+                                                        <small class="text-muted d-block">Producto base · {{ $producto->unidad_medida }}</small>
+                                                    </td>
+                                                    <td>{{ $producto->controla_stock ? $producto->etiquetaStock() : 'Sin control' }}</td>
+                                                    <td>
+                                                        <input type="hidden" name="recargas[{{ $recargaIndex }}][tipo]" value="producto">
+                                                        <input type="hidden" name="recargas[{{ $recargaIndex }}][id]" value="{{ $producto->id }}">
+                                                        <input type="number" name="recargas[{{ $recargaIndex }}][cantidad]"
+                                                            class="form-control-agrivall" min="0.01" step="0.01"
+                                                            placeholder="0.00">
+                                                    </td>
+                                                </tr>
+                                                @php $recargaIndex++; @endphp
+                                            @endif
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <button type="submit" class="btn btn-agrivall-primary btn-sm">
+                                Guardar recarga
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
             <div class="d-md-none">
                 @foreach ($productos as $producto)
                     <div class="card-agrivall mb-3 producto-item"
@@ -185,6 +264,16 @@
                                 <div class="col-6">
                                     <p class="text-muted small mb-0">Precio</p>
                                     <p class="text-green fw-bold mb-0">{{ number_format($producto->precio, 2) }} €/{{ $producto->unidad_medida }}</p><p class="text-muted small mb-0">{{ ucfirst($producto->tipo_venta) }} @if($producto->variedades->isNotEmpty()) · {{ $producto->variedades->count() }} variedades @endif</p>
+                                </div>
+                                <div class="col-6">
+                                    <p class="text-muted small mb-0">Stock</p>
+                                    <p class="fw-semibold mb-0 small">
+                                        @if ($producto->variedades->isNotEmpty())
+                                            {{ $producto->variedades->map(fn($variedad) => $variedad->nombre . ': ' . ($variedad->controla_stock ? $variedad->etiquetaStock($producto->unidad_medida) : 'Sin control'))->join(' · ') }}
+                                        @else
+                                            {{ $producto->controla_stock ? $producto->etiquetaStock() : 'Sin control' }}
+                                        @endif
+                                    </p>
                                 </div>
                             </div>
 
@@ -216,6 +305,7 @@
                             <th>Nombre</th>
                             <th>Categoria</th>
                             <th>Precio</th>
+                            <th>Stock</th>
                             <th>Activo</th>
                             <th class="text-end">Acciones</th>
                         </tr>
@@ -228,6 +318,21 @@
                                 <td class="fw-medium">{{ $producto->nombre }}</td>
                                 <td>{{ $producto->categoria?->nombre ?? 'Sin categoria' }}</td>
                                 <td class="text-green fw-semibold">{{ number_format($producto->precio, 2) }} €/{{ $producto->unidad_medida }}<br><small class="text-muted">{{ ucfirst($producto->tipo_venta) }} @if($producto->variedades->isNotEmpty()) · {{ $producto->variedades->count() }} variedades @endif</small></td>
+                                <td>
+                                    @if ($producto->variedades->isNotEmpty())
+                                        <span class="fw-semibold">{{ $producto->variedades->pluck('nombre')->join(', ') }}</span>
+                                        <br><small class="text-muted">Stock por variedad</small>
+                                    @elseif ($producto->controla_stock)
+                                        <span class="fw-semibold">{{ $producto->etiquetaStock() }}</span>
+                                        @if ($producto->estaAgotado())
+                                            <br><small class="text-danger">Agotado</small>
+                                        @elseif ($producto->tieneStockBajo())
+                                            <br><small class="text-warning">Stock bajo</small>
+                                        @endif
+                                    @else
+                                        <span class="text-muted">Sin control</span>
+                                    @endif
+                                </td>
                                 <td>
                                     @if ($producto->activo)
                                         <span class="badge badge-available">Activo</span>

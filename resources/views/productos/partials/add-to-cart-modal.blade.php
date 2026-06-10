@@ -34,6 +34,7 @@
                         <label for="cartModalQuantity" class="form-label-agrivall d-block text-center mb-2">
                             Cantidad <span class="js-cart-unit-label">ud</span>
                         </label>
+                        <p class="text-muted small text-center mb-2 js-cart-stock-help"></p>
                         <div class="cart-quantity-modal__stepper" role="group" aria-label="Seleccionar cantidad">
                             <button type="button" class="cart-quantity-modal__stepper-btn js-cart-quantity-step"
                                 data-step="-1" aria-label="Restar cantidad">−</button>
@@ -64,16 +65,36 @@
                 const productName = modalEl.querySelector('.js-cart-product-name');
                 const saleMode = modalEl.querySelector('.js-cart-sale-mode');
                 const unitLabel = modalEl.querySelector('.js-cart-unit-label');
+                const stockHelp = modalEl.querySelector('.js-cart-stock-help');
                 const variedadGroup = modalEl.querySelector('.js-cart-variedad-group');
                 const variedadSelect = modalEl.querySelector('.js-cart-variedad-select');
 
-                const normalizeQuantity = function (value, min, step, integerOnly) {
+                const normalizeQuantity = function (value, min, step, integerOnly, max = null) {
                     let parsed = parseFloat(String(value).replace(',', '.'));
                     if (Number.isNaN(parsed) || parsed < min) parsed = min;
+                    if (max !== null && parsed > max) parsed = max;
                     const ratio = Math.round(parsed / step);
                     parsed = ratio * step;
+                    if (max !== null && parsed > max) parsed = Math.floor(max / step) * step;
+                    if (parsed < min) parsed = min;
                     if (integerOnly) parsed = Math.round(parsed);
                     return Number(parsed.toFixed(2));
+                };
+
+                const applyStockLimit = function (stock, unidad, min, step) {
+                    if (stock !== null && !Number.isNaN(stock)) {
+                        quantityInput.max = String(stock);
+                        quantityInput.dataset.maxValue = String(stock);
+                        stockHelp.textContent = `Stock disponible: ${stock.toFixed(2)} ${unidad}`;
+                    } else {
+                        quantityInput.removeAttribute('max');
+                        quantityInput.dataset.maxValue = '';
+                        stockHelp.textContent = '';
+                    }
+
+                    const max = quantityInput.dataset.maxValue === '' ? null : parseFloat(quantityInput.dataset.maxValue);
+                    const integerOnly = quantityInput.dataset.integerOnly === '1';
+                    quantityInput.value = normalizeQuantity(quantityInput.value || min, min, step, integerOnly, max);
                 };
 
                 document.querySelectorAll('.js-open-cart-modal').forEach(function (button) {
@@ -82,6 +103,7 @@
                         const unidad = button.dataset.productUnit || 'ud';
                         const step = parseFloat(button.dataset.productStep || '1');
                         const min = step;
+                        const stock = button.dataset.productStock === '' ? null : parseFloat(button.dataset.productStock || '0');
                         const variedades = JSON.parse(button.dataset.productVariedades || '[]');
 
                         productIdInput.value = button.dataset.productId || '';
@@ -94,6 +116,7 @@
                         quantityInput.dataset.integerOnly = tipoVenta === 'unidad' ? '1' : '0';
                         quantityInput.dataset.stepValue = String(step);
                         quantityInput.dataset.minValue = String(min);
+                        applyStockLimit(stock, unidad, min, step);
 
                         variedadSelect.innerHTML = '<option value="">Selecciona una variedad</option>';
                         if (variedades.length) {
@@ -102,6 +125,14 @@
                                 const option = document.createElement('option');
                                 option.value = variedad.id;
                                 option.textContent = `${variedad.nombre} · ${parseFloat(variedad.precio).toFixed(2)} €/${unidad}`;
+                                if (variedad.stock !== null && variedad.stock !== undefined) {
+                                    option.dataset.stock = variedad.stock;
+                                    option.textContent += ` · Stock ${parseFloat(variedad.stock).toFixed(2)} ${unidad}`;
+                                }
+                                if (variedad.agotada) {
+                                    option.disabled = true;
+                                    option.textContent += ' · Agotada';
+                                }
                                 variedadSelect.appendChild(option);
                             });
                             variedadSelect.required = true;
@@ -114,22 +145,33 @@
                     });
                 });
 
+                variedadSelect.addEventListener('change', function () {
+                    const selected = variedadSelect.selectedOptions[0];
+                    const step = parseFloat(quantityInput.dataset.stepValue || '1');
+                    const min = parseFloat(quantityInput.dataset.minValue || '1');
+                    const unidad = unitLabel.textContent || 'ud';
+                    const stock = selected?.dataset.stock === undefined ? null : parseFloat(selected.dataset.stock);
+                    applyStockLimit(stock, unidad, min, step);
+                });
+
                 modalEl.querySelectorAll('.js-cart-quantity-step').forEach(function (button) {
                     button.addEventListener('click', function () {
                         const direction = parseInt(button.dataset.step, 10) || 0;
                         const step = parseFloat(quantityInput.dataset.stepValue || '1');
                         const min = parseFloat(quantityInput.dataset.minValue || '1');
+                        const max = quantityInput.dataset.maxValue === '' ? null : parseFloat(quantityInput.dataset.maxValue);
                         const integerOnly = quantityInput.dataset.integerOnly === '1';
-                        const current = normalizeQuantity(quantityInput.value, min, step, integerOnly);
-                        quantityInput.value = normalizeQuantity(current + (direction * step), min, step, integerOnly);
+                        const current = normalizeQuantity(quantityInput.value, min, step, integerOnly, max);
+                        quantityInput.value = normalizeQuantity(current + (direction * step), min, step, integerOnly, max);
                     });
                 });
 
                 quantityInput.addEventListener('blur', function () {
                     const step = parseFloat(quantityInput.dataset.stepValue || '1');
                     const min = parseFloat(quantityInput.dataset.minValue || '1');
+                    const max = quantityInput.dataset.maxValue === '' ? null : parseFloat(quantityInput.dataset.maxValue);
                     const integerOnly = quantityInput.dataset.integerOnly === '1';
-                    quantityInput.value = normalizeQuantity(quantityInput.value, min, step, integerOnly);
+                    quantityInput.value = normalizeQuantity(quantityInput.value, min, step, integerOnly, max);
                 });
             });
         </script>

@@ -7,38 +7,26 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         if (!Schema::hasTable('posts') || !Schema::hasTable('tipo_post') || !Schema::hasColumn('posts', 'tipo_post_id')) {
             return;
         }
 
-        $constraint = $this->foreignKeyName('posts', 'tipo_post_id');
-
-        if ($constraint) {
-            Schema::table('posts', function (Blueprint $table) use ($constraint) {
-                $table->dropForeign($constraint);
-            });
+        if ($this->foreignKeyExists('posts', 'tipo_post_id')) {
+            return;
         }
 
         DB::statement('ALTER TABLE posts MODIFY tipo_post_id BIGINT UNSIGNED NULL');
 
-        if (!$this->foreignKeyName('posts', 'tipo_post_id')) {
-            Schema::table('posts', function (Blueprint $table) {
-                $table->foreign('tipo_post_id')
-                    ->references('id')
-                    ->on('tipo_post')
-                    ->nullOnDelete();
-            });
-        }
+        Schema::table('posts', function (Blueprint $table) {
+            $table->foreign('tipo_post_id')
+                ->references('id')
+                ->on('tipo_post')
+                ->nullOnDelete();
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         if (!Schema::hasTable('posts') || !Schema::hasColumn('posts', 'tipo_post_id')) {
@@ -52,17 +40,11 @@ return new class extends Migration
                 $table->dropForeign($constraint);
             });
         }
+    }
 
-        DB::statement('ALTER TABLE posts MODIFY tipo_post_id BIGINT UNSIGNED NOT NULL');
-
-        if (Schema::hasTable('tipo_post') && !$this->foreignKeyName('posts', 'tipo_post_id')) {
-            Schema::table('posts', function (Blueprint $table) {
-                $table->foreign('tipo_post_id')
-                    ->references('id')
-                    ->on('tipo_post')
-                    ->restrictOnDelete();
-            });
-        }
+    private function foreignKeyExists(string $table, string $column): bool
+    {
+        return $this->foreignKeyName($table, $column) !== null;
     }
 
     private function foreignKeyName(string $table, string $column): ?string

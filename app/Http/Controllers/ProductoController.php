@@ -6,6 +6,7 @@ use App\Models\Categoria;
 use App\Models\Producto;
 use App\Models\ProductoVariedad;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -269,6 +270,9 @@ class ProductoController extends Controller
             'tipo_venta' => 'required|in:unidad,peso',
             'unidad_medida' => 'required|in:ud,kg',
             'step_cantidad' => 'required|numeric|min:0.01',
+            'stock_actual' => 'required|numeric|min:0',
+            'stock_minimo' => 'nullable|numeric|min:0',
+            'controla_stock' => 'nullable|boolean',
             'categoria_id' => 'nullable|exists:categorias,id',
             'activo' => 'nullable|boolean',
             'fecha_creacion' => 'nullable|date',
@@ -277,6 +281,9 @@ class ProductoController extends Controller
             'variedades.*.id' => 'nullable|integer|exists:producto_variedades,id',
             'variedades.*.nombre' => 'nullable|string|max:255|required_with:variedades.*.precio',
             'variedades.*.precio' => 'nullable|numeric|min:0|required_with:variedades.*.nombre',
+            'variedades.*.stock_actual' => 'nullable|numeric|min:0',
+            'variedades.*.stock_minimo' => 'nullable|numeric|min:0',
+            'variedades.*.controla_stock' => 'nullable|boolean',
             'variedades.*.activo' => 'nullable|boolean',
             'variedades.*.orden' => 'nullable|integer|min:0',
         ]);
@@ -299,7 +306,54 @@ class ProductoController extends Controller
             $validated['unidad_medida'] = 'kg';
         }
 
+        $validated['stock_actual'] = round((float) ($validated['stock_actual'] ?? 0), 2);
+        $validated['stock_minimo'] = round((float) ($validated['stock_minimo'] ?? 0), 2);
+        $validated['controla_stock'] = (bool) ($validated['controla_stock'] ?? false);
+
         return $validated;
+    }
+
+    public function recargarStock(Request $request)
+    {
+        $validated = $request->validate([
+            'recargas' => 'required|array',
+            'recargas.*.tipo' => 'required|in:producto,variedad',
+            'recargas.*.id' => 'required|integer',
+            'recargas.*.cantidad' => 'nullable|numeric|min:0.01',
+        ]);
+
+        $recargasAplicadas = 0;
+
+        DB::transaction(function () use ($validated, &$recargasAplicadas) {
+            foreach ($validated['recargas'] as $recarga) {
+                if (empty($recarga['cantidad'])) {
+                    continue;
+                }
+
+                $cantidad = round((float) $recarga['cantidad'], 2);
+                $target = $recarga['tipo'] === 'variedad'
+                    ? ProductoVariedad::whereKey($recarga['id'])->lockForUpdate()->firstOrFail()
+                    : Producto::whereKey($recarga['id'])->lockForUpdate()->firstOrFail();
+
+                $target->recargarStock(
+                    $cantidad,
+                    Auth::id(),
+                    'Recarga desde gestión de productos'
+                );
+
+                $recargasAplicadas++;
+            }
+        });
+
+        if ($recargasAplicadas === 0) {
+            return redirect()
+                ->route('admin.productos.index')
+                ->with('error', 'No se indicó ninguna cantidad para recargar.');
+        }
+
+        return redirect()
+            ->route('admin.productos.index')
+            ->with('success', 'Stock recargado correctamente en ' . $recargasAplicadas . ' producto(s). ✅');
     }
 
     private function extractVariedades(Request $request): array
@@ -319,6 +373,9 @@ class ProductoController extends Controller
                     'id' => $variedad['id'] ?? null,
                     'nombre' => $nombre,
                     'precio' => $precio,
+                    'stock_actual' => round((float) ($variedad['stock_actual'] ?? 0), 2),
+                    'stock_minimo' => round((float) ($variedad['stock_minimo'] ?? 0), 2),
+                    'controla_stock' => filter_var($variedad['controla_stock'] ?? true, FILTER_VALIDATE_BOOLEAN),
                     'activo' => filter_var($variedad['activo'] ?? false, FILTER_VALIDATE_BOOLEAN),
                     'orden' => (int) ($variedad['orden'] ?? $index),
                 ];
@@ -337,6 +394,9 @@ class ProductoController extends Controller
             $payload = [
                 'nombre' => $variedadData['nombre'],
                 'precio' => $variedadData['precio'],
+                'stock_actual' => $variedadData['stock_actual'],
+                'stock_minimo' => $variedadData['stock_minimo'],
+                'controla_stock' => $variedadData['controla_stock'],
                 'activo' => $variedadData['activo'],
                 'orden' => $variedadData['orden'],
             ];

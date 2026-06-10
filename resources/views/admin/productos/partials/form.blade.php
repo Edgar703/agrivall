@@ -6,6 +6,9 @@
             'id' => $variedad->id,
             'nombre' => $variedad->nombre,
             'precio' => $variedad->precio,
+            'stock_actual' => $variedad->stock_actual,
+            'stock_minimo' => $variedad->stock_minimo,
+            'controla_stock' => $variedad->controla_stock,
             'activo' => $variedad->activo,
             'orden' => $variedad->orden,
         ])->values()->all() ?? []);
@@ -71,6 +74,33 @@
     </div>
 </div>
 
+<div class="row g-2 g-md-3">
+    <div class="col-12 col-md-4 mb-3">
+        <label class="form-label-agrivall">Stock actual *</label>
+        <input type="number" step="0.01" min="0" name="stock_actual" class="form-control-agrivall"
+            value="{{ old('stock_actual', $producto->stock_actual ?? 0) }}" placeholder="0.00" required>
+        <small class="text-muted">Se usa si el producto no tiene variedades.</small>
+    </div>
+
+    <div class="col-12 col-md-4 mb-3">
+        <label class="form-label-agrivall">Stock mínimo</label>
+        <input type="number" step="0.01" min="0" name="stock_minimo" class="form-control-agrivall"
+            value="{{ old('stock_minimo', $producto->stock_minimo ?? 0) }}" placeholder="0.00">
+        <small class="text-muted">Aviso visual de últimas unidades.</small>
+    </div>
+
+    <div class="col-12 col-md-4 mb-3 d-flex align-items-end">
+        <div class="form-check">
+            <input type="hidden" name="controla_stock" value="0">
+            <input class="form-check-input" type="checkbox" name="controla_stock" id="controla_stock" value="1"
+                {{ old('controla_stock', $producto->controla_stock ?? true) ? 'checked' : '' }}>
+            <label class="form-check-label" for="controla_stock">
+                Controlar stock
+            </label>
+        </div>
+    </div>
+</div>
+
 <div class="mb-3">
     <label class="form-label-agrivall">Imagen</label>
     <input type="file" name="imagen_file" class="form-control-agrivall" accept="image/*">
@@ -97,22 +127,40 @@
             <div class="border rounded p-3 bg-white js-variedad-row">
                 <input type="hidden" name="variedades[{{ $index }}][id]" value="{{ $variedad['id'] ?? '' }}">
                 <div class="row g-2 align-items-end">
-                    <div class="col-12 col-md-4">
+                    <div class="col-12 col-md-3">
                         <label class="form-label-agrivall">Nombre</label>
                         <input type="text" name="variedades[{{ $index }}][nombre]" class="form-control-agrivall"
                             value="{{ $variedad['nombre'] ?? '' }}" placeholder="Ej: Cherry">
                     </div>
-                    <div class="col-12 col-md-3">
+                    <div class="col-12 col-md-2">
                         <label class="form-label-agrivall">Precio</label>
                         <input type="number" step="0.01" min="0" name="variedades[{{ $index }}][precio]"
                             class="form-control-agrivall" value="{{ $variedad['precio'] ?? '' }}" placeholder="0.00">
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <label class="form-label-agrivall">Stock</label>
+                        <input type="number" step="0.01" min="0" name="variedades[{{ $index }}][stock_actual]"
+                            class="form-control-agrivall" value="{{ $variedad['stock_actual'] ?? 0 }}" placeholder="0.00">
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <label class="form-label-agrivall">Stock mín.</label>
+                        <input type="number" step="0.01" min="0" name="variedades[{{ $index }}][stock_minimo]"
+                            class="form-control-agrivall" value="{{ $variedad['stock_minimo'] ?? 0 }}" placeholder="0.00">
                     </div>
                     <div class="col-6 col-md-2">
                         <label class="form-label-agrivall">Orden</label>
                         <input type="number" min="0" name="variedades[{{ $index }}][orden]" class="form-control-agrivall"
                             value="{{ $variedad['orden'] ?? $index }}">
                     </div>
-                    <div class="col-6 col-md-2">
+                    <div class="col-6 col-md-1">
+                        <input type="hidden" name="variedades[{{ $index }}][controla_stock]" value="0">
+                        <label class="form-label-agrivall d-block">Stock</label>
+                        <div class="form-check mt-2">
+                            <input class="form-check-input" type="checkbox" name="variedades[{{ $index }}][controla_stock]"
+                                value="1" {{ ($variedad['controla_stock'] ?? true) ? 'checked' : '' }}>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-1">
                         <input type="hidden" name="variedades[{{ $index }}][activo]" value="0">
                         <label class="form-label-agrivall d-block">Activa</label>
                         <div class="form-check mt-2">
@@ -148,19 +196,34 @@
     <div class="border rounded p-3 bg-white js-variedad-row">
         <input type="hidden" data-name="id" value="">
         <div class="row g-2 align-items-end">
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-md-3">
                 <label class="form-label-agrivall">Nombre</label>
                 <input type="text" class="form-control-agrivall" data-name="nombre" placeholder="Ej: Cherry">
             </div>
-            <div class="col-12 col-md-3">
+            <div class="col-12 col-md-2">
                 <label class="form-label-agrivall">Precio</label>
                 <input type="number" step="0.01" min="0" class="form-control-agrivall" data-name="precio" placeholder="0.00">
+            </div>
+            <div class="col-6 col-md-2">
+                <label class="form-label-agrivall">Stock</label>
+                <input type="number" step="0.01" min="0" class="form-control-agrivall" data-name="stock_actual" value="0">
+            </div>
+            <div class="col-6 col-md-2">
+                <label class="form-label-agrivall">Stock mín.</label>
+                <input type="number" step="0.01" min="0" class="form-control-agrivall" data-name="stock_minimo" value="0">
             </div>
             <div class="col-6 col-md-2">
                 <label class="form-label-agrivall">Orden</label>
                 <input type="number" min="0" class="form-control-agrivall" data-name="orden" value="0">
             </div>
-            <div class="col-6 col-md-2">
+            <div class="col-6 col-md-1">
+                <input type="hidden" data-name="controla_stock_hidden" value="0">
+                <label class="form-label-agrivall d-block">Stock</label>
+                <div class="form-check mt-2">
+                    <input class="form-check-input" type="checkbox" data-name="controla_stock" value="1" checked>
+                </div>
+            </div>
+            <div class="col-6 col-md-1">
                 <input type="hidden" data-name="activo_hidden" value="0">
                 <label class="form-label-agrivall d-block">Activa</label>
                 <div class="form-check mt-2">
@@ -218,7 +281,7 @@
             const reindexRows = () => {
                 variedadesList.querySelectorAll('.js-variedad-row').forEach((row, index) => {
                     row.querySelectorAll('[name]').forEach((input) => {
-                        const field = input.name.match(/\[(?:id|nombre|precio|orden|activo)\]$/)?.[0] || '';
+                        const field = input.name.match(/\[(?:id|nombre|precio|stock_actual|stock_minimo|controla_stock|orden|activo)\]$/)?.[0] || '';
                         if (field) {
                             input.name = `variedades[${index}]${field}`;
                         }
@@ -233,8 +296,8 @@
 
                     clone.querySelectorAll('[data-name]').forEach((input) => {
                         const field = input.dataset.name;
-                        if (field === 'activo_hidden') {
-                            input.name = `variedades[${index}][activo]`;
+                        if (field === 'activo_hidden' || field === 'controla_stock_hidden') {
+                            input.name = `variedades[${index}][${field.replace('_hidden', '')}]`;
                             return;
                         }
                         input.name = `variedades[${index}][${field}]`;

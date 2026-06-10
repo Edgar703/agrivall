@@ -80,6 +80,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/pedidos/{pedido}', [AdminPedidoController::class, 'destroy'])->name('pedidos.destroy');
 
         // Productos y categorías
+        Route::post('/productos/stock/recargar', [ProductoController::class, 'recargarStock'])->name('productos.stock.recargar');
         Route::resource('productos', ProductoController::class);
         Route::post('/categorias', [ProductoController::class, 'storeCategoria'])->name('categorias.store');
         Route::patch('/categorias/{categoria}', [ProductoController::class, 'updateCategoria'])->name('categorias.update');

@@ -42,6 +42,17 @@
             </script>
         @endif
 
+        @if ($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
         <div class="row g-4">
             <aside class="col-lg-3 d-none d-lg-block">
                 <div class="card">
@@ -108,14 +119,33 @@
                                                 'id' => $variedad->id,
                                                 'nombre' => $variedad->nombre,
                                                 'precio' => $variedad->precio,
+                                                'stock' => $variedad->controla_stock ? (float) $variedad->stock_actual : null,
+                                                'agotada' => $variedad->controla_stock && (float) $variedad->stock_actual < (float) $producto->step_cantidad,
                                             ],
                                         );
+                                    $variedadesActivas = $producto->variedades->where('activo', true);
+                                    $usaStockVariedades = $variedadesActivas->isNotEmpty();
+                                    $puedeComprar = $usaStockVariedades
+                                        ? $variedadesActivas->contains(fn($variedad) => !$variedad->controla_stock || (float) $variedad->stock_actual >= (float) $producto->step_cantidad)
+                                        : (!$producto->controla_stock || (float) $producto->stock_actual >= (float) $producto->step_cantidad);
+                                    $stockBajo = $usaStockVariedades
+                                        ? $variedadesActivas->contains(fn($variedad) => $variedad->tieneStockBajo())
+                                        : $producto->tieneStockBajo();
                                 @endphp
                                 <div class="position-relative overflow-hidden" style="height: 200px;">
                                     <a href="{{ route('productos.show', $producto) }}" class="d-block h-100">
                                         <img src="{{ $productoImagen }}" class="product-card-img w-100 h-100"
                                             alt="{{ $producto->nombre }}" style="object-fit: cover;">
                                     </a>
+                                    <div class="position-absolute top-0 end-0 m-2">
+                                        @if (!$puedeComprar)
+                                            <span class="badge bg-danger">Agotado</span>
+                                        @elseif ($stockBajo)
+                                            <span class="badge bg-warning text-dark">Últimas unidades</span>
+                                        @else
+                                            <span class="badge bg-success">Disponible</span>
+                                        @endif
+                                    </div>
                                 </div>
                                 <div class="p-4 border-bottom"
                                     style="background: linear-gradient(135deg, #f4f7f2 0%, #ffffff 100%);">
@@ -149,6 +179,17 @@
                                                 <div class="text-muted mt-1" style="font-size: 0.75rem;">Varias variedades
                                                     disponibles</div>
                                             @endif
+                                            @if ($usaStockVariedades)
+                                                <div class="mt-2 text-muted"
+                                                    style="font-size: 0.8rem; font-weight: 600;">
+                                                    Stock por variedad
+                                                </div>
+                                            @elseif ($producto->controla_stock)
+                                                <div class="mt-2 {{ $producto->estaAgotado() ? 'text-danger' : ($producto->tieneStockBajo() ? 'text-warning' : 'text-muted') }}"
+                                                    style="font-size: 0.8rem; font-weight: 600;">
+                                                    Stock: {{ $producto->etiquetaStock() }}
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
 
@@ -167,8 +208,10 @@
                                             data-product-sale-type="{{ $producto->tipo_venta }}"
                                             data-product-unit="{{ $producto->unidad_medida }}"
                                             data-product-step="{{ $producto->step_cantidad }}"
-                                            data-product-variedades='@json($variedadesActivasJson)'>
-                                            🛒 Añadir al carrito
+                                            data-product-stock="{{ !$usaStockVariedades && $producto->controla_stock ? $producto->stock_actual : '' }}"
+                                            data-product-variedades='@json($variedadesActivasJson)'
+                                            {{ !$puedeComprar ? 'disabled' : '' }}>
+                                            {{ !$puedeComprar ? 'Agotado' : '🛒 Añadir al carrito' }}
                                         </button>
                                     @endauth
                                 </div>

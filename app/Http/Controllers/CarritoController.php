@@ -40,6 +40,9 @@ class CarritoController extends Controller
             $this->assertQuantityMatchesStep($cantidad, (float) $producto->step_cantidad, $producto->tipo_venta);
         }
 
+        $cantidadTotalStock = $this->totalStockTargetEnCarrito($carrito, $producto->id, $variedad?->id, $itemKey, $cantidad);
+        $this->assertStockDisponible($producto, $variedad, $cantidadTotalStock);
+
         $carrito[$itemKey] = [
             'producto_id' => $producto->id,
             'variedad_id' => $variedad?->id,
@@ -79,6 +82,8 @@ class CarritoController extends Controller
 
         $variedad = $this->resolveVariedad($producto, $carrito[$itemKey]['variedad_id'] ?? null);
         $cantidad = $this->validateCantidad($request, $producto);
+        $cantidadTotalStock = $this->totalStockTargetEnCarrito($carrito, $producto->id, $variedad?->id, $itemKey, $cantidad);
+        $this->assertStockDisponible($producto, $variedad, $cantidadTotalStock);
 
         $carrito[$itemKey]['cantidad'] = $cantidad;
         $carrito[$itemKey]['precio_unitario'] = (float) ($variedad?->precio ?? $producto->precio);
@@ -165,6 +170,12 @@ class CarritoController extends Controller
     private function resolveVariedad(Producto $producto, $variedadId): ?ProductoVariedad
     {
         if (!$variedadId) {
+            if ($producto->variedades->isNotEmpty()) {
+                throw ValidationException::withMessages([
+                    'variedad_id' => 'Selecciona una variedad para este producto.',
+                ]);
+            }
+
             return null;
         }
 
@@ -220,6 +231,45 @@ class CarritoController extends Controller
                 'cantidad' => 'La cantidad debe respetar incrementos de ' . rtrim(rtrim(number_format($step, 2, '.', ''), '0'), '.') . '.',
             ]);
         }
+    }
+
+    private function assertStockDisponible(Producto $producto, ?ProductoVariedad $variedad, float $cantidad): void
+    {
+        $stockTarget = $variedad ?: $producto;
+
+        if ($stockTarget->tieneStock($cantidad)) {
+            return;
+        }
+
+        $nombre = $variedad
+            ? $producto->nombre . ' — ' . $variedad->nombre
+            : $producto->nombre;
+        $stockEtiqueta = $variedad
+            ? $variedad->etiquetaStock($producto->unidad_medida)
+            : $producto->etiquetaStock();
+
+        throw ValidationException::withMessages([
+            'cantidad' => 'No hay stock suficiente para ' . $nombre . '. Disponible: ' . $stockEtiqueta . '.',
+        ]);
+    }
+
+    private function totalStockTargetEnCarrito(array $carrito, int $productoId, ?int $variedadId, string $itemKeyActual, float $nuevaCantidad): float
+    {
+        $total = $nuevaCantidad;
+
+        foreach ($carrito as $itemKey => $entry) {
+            if (
+                $itemKey === $itemKeyActual
+                || (int) ($entry['producto_id'] ?? 0) !== $productoId
+                || (int) ($entry['variedad_id'] ?? 0) !== (int) ($variedadId ?? 0)
+            ) {
+                continue;
+            }
+
+            $total += (float) ($entry['cantidad'] ?? 0);
+        }
+
+        return round($total, 2);
     }
 
     private function makeItemKey(int $productoId, ?int $variedadId): string

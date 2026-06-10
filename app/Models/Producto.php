@@ -22,6 +22,9 @@ class Producto extends Model
         'tipo_venta',
         'unidad_medida',
         'step_cantidad',
+        'stock_actual',
+        'stock_minimo',
+        'controla_stock',
         'descripcion',
         'categoria_id',
         'activo',
@@ -32,6 +35,9 @@ class Producto extends Model
     protected $casts = [
         'precio' => 'decimal:2',
         'step_cantidad' => 'decimal:2',
+        'stock_actual' => 'decimal:2',
+        'stock_minimo' => 'decimal:2',
+        'controla_stock' => 'boolean',
         'activo' => 'boolean',
         'fecha_creacion' => 'date',
     ];
@@ -45,6 +51,11 @@ class Producto extends Model
     public function variedades(): HasMany
     {
         return $this->hasMany(ProductoVariedad::class, 'producto_id')->orderBy('orden')->orderBy('id');
+    }
+
+    public function movimientosStock(): HasMany
+    {
+        return $this->hasMany(MovimientoStock::class, 'producto_id')->latest();
     }
 
     public function variedadesActivas(): HasMany
@@ -67,5 +78,81 @@ class Producto extends Model
     public function getUnidadEtiquetaAttribute(): string
     {
         return $this->unidad_medida === 'kg' ? 'kg' : 'ud';
+    }
+
+    public function controlaStock(): bool
+    {
+        return (bool) $this->controla_stock;
+    }
+
+    public function tieneStock(float $cantidad): bool
+    {
+        return !$this->controlaStock() || (float) $this->stock_actual >= $cantidad;
+    }
+
+    public function estaAgotado(): bool
+    {
+        return $this->controlaStock() && (float) $this->stock_actual <= 0;
+    }
+
+    public function tieneStockBajo(): bool
+    {
+        return $this->controlaStock()
+            && (float) $this->stock_actual > 0
+            && (float) $this->stock_actual <= (float) $this->stock_minimo;
+    }
+
+    public function etiquetaStock(): string
+    {
+        if (!$this->controlaStock()) {
+            return 'Disponible';
+        }
+
+        return rtrim(rtrim(number_format((float) $this->stock_actual, 2, ',', '.'), '0'), ',') . ' ' . $this->unidad_medida;
+    }
+
+    public function descontarStock(float $cantidad, ?int $userId = null, ?string $descripcion = null): void
+    {
+        if (!$this->controlaStock()) {
+            return;
+        }
+
+        $stockAntes = (float) $this->stock_actual;
+        $stockDespues = round($stockAntes - $cantidad, 2);
+
+        $this->forceFill(['stock_actual' => $stockDespues])->save();
+        $this->registrarMovimientoStock('venta', $cantidad, $stockAntes, $stockDespues, $userId, $descripcion);
+    }
+
+    public function recargarStock(float $cantidad, ?int $userId = null, ?string $descripcion = null): void
+    {
+        $stockAntes = (float) $this->stock_actual;
+        $stockDespues = round($stockAntes + $cantidad, 2);
+
+        $this->forceFill([
+            'stock_actual' => $stockDespues,
+            'controla_stock' => true,
+        ])->save();
+
+        $this->registrarMovimientoStock('recarga', $cantidad, $stockAntes, $stockDespues, $userId, $descripcion);
+    }
+
+    public function registrarMovimientoStock(
+        string $tipo,
+        float $cantidad,
+        float $stockAntes,
+        float $stockDespues,
+        ?int $userId = null,
+        ?string $descripcion = null
+    ): void {
+        $this->movimientosStock()->create([
+            'producto_variedad_id' => null,
+            'user_id' => $userId,
+            'tipo' => $tipo,
+            'cantidad' => $cantidad,
+            'stock_antes' => $stockAntes,
+            'stock_despues' => $stockDespues,
+            'descripcion' => $descripcion,
+        ]);
     }
 }
