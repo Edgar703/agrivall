@@ -274,10 +274,25 @@
                 top: 0;
                 z-index: 1030;
                 background: linear-gradient(180deg,
-                        rgba(45, 106, 79, 0.95) 0%,
-                        rgba(45, 106, 79, 0.85) 50%,
-                        rgba(45, 106, 79, 0) 100%);
+                        rgba(45, 106, 79, 0.96) 0%,
+                        rgba(45, 106, 79, 0.72) 62%,
+                        rgba(45, 106, 79, 0.18) 100%) !important;
+                box-shadow: none;
                 backdrop-filter: blur(10px);
+            }
+
+            .page-hero .navbar-agrivall::after {
+                content: "";
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: -48px;
+                height: 48px;
+                pointer-events: none;
+                z-index: 0;
+                background: linear-gradient(180deg,
+                        rgba(45, 106, 79, 0.18) 0%,
+                        rgba(45, 106, 79, 0) 100%);
             }
 
             .page-hero .hero-section {
