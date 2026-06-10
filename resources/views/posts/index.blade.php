@@ -130,7 +130,12 @@
                                                 </svg> --}}
                                                 <i class="bi bi-calendar-date me-1"></i>
 
-                                                {{ $post->created_at->format('d/m/Y') }}
+                                                @if ($post->updated_at)
+                                                    {{ $post->updated_at->format('d/m/Y') }}
+                                                @else
+                                                    {{ $post->created_at->format('d/m/Y') }}
+                                                @endif
+                                                {{-- {{ $post->created_at->format('d/m/Y') }} --}}
                                                 @if ($post->categoria)
                                                     <span
                                                         class="badge badge-earth ms-2">{{ ucfirst($post->categoria) }}</span>

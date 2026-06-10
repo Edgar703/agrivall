@@ -332,4 +332,4 @@
             }
         </style>
 
-@endsection
+    @endsection
